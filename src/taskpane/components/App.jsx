@@ -9,6 +9,7 @@ import { getActiveRowIndex, getMappedRowData } from "../services/rowService";
 import { getWorkbookTables } from "../services/tableService";
 import { getTableHeaders } from "../services/headerService";
 import { saveMappings, loadMappings } from "../services/settingsService";
+import { openDraft } from "../services/emailService";
 
 import MappingRow from "./MappingRow";
 
@@ -68,13 +69,31 @@ function App() {
     if (index !== null && selectedTable) {
       const data = await getMappedRowData(selectedTable, index, mappings);
 
+      console.log("Fetched row data:", data);
+
       setRowData(data);
+    }
+  }
+
+  // handling create draft
+  function handleCreateDraft() {
+    try {
+      console.log("rowData:", rowData);
+
+      if (!rowData?.recipientEmail) {
+        console.error("Recipient email missing");
+        return;
+      }
+
+      openDraft(rowData);
+    } catch (error) {
+      console.error("Draft creation error:", error);
     }
   }
 
   return (
     <div style={{ padding: "20px" }}>
-      <h1 >Excel Email Automation</h1>
+      <h1>Excel Email Automation</h1>
 
       {/* Table Selection */}
       <h3>1. Select Excel Table</h3>
@@ -209,6 +228,8 @@ function App() {
       <h4>Mapped Row Data</h4>
 
       <pre>{JSON.stringify(rowData, null, 2)}</pre>
+
+      <button onClick={handleCreateDraft}>Create Outlook Draft</button>
     </div>
   );
 }
