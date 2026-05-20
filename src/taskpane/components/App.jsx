@@ -23,6 +23,7 @@ import AppFooter from "./layout/AppFooter";
 
 // Hooks
 import useNotifications from "../hooks/useNotifications";
+import useActivityLog from "../hooks/useActivityLog";
 
 // Constants
 import { MAPPING_FIELDS } from "../constants/mappingFields";
@@ -73,7 +74,7 @@ function App() {
 
   const { banner, toast, showBanner, showToast, clearBanner, clearToast } = useNotifications();
 
-  const [activityLog, setActivityLog] = useState([]);
+  const { activityLog, addActivity, clearActivityLog } = useActivityLog();
 
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [selectedWorkflowPreset, setSelectedWorkflowPreset] = useState("followup");
@@ -247,20 +248,6 @@ function App() {
     };
   }, [selectedTable, autoSyncEnabled, headers, mappings, rowIndex, rowData]);
 
-  function addActivity(type, message) {
-    const newActivity = {
-      id: Date.now(),
-      type,
-      message,
-      time: getActivityTime(),
-    };
-
-    setActivityLog((previousLog) => [newActivity, ...previousLog].slice(0, 8));
-  }
-
-  function clearActivityLog() {
-    setActivityLog([]);
-  }
 
   function autoLoadTemplateFromRow(rowDataFromExcel) {
     const templateTypeValue = rowDataFromExcel?.templateType;
