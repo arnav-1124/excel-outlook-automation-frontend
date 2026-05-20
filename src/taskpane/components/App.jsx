@@ -698,6 +698,74 @@ function App() {
     setShowOnboarding(true);
   }
 
+  async function handleWriteGeneratedEmailToRow() {
+    try {
+      if (!rowData) {
+        showBanner("error", "Please detect a selected row first.");
+        return;
+      }
+
+      if (!rowData.__templateApplied) {
+        showBanner("error", "Please generate preview from template before writing to Excel.");
+        return;
+      }
+
+      if (!rowData.subject && !rowData.body) {
+        showBanner("error", "Generated subject/body is empty.");
+        return;
+      }
+
+      if (!mappings.subject && !mappings.body) {
+        showBanner("error", "Please map Subject or Body column before writing generated email.");
+        return;
+      }
+
+      const valuesToUpdate = {};
+
+      if (mappings.subject) {
+        valuesToUpdate.subject = rowData.subject || "";
+      }
+
+      if (mappings.body) {
+        valuesToUpdate.body = rowData.body || "";
+      }
+
+      const updated = await updateMappedRowValues(
+        selectedTable,
+        rowIndex,
+        mappings,
+        valuesToUpdate
+      );
+
+      if (!updated) {
+        showBanner("error", "Could not write generated email to Excel row.");
+        return;
+      }
+
+      const refreshedData = await getMappedRowData(selectedTable, rowIndex, mappings);
+
+      setRowData({
+        ...refreshedData,
+        subject: rowData.subject,
+        body: rowData.body,
+        __templateApplied: true,
+      });
+
+      showToast(
+        "success",
+        "Generated email saved",
+        "Subject and Body were written back to the selected Excel row."
+      );
+
+      showBanner("success", "Generated email written back to Excel row.");
+
+      addActivity("success", "Generated subject/body written back to Excel row.");
+    } catch (error) {
+      console.error("Write generated email to row error:", error);
+      showBanner("error", "Could not write generated email to Excel.");
+    }
+  }
+
   function getCurrentDateTimeText() {
     const now = new Date();
 
@@ -1216,6 +1284,14 @@ function App() {
               <div className="template-actions">
                 <button className="btn-primary" onClick={handleGenerateFromTemplate}>
                   Generate Preview From Template
+                </button>
+
+                <button
+                  className="btn-outline"
+                  onClick={handleWriteGeneratedEmailToRow}
+                  disabled={!rowData?.__templateApplied}
+                >
+                  Write Generated Email to Row
                 </button>
 
                 <button
