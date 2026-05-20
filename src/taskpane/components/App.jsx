@@ -3,6 +3,15 @@ import React, { useEffect, useRef, useState } from "react";
 import { MAPPING_FIELDS } from "../constants/mappingFields";
 import { WORKFLOW_PRESETS } from "../constants/workflowPresets";
 
+import { getActivityTime, getCurrentDateTimeText } from "../utils/dateUtils";
+import { normalizeTemplateName, renderDisplayValue } from "../utils/textUtils";
+import { getRowDataSnapshot, mergeFreshRowDataSafely } from "../utils/rowDataUtils";
+import {
+  areArraysEqual,
+  cleanMappingsForHeaders,
+  getMappingFieldLabel,
+} from "../utils/mappingUtils";
+
 import useTableStore from "../store/tableStore";
 import useHeaderStore from "../store/headerStore";
 import useMappingStore from "../store/mappingStore";
@@ -26,10 +35,6 @@ import {
 } from "../services/settingsService";
 
 import MappingRow from "./MappingRow";
-
-
-
-
 
 function App() {
   const { tables, selectedTable, setTables, setSelectedTable } = useTableStore();
@@ -158,11 +163,6 @@ function App() {
     (presetCompletedFields.length / activeWorkflowPreset.recommendedFields.length) * 100
   );
 
-  function getMappingFieldLabel(fieldKey) {
-    const field = MAPPING_FIELDS.find((item) => item.key === fieldKey);
-    return field?.label || fieldKey;
-  }
-
   const recommendedMappingFields = MAPPING_FIELDS.filter((field) =>
     activeWorkflowPreset.recommendedFields.includes(field.key)
   );
@@ -240,13 +240,6 @@ function App() {
     }, 4500);
   }
 
-  function getActivityTime() {
-    return new Date().toLocaleTimeString("en-IN", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  }
-
   function addActivity(type, message) {
     const newActivity = {
       id: Date.now(),
@@ -260,14 +253,6 @@ function App() {
 
   function clearActivityLog() {
     setActivityLog([]);
-  }
-
-  function normalizeTemplateName(value) {
-    return String(value || "")
-      .trim()
-      .toLowerCase()
-      .replace(/[_-]+/g, " ")
-      .replace(/\s+/g, " ");
   }
 
   function autoLoadTemplateFromRow(rowDataFromExcel) {
@@ -421,7 +406,7 @@ function App() {
           finalMappings
         );
 
-        const safeFreshRowData = mergeFreshRowDataSafely(freshRowData);
+        const safeFreshRowData = mergeFreshRowDataSafely(freshRowData, rowData);
 
         const currentSnapshot = getRowDataSnapshot(rowData);
         const freshSnapshot = getRowDataSnapshot(safeFreshRowData);
@@ -455,59 +440,6 @@ function App() {
     } finally {
       isAutoSyncingRef.current = false;
     }
-  }
-
-  function areArraysEqual(firstArray = [], secondArray = []) {
-    if (firstArray.length !== secondArray.length) return false;
-
-    return firstArray.every((item, index) => item === secondArray[index]);
-  }
-
-  function cleanMappingsForHeaders(currentMappings, latestHeaders) {
-    const cleanedMappings = { ...currentMappings };
-    const removedMappings = [];
-
-    Object.entries(cleanedMappings).forEach(([key, mappedHeader]) => {
-      if (!mappedHeader) return;
-
-      if (!latestHeaders.includes(mappedHeader)) {
-        cleanedMappings[key] = "";
-        removedMappings.push({
-          key,
-          mappedHeader,
-        });
-      }
-    });
-
-    return {
-      cleanedMappings,
-      removedMappings,
-    };
-  }
-
-  function mergeFreshRowDataSafely(freshRowData) {
-    if (!rowData?.__templateApplied) {
-      return freshRowData;
-    }
-
-    // If template is already applied, preserve generated subject/body.
-    // This prevents auto-sync from accidentally replacing generated preview
-    // with raw Excel Subject/Body columns.
-    return {
-      ...freshRowData,
-      subject: rowData.subject,
-      body: rowData.body,
-      __templateApplied: true,
-    };
-  }
-
-  function getRowDataSnapshot(data) {
-    if (!data) return "";
-
-    return JSON.stringify({
-      ...data,
-      __templateApplied: undefined,
-    });
   }
 
   // Detect Active Row
@@ -835,18 +767,6 @@ function App() {
     }
   }
 
-  function getCurrentDateTimeText() {
-    const now = new Date();
-
-    return now.toLocaleString("en-IN", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  }
-
   async function handleOpenOutlookWebDraft() {
     try {
       if (!validateEmailDraftData()) return;
@@ -896,11 +816,13 @@ function App() {
   }
 
   function renderValue(value) {
-    if (value === null || value === undefined || value === "") {
+    const displayValue = renderDisplayValue(value);
+
+    if (!displayValue) {
       return <span className="value-empty">Not available</span>;
     }
 
-    return String(value);
+    return displayValue;
   }
 
   return (
@@ -1146,7 +1068,7 @@ function App() {
                   className={`preset-chip ${isMapped ? "preset-chip-complete" : "preset-chip-missing"}`}
                   key={fieldKey}
                 >
-                  {isMapped ? "✓" : "•"} {getMappingFieldLabel(fieldKey)}
+                  {isMapped ? "✓" : "•"} {getMappingFieldLabel(MAPPING_FIELDS, fieldKey)}
                 </span>
               );
             })}
@@ -1155,7 +1077,9 @@ function App() {
           {presetMissingFields.length > 0 && (
             <div className="preset-warning">
               Missing recommended mappings:{" "}
-              {presetMissingFields.map((fieldKey) => getMappingFieldLabel(fieldKey)).join(", ")}
+              {presetMissingFields
+                .map((fieldKey) => getMappingFieldLabel(MAPPING_FIELDS, fieldKey))
+                .join(", ")}
             </div>
           )}
 
