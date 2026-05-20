@@ -26,6 +26,7 @@ import useNotifications from "../hooks/useNotifications";
 import useActivityLog from "../hooks/useActivityLog";
 import useWorkflowPreset from "../hooks/useWorkflowPreset";
 import useSetupChecklist from "../hooks/useSetupChecklist";
+import useTemplates from "../hooks/useTemplates";
 
 // Constants
 import { MAPPING_FIELDS } from "../constants/mappingFields";
@@ -33,7 +34,7 @@ import { WORKFLOW_PRESETS } from "../constants/workflowPresets";
 
 // Utils
 import { getActivityTime, getCurrentDateTimeText } from "../utils/dateUtils";
-import { normalizeTemplateName, renderDisplayValue } from "../utils/textUtils";
+import { renderDisplayValue } from "../utils/textUtils";
 import { getRowDataSnapshot, mergeFreshRowDataSafely } from "../utils/rowDataUtils";
 import {
   areArraysEqual,
@@ -52,18 +53,8 @@ import { getActiveRowIndex, getMappedRowData, updateMappedRowValues } from "../s
 import { getWorkbookTables } from "../services/tableService";
 import { openOutlookWebDraft } from "../services/emailService";
 import { suggestMappingsFromHeaders } from "../services/autoMappingService";
-import { replaceTemplatePlaceholders, findMissingPlaceholders } from "../services/templateService";
 import { getTableHeaders } from "../services/headerService";
-import {
-  saveMappings,
-  loadMappings,
-  saveTemplateSettings,
-  loadTemplateSettings,
-  saveNamedTemplates,
-  loadNamedTemplates,
-  saveOnboardingCompleted,
-  loadOnboardingCompleted,
-} from "../services/settingsService";
+import { saveMappings, loadMappings } from "../services/settingsService";
 
 function App() {
   const { tables, selectedTable, setTables, setSelectedTable } = useTableStore();
@@ -85,14 +76,37 @@ function App() {
   const [autoSyncEnabled, setAutoSyncEnabled] = useState(true);
   const [lastSyncText, setLastSyncText] = useState("");
   const isAutoSyncingRef = useRef(false);
+  const initialRowSyncDoneRef = useRef(false);
 
-  const [subjectTemplate, setSubjectTemplate] = useState("");
-  const [bodyTemplate, setBodyTemplate] = useState("");
-  const [templateMissingFields, setTemplateMissingFields] = useState([]);
+  const {
+    subjectTemplate,
+    setSubjectTemplate,
+    bodyTemplate,
+    setBodyTemplate,
+    templateMissingFields,
 
-  const [templateName, setTemplateName] = useState("");
-  const [namedTemplates, setNamedTemplates] = useState([]);
-  const [selectedNamedTemplateId, setSelectedNamedTemplateId] = useState("");
+    templateName,
+    setTemplateName,
+    namedTemplates,
+    selectedNamedTemplateId,
+
+    handleSaveNamedTemplate,
+    handleLoadNamedTemplate,
+    handleDeleteNamedTemplate,
+    handleGenerateFromTemplate,
+    handleWriteGeneratedEmailToRow,
+    handleClearTemplate,
+    autoLoadTemplateFromRow,
+  } = useTemplates({
+    rowData,
+    setRowData,
+    selectedTable,
+    rowIndex,
+    mappings,
+    showBanner,
+    showToast,
+    addActivity,
+  });
 
   const [isLoadingTables, setIsLoadingTables] = useState(false);
   const [isReadingRow, setIsReadingRow] = useState(false);
@@ -143,85 +157,57 @@ function App() {
 
     const saved = loadMappings();
     loadSavedMappings(saved);
-
-    const savedTemplateSettings = loadTemplateSettings();
-
-    setSubjectTemplate(savedTemplateSettings.subjectTemplate || "");
-    setBodyTemplate(savedTemplateSettings.bodyTemplate || "");
-
-    const savedNamedTemplates = loadNamedTemplates();
-    setNamedTemplates(savedNamedTemplates);
   }, []);
 
   // Load headers when table changes
   useEffect(() => {
     if (selectedTable) {
+      initialRowSyncDoneRef.current = false;
       loadHeaders(selectedTable);
     }
   }, [selectedTable]);
+
+  // One-time quick sync when table + required setup are ready
+  useEffect(() => {
+    if (!selectedTable) return;
+    if (headers.length === 0) return;
+
+    const hasRecipientMapping = Boolean(mappings.recipientEmail);
+    const hasBodySource = Boolean(mappings.body || bodyTemplate.trim());
+
+    if (!hasRecipientMapping || !hasBodySource) return;
+    if (initialRowSyncDoneRef.current) return;
+
+    const timerId = setTimeout(() => {
+      syncWorkbookChanges({ manual: false });
+      initialRowSyncDoneRef.current = true;
+    }, 400);
+
+    return () => {
+      clearTimeout(timerId);
+    };
+  }, [selectedTable, headers.length, mappings.recipientEmail, mappings.body, bodyTemplate]);
 
   // Auto-save mappings
   useEffect(() => {
     saveMappings(mappings);
   }, [mappings]);
 
-  useEffect(() => {
-    saveTemplateSettings({
-      subjectTemplate,
-      bodyTemplate,
-    });
-  }, [subjectTemplate, bodyTemplate]);
-
   // Auto-sync in every 3 minutes
   useEffect(() => {
     if (!selectedTable || !autoSyncEnabled) return;
 
-    const intervalId = setInterval(() => {
-      syncWorkbookChanges();
-    }, 1800);
+    const intervalId = setInterval(
+      () => {
+        syncWorkbookChanges();
+      },
+      2 * 60 * 1000
+    );
 
     return () => {
       clearInterval(intervalId);
     };
   }, [selectedTable, autoSyncEnabled, headers, mappings, rowIndex, rowData]);
-
-  function autoLoadTemplateFromRow(rowDataFromExcel) {
-    const templateTypeValue = rowDataFromExcel?.templateType;
-
-    if (!templateTypeValue) {
-      return;
-    }
-
-    const matchedTemplate = findMatchingNamedTemplate(templateTypeValue);
-
-    if (!matchedTemplate) {
-      showBanner("warning", `No saved template found for Template Type: ${templateTypeValue}`);
-
-      addActivity("warning", `No saved template matched Template Type: ${templateTypeValue}`);
-
-      return;
-    }
-
-    setSelectedNamedTemplateId(matchedTemplate.id);
-    setTemplateName(matchedTemplate.name);
-    setSubjectTemplate(matchedTemplate.subjectTemplate || "");
-    setBodyTemplate(matchedTemplate.bodyTemplate || "");
-    setTemplateMissingFields([]);
-
-    showToast("success", "Template matched", `${matchedTemplate.name} loaded from Template Type.`);
-
-    addActivity("success", `Template auto-loaded from row: ${matchedTemplate.name}`);
-  }
-
-  function findMatchingNamedTemplate(templateTypeValue) {
-    if (!templateTypeValue) return null;
-
-    const normalizedTemplateType = normalizeTemplateName(templateTypeValue);
-
-    return namedTemplates.find(
-      (template) => normalizeTemplateName(template.name) === normalizedTemplateType
-    );
-  }
 
   async function loadTables() {
     try {
@@ -380,8 +366,19 @@ function App() {
         return;
       }
 
-      if (requiredMissingCount > 0) {
-        showBanner("error", "Please map Recipient Email and Body before reading the selected row.");
+      const hasRecipientMapping = Boolean(mappings.recipientEmail);
+      const hasBodySource = Boolean(mappings.body || bodyTemplate.trim());
+
+      if (!hasRecipientMapping) {
+        showBanner("error", "Please map Recipient Email before reading the selected row.");
+        return;
+      }
+
+      if (!hasBodySource) {
+        showBanner(
+          "error",
+          "Please map Body column or enter a Body Template before reading the selected row."
+        );
         return;
       }
 
@@ -434,184 +431,6 @@ function App() {
     return true;
   }
 
-  function handleGenerateFromTemplate() {
-    try {
-      if (!rowData?.__allFields) {
-        showBanner("error", "Please detect a selected row before generating from template.");
-        return;
-      }
-
-      if (!subjectTemplate.trim() && !bodyTemplate.trim()) {
-        showBanner("error", "Please enter a subject template or body template first.");
-        return;
-      }
-
-      const allFields = {
-        ...rowData.__allFields,
-        Recipient_Email: rowData.recipientEmail || "",
-        Recipient_Name: rowData.recipientName || "",
-        Sender_Email: rowData.senderEmail || "",
-        Sender_Name: rowData.senderName || "",
-      };
-
-      const combinedTemplateText = `${subjectTemplate}\n${bodyTemplate}`;
-      const missingFields = findMissingPlaceholders(combinedTemplateText, allFields);
-
-      setTemplateMissingFields(missingFields);
-
-      if (missingFields.length > 0) {
-        showBanner(
-          "warning",
-          `Some placeholders were not found: ${missingFields
-            .map((field) => `{{${field}}}`)
-            .join(", ")}`
-        );
-      }
-
-      const generatedSubject = subjectTemplate.trim()
-        ? replaceTemplatePlaceholders(subjectTemplate, allFields)
-        : rowData.subject || "";
-
-      const generatedBody = bodyTemplate.trim()
-        ? replaceTemplatePlaceholders(bodyTemplate, allFields)
-        : rowData.body || "";
-
-      const generatedRowData = {
-        ...rowData,
-        subject: generatedSubject,
-        body: generatedBody,
-        __templateApplied: true,
-      };
-
-      setRowData(generatedRowData);
-
-      showToast(
-        "success",
-        "Template applied",
-        "Subject and body preview were generated from your template."
-      );
-
-      addActivity("success", "Template applied to selected row.");
-    } catch (error) {
-      console.error("Template generation error:", error);
-      showBanner("error", "Could not generate email from template.");
-    }
-  }
-
-  function handleSaveNamedTemplate() {
-    const cleanName = templateName.trim();
-
-    if (!cleanName) {
-      showBanner("error", "Please enter a template name before saving.");
-      return;
-    }
-
-    if (!subjectTemplate.trim() && !bodyTemplate.trim()) {
-      showBanner("error", "Please enter a subject or body template before saving.");
-      return;
-    }
-
-    const existingTemplate = namedTemplates.find(
-      (template) => template.name.toLowerCase() === cleanName.toLowerCase()
-    );
-
-    let updatedTemplates;
-
-    if (existingTemplate) {
-      updatedTemplates = namedTemplates.map((template) =>
-        template.id === existingTemplate.id
-          ? {
-              ...template,
-              name: cleanName,
-              subjectTemplate,
-              bodyTemplate,
-              updatedAt: new Date().toISOString(),
-            }
-          : template
-      );
-
-      setSelectedNamedTemplateId(existingTemplate.id);
-
-      showToast("success", "Template updated", `${cleanName} was updated.`);
-      addActivity("success", `Template updated: ${cleanName}`);
-    } else {
-      const newTemplate = {
-        id: `tpl_${Date.now()}`,
-        name: cleanName,
-        subjectTemplate,
-        bodyTemplate,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-
-      updatedTemplates = [newTemplate, ...namedTemplates];
-
-      setSelectedNamedTemplateId(newTemplate.id);
-
-      showToast("success", "Template saved", `${cleanName} was saved.`);
-      addActivity("success", `Template saved: ${cleanName}`);
-    }
-
-    setNamedTemplates(updatedTemplates);
-    saveNamedTemplates(updatedTemplates);
-  }
-
-  function handleLoadNamedTemplate(templateId) {
-    setSelectedNamedTemplateId(templateId);
-
-    if (!templateId) return;
-
-    const selectedTemplate = namedTemplates.find((template) => template.id === templateId);
-
-    if (!selectedTemplate) {
-      showBanner("error", "Selected template was not found.");
-      return;
-    }
-
-    setTemplateName(selectedTemplate.name);
-    setSubjectTemplate(selectedTemplate.subjectTemplate || "");
-    setBodyTemplate(selectedTemplate.bodyTemplate || "");
-    setTemplateMissingFields([]);
-
-    showToast("success", "Template loaded", `${selectedTemplate.name} loaded into editor.`);
-    addActivity("success", `Template loaded: ${selectedTemplate.name}`);
-  }
-
-  function handleDeleteNamedTemplate() {
-    if (!selectedNamedTemplateId) {
-      showBanner("error", "Please select a template to delete.");
-      return;
-    }
-
-    const selectedTemplate = namedTemplates.find(
-      (template) => template.id === selectedNamedTemplateId
-    );
-
-    const updatedTemplates = namedTemplates.filter(
-      (template) => template.id !== selectedNamedTemplateId
-    );
-
-    setNamedTemplates(updatedTemplates);
-    saveNamedTemplates(updatedTemplates);
-
-    setSelectedNamedTemplateId("");
-    setTemplateName("");
-    setSubjectTemplate("");
-    setBodyTemplate("");
-    setTemplateMissingFields([]);
-
-    showToast(
-      "success",
-      "Template deleted",
-      selectedTemplate ? `${selectedTemplate.name} was deleted.` : "Template was deleted."
-    );
-
-    addActivity(
-      "success",
-      selectedTemplate ? `Template deleted: ${selectedTemplate.name}` : "Template deleted."
-    );
-  }
-
   function handleCompleteOnboarding() {
     setShowOnboarding(false);
 
@@ -626,74 +445,6 @@ function App() {
 
   function handleShowOnboardingAgain() {
     setShowOnboarding(true);
-  }
-
-  async function handleWriteGeneratedEmailToRow() {
-    try {
-      if (!rowData) {
-        showBanner("error", "Please detect a selected row first.");
-        return;
-      }
-
-      if (!rowData.__templateApplied) {
-        showBanner("error", "Please generate preview from template before writing to Excel.");
-        return;
-      }
-
-      if (!rowData.subject && !rowData.body) {
-        showBanner("error", "Generated subject/body is empty.");
-        return;
-      }
-
-      if (!mappings.subject && !mappings.body) {
-        showBanner("error", "Please map Subject or Body column before writing generated email.");
-        return;
-      }
-
-      const valuesToUpdate = {};
-
-      if (mappings.subject) {
-        valuesToUpdate.subject = rowData.subject || "";
-      }
-
-      if (mappings.body) {
-        valuesToUpdate.body = rowData.body || "";
-      }
-
-      const updated = await updateMappedRowValues(
-        selectedTable,
-        rowIndex,
-        mappings,
-        valuesToUpdate
-      );
-
-      if (!updated) {
-        showBanner("error", "Could not write generated email to Excel row.");
-        return;
-      }
-
-      const refreshedData = await getMappedRowData(selectedTable, rowIndex, mappings);
-
-      setRowData({
-        ...refreshedData,
-        subject: rowData.subject,
-        body: rowData.body,
-        __templateApplied: true,
-      });
-
-      showToast(
-        "success",
-        "Generated email saved",
-        "Subject and Body were written back to the selected Excel row."
-      );
-
-      showBanner("success", "Generated email written back to Excel row.");
-
-      addActivity("success", "Generated subject/body written back to Excel row.");
-    } catch (error) {
-      console.error("Write generated email to row error:", error);
-      showBanner("error", "Could not write generated email to Excel.");
-    }
   }
 
   async function handleOpenOutlookWebDraft() {
@@ -749,22 +500,6 @@ function App() {
 
     showToast("success", "Placeholder copied", `{{${fieldName}}} copied.`);
     addActivity("success", `Placeholder copied: {{${fieldName}}}`);
-  }
-
-  function handleClearTemplate() {
-    setSelectedNamedTemplateId("");
-    setTemplateName("");
-    setSubjectTemplate("");
-    setBodyTemplate("");
-    setTemplateMissingFields([]);
-
-    saveTemplateSettings({
-      subjectTemplate: "",
-      bodyTemplate: "",
-    });
-
-    showToast("success", "Template cleared", "Template editor has been reset.");
-    addActivity("success", "Template editor cleared.");
   }
 
   function renderValue(value) {
