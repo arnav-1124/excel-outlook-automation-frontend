@@ -1,41 +1,38 @@
+function cleanEmailList(value) {
+  return String(value || "")
+    .split(/[;,]/)
+    .map((email) => email.trim())
+    .filter(Boolean)
+    .join(";");
+}
+
+function buildOutlookWebComposeUrl(emailData) {
+  const params = new URLSearchParams();
+
+  const to = cleanEmailList(emailData.recipientEmail);
+  const cc = cleanEmailList(emailData.cc);
+  const bcc = cleanEmailList(emailData.bcc);
+  const subject = String(emailData.subject || "");
+  const body = String(emailData.body || "");
+
+  if (to) params.set("to", to);
+  if (cc) params.set("cc", cc);
+  if (bcc) params.set("bcc", bcc);
+  if (subject) params.set("subject", subject);
+  if (body) params.set("body", body);
+
+  return `https://outlook.office.com/mail/deeplink/compose?${params.toString()}`;
+}
+
 export function openOutlookWebDraft(emailData) {
   try {
-    const to = encodeURIComponent(String(emailData.recipientEmail || ""));
-    const subject = encodeURIComponent(String(emailData.subject || ""));
-    const body = encodeURIComponent(String(emailData.body || ""));
-    const cc = encodeURIComponent(String(emailData.cc || ""));
-    const bcc = encodeURIComponent(String(emailData.bcc || ""));
+    const outlookUrl = buildOutlookWebComposeUrl(emailData);
 
-    const outlookUrl =
-      `https://outlook.office.com/mail/deeplink/compose?to=${to}` +
-      `&subject=${subject}` +
-      `&body=${body}` +
-      `&cc=${cc}` +
-      `&bcc=${bcc}`;
-
+    console.log("Email data:", emailData);
     console.log("Opening Outlook Web:", outlookUrl);
 
     window.open(outlookUrl, "_blank", "noopener,noreferrer");
   } catch (error) {
     console.error("openOutlookWebDraft failed:", error);
-  }
-}
-
-export function tryOpenDesktopMailApp(emailData) {
-  try {
-    const to = encodeURIComponent(String(emailData.recipientEmail || ""));
-    const subject = encodeURIComponent(String(emailData.subject || ""));
-    const body = encodeURIComponent(String(emailData.body || ""));
-    const cc = encodeURIComponent(String(emailData.cc || ""));
-    const bcc = encodeURIComponent(String(emailData.bcc || ""));
-
-    const mailtoUrl =
-      `mailto:${to}?subject=${subject}` + `&body=${body}` + `&cc=${cc}` + `&bcc=${bcc}`;
-
-    console.log("Trying desktop mail app:", mailtoUrl);
-
-    window.open(mailtoUrl, "_blank");
-  } catch (error) {
-    console.error("tryOpenDesktopMailApp failed:", error);
   }
 }

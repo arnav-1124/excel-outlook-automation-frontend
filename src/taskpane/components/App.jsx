@@ -5,11 +5,12 @@ import useHeaderStore from "../store/headerStore";
 import useMappingStore from "../store/mappingStore";
 import useActiveRowStore from "../store/activeRowStore";
 
-import { getActiveRowIndex, getMappedRowData } from "../services/rowService";
+import { getActiveRowIndex, getMappedRowData, updateMappedRowValues } from "../services/rowService";
 import { getWorkbookTables } from "../services/tableService";
 import { getTableHeaders } from "../services/headerService";
 import { saveMappings, loadMappings } from "../services/settingsService";
 import { openOutlookWebDraft } from "../services/emailService";
+import { suggestMappingsFromHeaders } from "../services/autoMappingService";
 
 import MappingRow from "./MappingRow";
 
@@ -80,6 +81,7 @@ function App() {
   const { rowIndex, rowData, setRowIndex, setRowData } = useActiveRowStore();
 
   const [banner, setBanner] = useState(null);
+  const [toast, setToast] = useState(null);
   const [isLoadingTables, setIsLoadingTables] = useState(false);
   const [isReadingRow, setIsReadingRow] = useState(false);
   const [showHeaders, setShowHeaders] = useState(false);
@@ -121,6 +123,14 @@ function App() {
     }
   }
 
+  function showToast(type, title, message) {
+    setToast({ type, title, message });
+
+    setTimeout(() => {
+      setToast(null);
+    }, 4500);
+  }
+
   async function loadTables() {
     try {
       setIsLoadingTables(true);
@@ -153,7 +163,18 @@ function App() {
 
       if (foundHeaders.length === 0) {
         showBanner("warning", "Selected table has no headers.");
+        return;
       }
+
+      const suggestedMappings = suggestMappingsFromHeaders(foundHeaders, mappings);
+
+      Object.entries(suggestedMappings).forEach(([key, value]) => {
+        if (value && !mappings[key]) {
+          setMapping(key, value);
+        }
+      });
+
+      showBanner("success", "Headers loaded and obvious columns auto-mapped.");
     } catch (error) {
       console.error("Load headers error:", error);
       showBanner("error", "Could not load table headers.");
@@ -219,16 +240,59 @@ function App() {
     return true;
   }
 
-  function handleOpenOutlookWebDraft() {
+  function getCurrentDateTimeText() {
+    const now = new Date();
+
+    return now.toLocaleString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
+  async function handleOpenOutlookWebDraft() {
     try {
       if (!validateEmailDraftData()) return;
 
       openOutlookWebDraft(rowData);
 
-      showBanner("success", "Outlook Web draft opened.");
+      const nowText = getCurrentDateTimeText();
+
+      const valuesToUpdate = {
+        emailStatus: "Draft Created",
+        draftCreatedDate: rowData?.draftCreatedDate || nowText,
+        draftModifiedDate: nowText,
+      };
+
+      const updated = await updateMappedRowValues(
+        selectedTable,
+        rowIndex,
+        mappings,
+        valuesToUpdate
+      );
+
+      if (updated) {
+        const refreshedData = await getMappedRowData(selectedTable, rowIndex, mappings);
+        setRowData(refreshedData);
+
+        showBanner("success", "Outlook draft opened and Excel row updated.");
+
+        showToast(
+          "success",
+          "Excel row updated",
+          "Email Status, Draft Created Date and Draft Modified Date were updated."
+        );
+      } else {
+        showBanner(
+          "warning",
+          "Draft opened, but Excel row was not updated. Please check status/date mappings."
+        );
+      }
     } catch (error) {
       console.error("Outlook Web draft creation error:", error);
-      showBanner("error", "Could not open Outlook draft.");
+      showBanner("error", "Could not open Outlook draft or update Excel row.");
     }
   }
 
@@ -256,6 +320,25 @@ function App() {
           ↻
         </button>
       </header>
+
+      {toast && (
+        <div className={`toast toast-${toast.type}`}>
+          <div className="toast-icon">
+            {toast.type === "success" && "✓"}
+            {toast.type === "error" && "!"}
+            {toast.type === "warning" && "⚠"}
+          </div>
+
+          <div className="toast-content">
+            <div className="toast-title">{toast.title}</div>
+            <div className="toast-message">{toast.message}</div>
+          </div>
+
+          <button className="toast-close" onClick={() => setToast(null)}>
+            ×
+          </button>
+        </div>
+      )}
 
       {banner && (
         <div className="banner-container">
