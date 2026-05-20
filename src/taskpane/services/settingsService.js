@@ -33,3 +33,66 @@ export function loadMappings() {
     return {};
   }
 }
+
+const TEMPLATE_SETTINGS_KEY = "excel_email_addin_template_settings";
+
+export function saveTemplateSettings(templateSettings) {
+  try {
+    localStorage.setItem(TEMPLATE_SETTINGS_KEY, JSON.stringify(templateSettings));
+  } catch (error) {
+    console.error("Failed to save template settings:", error);
+  }
+}
+
+export function loadTemplateSettings() {
+  try {
+    const saved = localStorage.getItem(TEMPLATE_SETTINGS_KEY);
+
+    if (!saved) {
+      return {
+        subjectTemplate: "",
+        bodyTemplate: "",
+      };
+    }
+
+    return JSON.parse(saved);
+  } catch (error) {
+    console.error("Failed to load template settings:", error);
+
+    return {
+      subjectTemplate: "",
+      bodyTemplate: "",
+    };
+  }
+}
+
+const NAMED_TEMPLATES_KEY = "excel_email_addin_named_templates";
+
+export function saveNamedTemplates(templates) {
+  try {
+    localStorage.setItem(NAMED_TEMPLATES_KEY, JSON.stringify(templates || []));
+  } catch (error) {
+    console.error("Failed to save named templates:", error);
+  }
+}
+
+export function loadNamedTemplates() {
+  try {
+    const saved = localStorage.getItem(NAMED_TEMPLATES_KEY);
+
+    if (!saved) {
+      return [];
+    }
+
+    const parsed = JSON.parse(saved);
+
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+
+    return parsed;
+  } catch (error) {
+    console.error("Failed to load named templates:", error);
+    return [];
+  }
+}

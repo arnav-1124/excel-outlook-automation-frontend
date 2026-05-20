@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import useTableStore from "../store/tableStore";
 import useHeaderStore from "../store/headerStore";
@@ -7,11 +7,18 @@ import useActiveRowStore from "../store/activeRowStore";
 
 import { getActiveRowIndex, getMappedRowData, updateMappedRowValues } from "../services/rowService";
 import { getWorkbookTables } from "../services/tableService";
-import { getTableHeaders } from "../services/headerService";
-import { saveMappings, loadMappings } from "../services/settingsService";
 import { openOutlookWebDraft } from "../services/emailService";
 import { suggestMappingsFromHeaders } from "../services/autoMappingService";
 import { replaceTemplatePlaceholders, findMissingPlaceholders } from "../services/templateService";
+import { getTableHeaders } from "../services/headerService";
+import {
+  saveMappings,
+  loadMappings,
+  saveTemplateSettings,
+  loadTemplateSettings,
+  saveNamedTemplates,
+  loadNamedTemplates,
+} from "../services/settingsService";
 
 import MappingRow from "./MappingRow";
 
@@ -85,9 +92,17 @@ function App() {
   const [toast, setToast] = useState(null);
   const [activityLog, setActivityLog] = useState([]);
 
+  const [autoSyncEnabled, setAutoSyncEnabled] = useState(true);
+  const [lastSyncText, setLastSyncText] = useState("");
+  const isAutoSyncingRef = useRef(false);
+
   const [subjectTemplate, setSubjectTemplate] = useState("");
   const [bodyTemplate, setBodyTemplate] = useState("");
   const [templateMissingFields, setTemplateMissingFields] = useState([]);
+
+  const [templateName, setTemplateName] = useState("");
+  const [namedTemplates, setNamedTemplates] = useState([]);
+  const [selectedNamedTemplateId, setSelectedNamedTemplateId] = useState("");
 
   const [isLoadingTables, setIsLoadingTables] = useState(false);
   const [isReadingRow, setIsReadingRow] = useState(false);
@@ -106,6 +121,14 @@ function App() {
 
     const saved = loadMappings();
     loadSavedMappings(saved);
+
+    const savedTemplateSettings = loadTemplateSettings();
+
+    setSubjectTemplate(savedTemplateSettings.subjectTemplate || "");
+    setBodyTemplate(savedTemplateSettings.bodyTemplate || "");
+
+    const savedNamedTemplates = loadNamedTemplates();
+    setNamedTemplates(savedNamedTemplates);
   }, []);
 
   // Load headers when table changes
@@ -119,6 +142,26 @@ function App() {
   useEffect(() => {
     saveMappings(mappings);
   }, [mappings]);
+
+  useEffect(() => {
+    saveTemplateSettings({
+      subjectTemplate,
+      bodyTemplate,
+    });
+  }, [subjectTemplate, bodyTemplate]);
+
+  // Auto-sync in every 3 minutes
+  useEffect(() => {
+    if (!selectedTable || !autoSyncEnabled) return;
+
+    const intervalId = setInterval(() => {
+      syncWorkbookChanges();
+    }, 1800);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [selectedTable, autoSyncEnabled, headers, mappings, rowIndex, rowData]);
 
   function showBanner(type, message) {
     setBanner({ type, message });
@@ -158,6 +201,52 @@ function App() {
 
   function clearActivityLog() {
     setActivityLog([]);
+  }
+
+  function normalizeTemplateName(value) {
+    return String(value || "")
+      .trim()
+      .toLowerCase()
+      .replace(/[_-]+/g, " ")
+      .replace(/\s+/g, " ");
+  }
+
+  function autoLoadTemplateFromRow(rowDataFromExcel) {
+    const templateTypeValue = rowDataFromExcel?.templateType;
+
+    if (!templateTypeValue) {
+      return;
+    }
+
+    const matchedTemplate = findMatchingNamedTemplate(templateTypeValue);
+
+    if (!matchedTemplate) {
+      showBanner("warning", `No saved template found for Template Type: ${templateTypeValue}`);
+
+      addActivity("warning", `No saved template matched Template Type: ${templateTypeValue}`);
+
+      return;
+    }
+
+    setSelectedNamedTemplateId(matchedTemplate.id);
+    setTemplateName(matchedTemplate.name);
+    setSubjectTemplate(matchedTemplate.subjectTemplate || "");
+    setBodyTemplate(matchedTemplate.bodyTemplate || "");
+    setTemplateMissingFields([]);
+
+    showToast("success", "Template matched", `${matchedTemplate.name} loaded from Template Type.`);
+
+    addActivity("success", `Template auto-loaded from row: ${matchedTemplate.name}`);
+  }
+
+  function findMatchingNamedTemplate(templateTypeValue) {
+    if (!templateTypeValue) return null;
+
+    const normalizedTemplateType = normalizeTemplateName(templateTypeValue);
+
+    return namedTemplates.find(
+      (template) => normalizeTemplateName(template.name) === normalizedTemplateType
+    );
   }
 
   async function loadTables() {
@@ -212,6 +301,139 @@ function App() {
     }
   }
 
+  async function syncWorkbookChanges({ manual = false } = {}) {
+    if (!selectedTable) return;
+
+    if (isAutoSyncingRef.current) return;
+
+    try {
+      isAutoSyncingRef.current = true;
+
+      const latestHeaders = await getTableHeaders(selectedTable);
+
+      const headersChanged = !areArraysEqual(headers, latestHeaders);
+
+      let finalMappings = mappings;
+
+      if (headersChanged) {
+        setHeaders(latestHeaders);
+
+        const { cleanedMappings, removedMappings } = cleanMappingsForHeaders(
+          mappings,
+          latestHeaders
+        );
+
+        finalMappings = suggestMappingsFromHeaders(latestHeaders, cleanedMappings);
+
+        loadSavedMappings(finalMappings);
+        saveMappings(finalMappings);
+
+        const removedText =
+          removedMappings.length > 0
+            ? ` Removed invalid mappings: ${removedMappings
+                .map((item) => item.mappedHeader)
+                .join(", ")}.`
+            : "";
+
+        showToast(
+          "warning",
+          "Workbook structure refreshed",
+          `Headers and mapping dropdowns were updated.${removedText}`
+        );
+
+        addActivity(
+          "warning",
+          `Table structure changed. Headers and mappings refreshed.${removedText}`
+        );
+      }
+
+      if (rowIndex !== null) {
+        const freshRowData = await getMappedRowData(selectedTable, rowIndex, finalMappings);
+
+        const safeFreshRowData = mergeFreshRowDataSafely(freshRowData);
+
+        const currentSnapshot = getRowDataSnapshot(rowData);
+        const freshSnapshot = getRowDataSnapshot(safeFreshRowData);
+
+        if (currentSnapshot !== freshSnapshot) {
+          setRowData(safeFreshRowData);
+
+          if (!headersChanged && manual) {
+            addActivity("success", "Selected row preview refreshed.");
+          }
+        }
+      }
+
+      if (manual) {
+        showToast("success", "Workbook synced", "Latest headers and row data were refreshed.");
+        addActivity("success", "Manual workbook sync completed.");
+      }
+
+      setLastSyncText(getActivityTime());
+    } catch (error) {
+      console.error("Auto-sync failed:", error);
+
+      if (manual) {
+        showBanner("error", "Could not sync workbook changes.");
+      }
+    } finally {
+      isAutoSyncingRef.current = false;
+    }
+  }
+
+  function areArraysEqual(firstArray = [], secondArray = []) {
+    if (firstArray.length !== secondArray.length) return false;
+
+    return firstArray.every((item, index) => item === secondArray[index]);
+  }
+
+  function cleanMappingsForHeaders(currentMappings, latestHeaders) {
+    const cleanedMappings = { ...currentMappings };
+    const removedMappings = [];
+
+    Object.entries(cleanedMappings).forEach(([key, mappedHeader]) => {
+      if (!mappedHeader) return;
+
+      if (!latestHeaders.includes(mappedHeader)) {
+        cleanedMappings[key] = "";
+        removedMappings.push({
+          key,
+          mappedHeader,
+        });
+      }
+    });
+
+    return {
+      cleanedMappings,
+      removedMappings,
+    };
+  }
+
+  function mergeFreshRowDataSafely(freshRowData) {
+    if (!rowData?.__templateApplied) {
+      return freshRowData;
+    }
+
+    // If template is already applied, preserve generated subject/body.
+    // This prevents auto-sync from accidentally replacing generated preview
+    // with raw Excel Subject/Body columns.
+    return {
+      ...freshRowData,
+      subject: rowData.subject,
+      body: rowData.body,
+      __templateApplied: true,
+    };
+  }
+
+  function getRowDataSnapshot(data) {
+    if (!data) return "";
+
+    return JSON.stringify({
+      ...data,
+      __templateApplied: undefined,
+    });
+  }
+
   // Detect Active Row
   async function detectActiveRow() {
     try {
@@ -237,6 +459,8 @@ function App() {
         console.log("Fetched row data:", data);
 
         setRowData(data);
+
+        autoLoadTemplateFromRow(data);
 
         showBanner("success", "Selected row loaded successfully.");
         addActivity("success", `Selected row ${index + 1} detected and preview loaded.`);
@@ -334,6 +558,120 @@ function App() {
       console.error("Template generation error:", error);
       showBanner("error", "Could not generate email from template.");
     }
+  }
+
+  function handleSaveNamedTemplate() {
+    const cleanName = templateName.trim();
+
+    if (!cleanName) {
+      showBanner("error", "Please enter a template name before saving.");
+      return;
+    }
+
+    if (!subjectTemplate.trim() && !bodyTemplate.trim()) {
+      showBanner("error", "Please enter a subject or body template before saving.");
+      return;
+    }
+
+    const existingTemplate = namedTemplates.find(
+      (template) => template.name.toLowerCase() === cleanName.toLowerCase()
+    );
+
+    let updatedTemplates;
+
+    if (existingTemplate) {
+      updatedTemplates = namedTemplates.map((template) =>
+        template.id === existingTemplate.id
+          ? {
+              ...template,
+              name: cleanName,
+              subjectTemplate,
+              bodyTemplate,
+              updatedAt: new Date().toISOString(),
+            }
+          : template
+      );
+
+      setSelectedNamedTemplateId(existingTemplate.id);
+
+      showToast("success", "Template updated", `${cleanName} was updated.`);
+      addActivity("success", `Template updated: ${cleanName}`);
+    } else {
+      const newTemplate = {
+        id: `tpl_${Date.now()}`,
+        name: cleanName,
+        subjectTemplate,
+        bodyTemplate,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      updatedTemplates = [newTemplate, ...namedTemplates];
+
+      setSelectedNamedTemplateId(newTemplate.id);
+
+      showToast("success", "Template saved", `${cleanName} was saved.`);
+      addActivity("success", `Template saved: ${cleanName}`);
+    }
+
+    setNamedTemplates(updatedTemplates);
+    saveNamedTemplates(updatedTemplates);
+  }
+
+  function handleLoadNamedTemplate(templateId) {
+    setSelectedNamedTemplateId(templateId);
+
+    if (!templateId) return;
+
+    const selectedTemplate = namedTemplates.find((template) => template.id === templateId);
+
+    if (!selectedTemplate) {
+      showBanner("error", "Selected template was not found.");
+      return;
+    }
+
+    setTemplateName(selectedTemplate.name);
+    setSubjectTemplate(selectedTemplate.subjectTemplate || "");
+    setBodyTemplate(selectedTemplate.bodyTemplate || "");
+    setTemplateMissingFields([]);
+
+    showToast("success", "Template loaded", `${selectedTemplate.name} loaded into editor.`);
+    addActivity("success", `Template loaded: ${selectedTemplate.name}`);
+  }
+
+  function handleDeleteNamedTemplate() {
+    if (!selectedNamedTemplateId) {
+      showBanner("error", "Please select a template to delete.");
+      return;
+    }
+
+    const selectedTemplate = namedTemplates.find(
+      (template) => template.id === selectedNamedTemplateId
+    );
+
+    const updatedTemplates = namedTemplates.filter(
+      (template) => template.id !== selectedNamedTemplateId
+    );
+
+    setNamedTemplates(updatedTemplates);
+    saveNamedTemplates(updatedTemplates);
+
+    setSelectedNamedTemplateId("");
+    setTemplateName("");
+    setSubjectTemplate("");
+    setBodyTemplate("");
+    setTemplateMissingFields([]);
+
+    showToast(
+      "success",
+      "Template deleted",
+      selectedTemplate ? `${selectedTemplate.name} was deleted.` : "Template was deleted."
+    );
+
+    addActivity(
+      "success",
+      selectedTemplate ? `Template deleted: ${selectedTemplate.name}` : "Template deleted."
+    );
   }
 
   function getCurrentDateTimeText() {
@@ -492,6 +830,19 @@ function App() {
           <button className="btn-outline" onClick={loadTables} disabled={isLoadingTables}>
             {isLoadingTables ? "Loading..." : "Refresh Tables"}
           </button>
+
+          <div className="sync-control">
+            <label className="sync-toggle">
+              <input
+                type="checkbox"
+                checked={autoSyncEnabled}
+                onChange={(e) => setAutoSyncEnabled(e.target.checked)}
+              />
+              <span>Auto-sync workbook changes</span>
+            </label>
+
+            {lastSyncText && <span className="sync-time">Last sync: {lastSyncText}</span>}
+          </div>
         </section>
 
         {/* Headers Preview */}
@@ -663,6 +1014,55 @@ function App() {
 
           {rowData?.__allFields && (
             <>
+              {rowData?.templateType && (
+                <div className="template-type-hint">
+                  Template Type from row: <strong>{rowData.templateType}</strong>
+                </div>
+              )}
+              <div className="template-manager">
+                <div className="template-field-group">
+                  <label className="field-label">Saved Templates</label>
+
+                  <select
+                    className="select"
+                    value={selectedNamedTemplateId}
+                    onChange={(e) => handleLoadNamedTemplate(e.target.value)}
+                  >
+                    <option value="">Select saved template...</option>
+
+                    {namedTemplates.map((template) => (
+                      <option key={template.id} value={template.id}>
+                        {template.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="template-field-group">
+                  <label className="field-label">Template Name</label>
+
+                  <input
+                    className="input"
+                    value={templateName}
+                    onChange={(e) => setTemplateName(e.target.value)}
+                    placeholder="Example: Initial Follow-up"
+                  />
+                </div>
+
+                <div className="template-manager-actions">
+                  <button className="btn-outline" onClick={handleSaveNamedTemplate}>
+                    Save Template
+                  </button>
+
+                  <button
+                    className="btn-outline danger-outline"
+                    onClick={handleDeleteNamedTemplate}
+                    disabled={!selectedNamedTemplateId}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
               <div className="template-field-group">
                 <label className="field-label">Subject Template</label>
 
@@ -701,10 +1101,19 @@ function App() {
                 <button
                   className="btn-outline"
                   onClick={() => {
+                    setSelectedNamedTemplateId("");
+                    setTemplateName("");
                     setSubjectTemplate("");
                     setBodyTemplate("");
                     setTemplateMissingFields([]);
+
+                    saveTemplateSettings({
+                      subjectTemplate: "",
+                      bodyTemplate: "",
+                    });
+
                     showToast("success", "Template cleared", "Template editor has been reset.");
+                    addActivity("success", "Template editor cleared.");
                   }}
                 >
                   Clear Template
@@ -785,6 +1194,9 @@ function App() {
           </div>
 
           <div className="action-grid">
+            <button className="btn-outline" onClick={() => syncWorkbookChanges({ manual: true })}>
+              Sync Workbook
+            </button>
             <button className="btn-outline" onClick={loadTables}>
               Refresh Tables
             </button>
@@ -865,7 +1277,7 @@ function App() {
       </main>
 
       <footer className="app-footer">
-        <span>Excel Email Automation</span>
+        <span>Excel Email Automation by Arnav</span>
         <span className="footer-tag">Local MVP</span>
       </footer>
     </div>

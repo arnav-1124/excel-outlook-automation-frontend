@@ -1,5 +1,10 @@
 {
   "name": "office-addin-taskpane-react-js",
+  "displayName": "Office Add-in TaskPane React JS",
+  "author": {
+    "name": "Arnav Raj",
+    "email": "arnavgupta112@gmail.com"
+  },
   "version": "0.0.1",
   "repository": {
     "type": "git",
