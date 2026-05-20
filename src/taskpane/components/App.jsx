@@ -9,6 +9,9 @@ import TableSelectorSection from "./TableSelectorSection";
 import HeaderPreviewSection from "./HeaderPreviewSection";
 import SetupChecklistSection from "./SetupChecklistSection";
 import WorkflowPresetSection from "./WorkflowPresetSection";
+import MappingSection from "./MappingSection";
+import SelectedRowSection from "./SelectedRowSection";
+import PlaceholderSection from "./PlaceholderSection";
 
 import { MAPPING_FIELDS } from "../constants/mappingFields";
 import { WORKFLOW_PRESETS } from "../constants/workflowPresets";
@@ -43,8 +46,6 @@ import {
   saveOnboardingCompleted,
   loadOnboardingCompleted,
 } from "../services/settingsService";
-
-import MappingRow from "./MappingRow";
 
 function App() {
   const { tables, selectedTable, setTables, setSelectedTable } = useTableStore();
@@ -825,6 +826,13 @@ function App() {
     }
   }
 
+  function handleCopyPlaceholder(fieldName) {
+    navigator.clipboard?.writeText(`{{${fieldName}}}`);
+
+    showToast("success", "Placeholder copied", `{{${fieldName}}} copied.`);
+    addActivity("success", `Placeholder copied: {{${fieldName}}}`);
+  }
+
   function renderValue(value) {
     const displayValue = renderDisplayValue(value);
 
@@ -995,163 +1003,32 @@ function App() {
         />
 
         {/* Mapping Section */}
-        <section className="section">
-          <div className="section-header">
-            <span className="section-number">03</span>
-            <h2 className="section-title">Column Mapping</h2>
-
-            <span className={`badge ${requiredMissingCount > 0 ? "badge-warn" : "badge-ok"}`}>
-              {mappedCount}/{MAPPING_FIELDS.length}
-            </span>
-          </div>
-
-          <div className="mapping-subtitle-row">
-            <span>Recommended for: {activeWorkflowPreset.name}</span>
-            <span>
-              {presetCompletedFields.length}/{activeWorkflowPreset.recommendedFields.length} mapped
-            </span>
-          </div>
-
-          <div className="mapping-grid">
-            {recommendedMappingFields.map((field) => (
-              <div className="mapping-row-wrap recommended-mapping" key={field.key}>
-                <div className="mapping-recommend-badge">Recommended</div>
-
-                <MappingRow
-                  label={field.label}
-                  required={field.required}
-                  value={mappings[field.key]}
-                  headers={headers}
-                  onChange={(value) => setMapping(field.key, value)}
-                />
-              </div>
-            ))}
-          </div>
-
-          <div className="optional-mapping-header">
-            <button
-              className="btn-ghost"
-              onClick={() => setShowOptionalMappings((value) => !value)}
-            >
-              {showOptionalMappings ? "Hide Optional Fields" : "Show Optional Fields"}
-            </button>
-
-            <span>{optionalMappingFields.length} optional</span>
-          </div>
-
-          {showOptionalMappings && (
-            <div className="mapping-grid optional-mapping-grid">
-              {optionalMappingFields.map((field) => (
-                <div className="mapping-row-wrap" key={field.key}>
-                  <MappingRow
-                    label={field.label}
-                    required={field.required}
-                    value={mappings[field.key]}
-                    headers={headers}
-                    onChange={(value) => setMapping(field.key, value)}
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-
-          <div className="save-note">
-            <span>✓</span>
-            <span>Configuration auto-saved locally</span>
-          </div>
-        </section>
+        <MappingSection
+          mappings={mappings}
+          headers={headers}
+          mappedCount={mappedCount}
+          totalMappingCount={MAPPING_FIELDS.length}
+          requiredMissingCount={requiredMissingCount}
+          recommendedMappingFields={recommendedMappingFields}
+          optionalMappingFields={optionalMappingFields}
+          activeWorkflowPreset={activeWorkflowPreset}
+          presetCompletedFields={presetCompletedFields}
+          showOptionalMappings={showOptionalMappings}
+          onToggleOptionalMappings={() => setShowOptionalMappings((value) => !value)}
+          onSetMapping={setMapping}
+        />
 
         {/* Active Row Detection */}
-        <section className="section">
-          <div className="section-header">
-            <span className="section-number">04</span>
-            <h2 className="section-title">Selected Row</h2>
-          </div>
-
-          <button className="btn-primary" onClick={detectActiveRow} disabled={isReadingRow}>
-            {isReadingRow ? "Reading selected row..." : "Detect Selected Row"}
-          </button>
-
-          <p className="hint">
-            Active Row: {rowIndex !== null ? rowIndex + 1 : "Not detected yet"}
-          </p>
-
-          {!rowData && (
-            <div className="empty-state">
-              Select a cell inside your Excel table, then click Detect Selected Row.
-            </div>
-          )}
-
-          {rowData && (
-            <div className="row-preview-grid">
-              <div className="preview-row">
-                <span className="preview-label">To</span>
-                <span className="preview-value">{renderValue(rowData.recipientEmail)}</span>
-              </div>
-
-              <div className="preview-row">
-                <span className="preview-label">Name</span>
-                <span className="preview-value">{renderValue(rowData.recipientName)}</span>
-              </div>
-
-              <div className="preview-row">
-                <span className="preview-label">Subject</span>
-                <span className="preview-value">{renderValue(rowData.subject)}</span>
-              </div>
-
-              <div className="preview-row">
-                <span className="preview-label">Status</span>
-                <span className="preview-value">{renderValue(rowData.emailStatus)}</span>
-              </div>
-
-              <div className="preview-row">
-                <span className="preview-label">Template</span>
-                <span className="preview-value">{renderValue(rowData.templateType)}</span>
-              </div>
-            </div>
-          )}
-        </section>
+        <SelectedRowSection
+          rowIndex={rowIndex}
+          rowData={rowData}
+          isReadingRow={isReadingRow}
+          onDetectActiveRow={detectActiveRow}
+          renderValue={renderValue}
+        />
 
         {/* Available Placeholders */}
-        <section className="section">
-          <div className="section-header">
-            <span className="section-number">TPL</span>
-            <h2 className="section-title">Available Placeholders</h2>
-          </div>
-
-          {!rowData?.__allFields && (
-            <div className="empty-state">
-              Detect a selected row to see all available placeholders from your Excel table.
-            </div>
-          )}
-
-          {rowData?.__allFields && (
-            <>
-              <p className="field-hint placeholder-hint">
-                Use these placeholders in future templates. They are generated directly from your
-                Excel table headers.
-              </p>
-
-              <div className="placeholder-list">
-                {Object.keys(rowData.__allFields).map((fieldName) => (
-                  <button
-                    key={fieldName}
-                    type="button"
-                    className="placeholder-chip"
-                    title={`{{${fieldName}}}`}
-                    onClick={() => {
-                      navigator.clipboard?.writeText(`{{${fieldName}}}`);
-                      showToast("success", "Placeholder copied", `{{${fieldName}}} copied.`);
-                      addActivity("success", `Placeholder copied: {{${fieldName}}}`);
-                    }}
-                  >
-                    {`{{${fieldName}}}`}
-                  </button>
-                ))}
-              </div>
-            </>
-          )}
-        </section>
+        <PlaceholderSection rowData={rowData} onCopyPlaceholder={handleCopyPlaceholder} />
 
         {/* Template Editor */}
         <section className="section">
