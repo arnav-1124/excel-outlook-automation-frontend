@@ -1,5 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 
+import Toast from "./Toast";
+import Banner from "./Banner";
+
+import ActivityLogSection from "./ActivityLogSection";
+import DebugSection from "./DebugSection";
+
 import { MAPPING_FIELDS } from "../constants/mappingFields";
 import { WORKFLOW_PRESETS } from "../constants/workflowPresets";
 
@@ -938,43 +944,9 @@ function App() {
         </button>
       </header>
 
-      {toast && (
-        <div className={`toast toast-${toast.type}`}>
-          <div className="toast-icon">
-            {toast.type === "success" && "✓"}
-            {toast.type === "error" && "!"}
-            {toast.type === "warning" && "⚠"}
-          </div>
+      <Toast toast={toast} onClose={() => setToast(null)} />
 
-          <div className="toast-content">
-            <div className="toast-title">{toast.title}</div>
-            <div className="toast-message">{toast.message}</div>
-          </div>
-
-          <button className="toast-close" onClick={() => setToast(null)}>
-            ×
-          </button>
-        </div>
-      )}
-
-      {banner && (
-        <div className="banner-container">
-          <div className={`banner banner-${banner.type}`}>
-            <span className="banner-icon">
-              {banner.type === "success" && "✓"}
-              {banner.type === "error" && "!"}
-              {banner.type === "warning" && "⚠"}
-              {banner.type === "info" && "i"}
-            </span>
-
-            <span className="banner-message">{banner.message}</span>
-
-            <button className="banner-dismiss" onClick={() => setBanner(null)}>
-              ×
-            </button>
-          </div>
-        </div>
-      )}
+      <Banner banner={banner} onClose={() => setBanner(null)} />
 
       <main className="app-main">
         {/* Setup Checklist */}
@@ -1556,63 +1528,14 @@ function App() {
         </section>
 
         {/* Activity Log */}
-        <section className="section">
-          <div className="section-header">
-            <span className="section-number">LOG</span>
-            <h2 className="section-title">Recent Activity</h2>
-
-            {activityLog.length > 0 && (
-              <button className="btn-ghost" onClick={clearActivityLog}>
-                Clear
-              </button>
-            )}
-          </div>
-
-          {activityLog.length === 0 && (
-            <div className="empty-state compact">
-              No activity yet. Actions like row detection and draft creation will appear here.
-            </div>
-          )}
-
-          {activityLog.length > 0 && (
-            <div className="activity-list">
-              {activityLog.map((activity) => (
-                <div className="activity-item" key={activity.id}>
-                  <div className={`activity-dot activity-dot-${activity.type}`}>
-                    {activity.type === "success" && "✓"}
-                    {activity.type === "error" && "!"}
-                    {activity.type === "warning" && "⚠"}
-                  </div>
-
-                  <div className="activity-content">
-                    <div className="activity-message">{activity.message}</div>
-                    <div className="activity-time">{activity.time}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
+        <ActivityLogSection activityLog={activityLog} onClear={clearActivityLog} />
 
         {/* Debug JSON */}
-        <section className="section debug-section">
-          <div className="section-header">
-            <span className="section-number">DBG</span>
-            <h2 className="section-title">Debug Data</h2>
-
-            <button className="btn-ghost" onClick={() => setShowRawJson((value) => !value)}>
-              {showRawJson ? "Hide" : "Show"}
-            </button>
-          </div>
-
-          {showRawJson && <pre className="debug-json">{JSON.stringify(rowData, null, 2)}</pre>}
-
-          {!showRawJson && (
-            <p className="empty-state compact">
-              Hidden by default. Open this only while debugging.
-            </p>
-          )}
-        </section>
+        <DebugSection
+          rowData={rowData}
+          showRawJson={showRawJson}
+          onToggle={() => setShowRawJson((value) => !value)}
+        />
       </main>
 
       <footer className="app-footer">
