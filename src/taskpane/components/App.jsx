@@ -82,6 +82,7 @@ function App() {
 
   const [banner, setBanner] = useState(null);
   const [toast, setToast] = useState(null);
+  const [activityLog, setActivityLog] = useState([]);
   const [isLoadingTables, setIsLoadingTables] = useState(false);
   const [isReadingRow, setIsReadingRow] = useState(false);
   const [showHeaders, setShowHeaders] = useState(false);
@@ -131,6 +132,28 @@ function App() {
     }, 4500);
   }
 
+  function getActivityTime() {
+    return new Date().toLocaleTimeString("en-IN", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
+  function addActivity(type, message) {
+    const newActivity = {
+      id: Date.now(),
+      type,
+      message,
+      time: getActivityTime(),
+    };
+
+    setActivityLog((previousLog) => [newActivity, ...previousLog].slice(0, 8));
+  }
+
+  function clearActivityLog() {
+    setActivityLog([]);
+  }
+
   async function loadTables() {
     try {
       setIsLoadingTables(true);
@@ -142,6 +165,7 @@ function App() {
       if (foundTables.length > 0) {
         setSelectedTable(foundTables[0]);
         showBanner("success", `${foundTables.length} table(s) loaded successfully.`);
+        addActivity("success", `${foundTables.length} table(s) loaded from workbook.`);
       } else {
         showBanner("warning", "No Excel tables found. Please create/select a table first.");
       }
@@ -175,6 +199,7 @@ function App() {
       });
 
       showBanner("success", "Headers loaded and obvious columns auto-mapped.");
+      addActivity("success", `Headers loaded for table: ${tableName}.`);
     } catch (error) {
       console.error("Load headers error:", error);
       showBanner("error", "Could not load table headers.");
@@ -208,6 +233,7 @@ function App() {
         setRowData(data);
 
         showBanner("success", "Selected row loaded successfully.");
+        addActivity("success", `Selected row ${index + 1} detected and preview loaded.`);
       } else {
         showBanner("warning", "Could not detect selected row. Please click inside the table row.");
       }
@@ -278,6 +304,10 @@ function App() {
         setRowData(refreshedData);
 
         showBanner("success", "Outlook draft opened and Excel row updated.");
+
+        addActivity("success", "Outlook Web draft opened.");
+        addActivity("success", "Email Status updated to Draft Created.");
+        addActivity("success", "Draft Created Date and Draft Modified Date updated.");
 
         showToast(
           "success",
@@ -588,6 +618,45 @@ function App() {
             Desktop Outlook automation is skipped for now. This opens Outlook Web using your working
             email draft logic.
           </p>
+        </section>
+
+        {/* Activity Log */}
+        <section className="section">
+          <div className="section-header">
+            <span className="section-number">LOG</span>
+            <h2 className="section-title">Recent Activity</h2>
+
+            {activityLog.length > 0 && (
+              <button className="btn-ghost" onClick={clearActivityLog}>
+                Clear
+              </button>
+            )}
+          </div>
+
+          {activityLog.length === 0 && (
+            <div className="empty-state compact">
+              No activity yet. Actions like row detection and draft creation will appear here.
+            </div>
+          )}
+
+          {activityLog.length > 0 && (
+            <div className="activity-list">
+              {activityLog.map((activity) => (
+                <div className="activity-item" key={activity.id}>
+                  <div className={`activity-dot activity-dot-${activity.type}`}>
+                    {activity.type === "success" && "✓"}
+                    {activity.type === "error" && "!"}
+                    {activity.type === "warning" && "⚠"}
+                  </div>
+
+                  <div className="activity-content">
+                    <div className="activity-message">{activity.message}</div>
+                    <div className="activity-time">{activity.time}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
 
         {/* Debug JSON */}
