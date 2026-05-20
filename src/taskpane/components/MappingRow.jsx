@@ -1,34 +1,22 @@
 import React from "react";
 
-function MappingRow({
-  label,
-  value,
-  headers,
-  onChange,
-}) {
+function MappingRow({ label, value, headers, onChange, required = false }) {
   return (
-    <div style={{ marginBottom: "12px" }}>
-      <label>
-        {label}
+    <div className="mapping-row">
+      <label className="mapping-label">
+        {required && <span className="required-dot" />}
+        <span>{label}</span>
       </label>
 
-      <br />
-
       <select
-        value={value}
-        onChange={(e) =>
-          onChange(e.target.value)
-        }
+        className={`select select-compact ${required && !value ? "select-missing" : ""}`}
+        value={value || ""}
+        onChange={(e) => onChange(e.target.value)}
       >
-        <option value="">
-          Select...
-        </option>
+        <option value="">Select column...</option>
 
         {headers.map((header) => (
-          <option
-            key={header}
-            value={header}
-          >
+          <option key={header} value={header}>
             {header}
           </option>
         ))}

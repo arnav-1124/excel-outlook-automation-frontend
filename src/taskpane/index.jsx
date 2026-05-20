@@ -2,6 +2,7 @@ import * as React from "react";
 import { createRoot } from "react-dom/client";
 import App from "./components/App";
 import { FluentProvider, webLightTheme } from "@fluentui/react-components";
+import "./index.css";
 
 /* global document, Office, module, require */
 

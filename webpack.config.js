@@ -35,6 +35,10 @@ module.exports = async (env, options) => {
     module: {
       rules: [
         {
+          test: /\.css$/i,
+          use: ["style-loader", "css-loader"],
+        },
+        {
           test: /\.jsx?$/,
           use: {
             loader: "babel-loader",
@@ -96,7 +100,10 @@ module.exports = async (env, options) => {
       },
       server: {
         type: "https",
-        options: env.WEBPACK_BUILD || options.https !== undefined ? options.https : await getHttpsOptions(),
+        options:
+          env.WEBPACK_BUILD || options.https !== undefined
+            ? options.https
+            : await getHttpsOptions(),
       },
       port: process.env.npm_package_config_dev_server_port || 3000,
     },
