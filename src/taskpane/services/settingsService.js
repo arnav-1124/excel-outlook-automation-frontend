@@ -96,3 +96,28 @@ export function loadNamedTemplates() {
     return [];
   }
 }
+
+const ONBOARDING_KEY = "excel_email_addin_onboarding_completed";
+
+export function saveOnboardingCompleted(isCompleted) {
+  try {
+    localStorage.setItem(ONBOARDING_KEY, JSON.stringify(Boolean(isCompleted)));
+  } catch (error) {
+    console.error("Failed to save onboarding status:", error);
+  }
+}
+
+export function loadOnboardingCompleted() {
+  try {
+    const saved = localStorage.getItem(ONBOARDING_KEY);
+
+    if (!saved) {
+      return false;
+    }
+
+    return JSON.parse(saved) === true;
+  } catch (error) {
+    console.error("Failed to load onboarding status:", error);
+    return false;
+  }
+}

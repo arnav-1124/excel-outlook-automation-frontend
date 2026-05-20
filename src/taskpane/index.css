@@ -927,6 +927,227 @@ button:disabled {
   color: var(--text-muted);
 }
 
+/* === ONBOARDING SCREEN === */
+
+.onboarding-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  overflow-y: auto;
+  padding: 18px 16px 22px;
+  background:
+    radial-gradient(circle at top left, rgba(240, 90, 0, 0.18), transparent 28%),
+    linear-gradient(180deg, #ffffff 0%, #fff7f1 45%, #ffffff 100%);
+}
+
+.onboarding-hero {
+  padding: 20px 18px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #111827 0%, #1f2937 56%, #f05a00 160%);
+  color: #ffffff;
+  box-shadow: 0 18px 45px rgba(17, 24, 39, 0.22);
+}
+
+.onboarding-brand-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-bottom: 22px;
+}
+
+.onboarding-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: #f05a00;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 10px 24px rgba(240, 90, 0, 0.35);
+}
+
+.onboarding-brand {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.onboarding-kicker {
+  margin-top: 2px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.64);
+}
+
+.onboarding-title {
+  margin: 0;
+  font-size: 26px;
+  line-height: 1.06;
+  letter-spacing: -0.05em;
+  font-weight: 900;
+}
+
+.onboarding-subtitle {
+  margin: 12px 0 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 12.5px;
+  line-height: 1.65;
+}
+
+.onboarding-action-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 9px;
+  margin-top: 20px;
+}
+
+.onboarding-primary-btn,
+.onboarding-secondary-btn {
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 800;
+}
+
+.onboarding-primary-btn {
+  border: none;
+  background: #ffffff;
+  color: #111827;
+}
+
+.onboarding-primary-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(255, 255, 255, 0.18);
+}
+
+.onboarding-secondary-btn {
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.onboarding-secondary-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.onboarding-flow-card {
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1px solid rgba(240, 90, 0, 0.14);
+  box-shadow: 0 14px 32px rgba(17, 24, 39, 0.08);
+}
+
+.onboarding-flow-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+}
+
+.onboarding-flow-number {
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  background: var(--orange-light);
+  color: var(--orange-dark);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.onboarding-flow-item h3 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 850;
+  color: var(--text-primary);
+}
+
+.onboarding-flow-item p {
+  margin: 4px 0 0;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.onboarding-flow-line {
+  width: 1px;
+  height: 18px;
+  margin: 5px 0 5px 14px;
+  background: linear-gradient(180deg, var(--orange-mid), transparent);
+}
+
+.onboarding-feature-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.onboarding-feature-card {
+  padding: 13px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 24px rgba(17, 24, 39, 0.06);
+}
+
+.feature-icon {
+  width: 28px;
+  height: 28px;
+  margin-bottom: 8px;
+  border-radius: 10px;
+  background: var(--orange-light);
+  color: var(--orange-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+}
+
+.onboarding-feature-card h3 {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 850;
+  color: var(--text-primary);
+}
+
+.onboarding-feature-card p {
+  margin: 5px 0 0;
+  font-size: 11.3px;
+  line-height: 1.48;
+  color: var(--text-secondary);
+}
+
+.onboarding-footer-note {
+  margin: 14px 4px 0;
+  text-align: center;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.footer-link-btn {
+  background: transparent;
+  border: none;
+  color: var(--orange-dark);
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 4px;
+}
+
+.footer-link-btn:hover {
+  text-decoration: underline;
+}
+
 /* === FOOTER === */
 
 .app-footer {
