@@ -1,0 +1,47 @@
+export const WORKFLOW_PRESETS = [
+  {
+    id: "basic",
+    name: "Basic Email Draft",
+    description: "Create a draft from recipient, subject and body columns.",
+    recommendedFields: ["recipientEmail", "subject", "body"],
+  },
+  {
+    id: "followup",
+    name: "Follow-up Tracker",
+    description: "Create drafts and update status/date tracking columns.",
+    recommendedFields: [
+      "recipientEmail",
+      "subject",
+      "body",
+      "emailStatus",
+      "draftCreatedDate",
+      "draftModifiedDate",
+    ],
+  },
+  {
+    id: "template",
+    name: "Template-Based Draft",
+    description: "Use Template Type and placeholders to generate email drafts.",
+    recommendedFields: ["recipientEmail", "templateType", "senderName", "senderEmail"],
+  },
+  {
+    id: "full",
+    name: "Full Tracking Workflow",
+    description: "Use all email, template and tracking features together.",
+    recommendedFields: [
+      "recipientEmail",
+      "recipientName",
+      "cc",
+      "bcc",
+      "subject",
+      "body",
+      "emailStatus",
+      "draftCreatedDate",
+      "draftModifiedDate",
+      "draftId",
+      "templateType",
+      "senderEmail",
+      "senderName",
+    ],
+  },
+];

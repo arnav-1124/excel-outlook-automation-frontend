@@ -1,5 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 
+import { MAPPING_FIELDS } from "../constants/mappingFields";
+import { WORKFLOW_PRESETS } from "../constants/workflowPresets";
+
 import useTableStore from "../store/tableStore";
 import useHeaderStore from "../store/headerStore";
 import useMappingStore from "../store/mappingStore";
@@ -24,62 +27,9 @@ import {
 
 import MappingRow from "./MappingRow";
 
-const MAPPING_FIELDS = [
-  {
-    key: "recipientEmail",
-    label: "Recipient Email",
-    required: true,
-  },
-  {
-    key: "recipientName",
-    label: "Recipient Name",
-  },
-  {
-    key: "cc",
-    label: "CC",
-  },
-  {
-    key: "bcc",
-    label: "BCC",
-  },
-  {
-    key: "subject",
-    label: "Subject",
-  },
-  {
-    key: "body",
-    label: "Body",
-    required: true,
-  },
-  {
-    key: "draftCreatedDate",
-    label: "Draft Created Date",
-  },
-  {
-    key: "draftModifiedDate",
-    label: "Draft Modified Date",
-  },
-  {
-    key: "draftId",
-    label: "Draft ID",
-  },
-  {
-    key: "emailStatus",
-    label: "Email Status",
-  },
-  {
-    key: "templateType",
-    label: "Template Type",
-  },
-  {
-    key: "senderEmail",
-    label: "Sender Email",
-  },
-  {
-    key: "senderName",
-    label: "Sender Name",
-  },
-];
+
+
+
 
 function App() {
   const { tables, selectedTable, setTables, setSelectedTable } = useTableStore();
@@ -95,6 +45,8 @@ function App() {
   const [activityLog, setActivityLog] = useState([]);
 
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [selectedWorkflowPreset, setSelectedWorkflowPreset] = useState("followup");
+  const [showOptionalMappings, setShowOptionalMappings] = useState(false);
 
   const [autoSyncEnabled, setAutoSyncEnabled] = useState(true);
   const [lastSyncText, setLastSyncText] = useState("");
@@ -118,6 +70,106 @@ function App() {
   const requiredMissingCount = MAPPING_FIELDS.filter(
     (field) => field.required && !mappings?.[field.key]
   ).length;
+
+  const setupChecklist = [
+    {
+      key: "table",
+      label: "Excel table selected",
+      completed: Boolean(selectedTable),
+      helpText: "Select the Excel table that contains your email workflow data.",
+    },
+    {
+      key: "headers",
+      label: "Headers loaded",
+      completed: headers.length > 0,
+      helpText: "Refresh tables or select a valid Excel table.",
+    },
+    {
+      key: "recipientMapping",
+      label: "Recipient Email mapped",
+      completed: Boolean(mappings.recipientEmail),
+      helpText: "Map the column that contains recipient email addresses.",
+    },
+    {
+      key: "bodyMapping",
+      label: "Email Body mapped or template available",
+      completed: Boolean(mappings.body || bodyTemplate.trim()),
+      helpText: "Map a Body column or enter a body template.",
+    },
+    {
+      key: "rowDetected",
+      label: "Selected row detected",
+      completed: Boolean(rowData),
+      helpText: "Click inside a table row and then click Detect Selected Row.",
+    },
+    {
+      key: "recipientValue",
+      label: "Selected row has recipient value",
+      completed: Boolean(rowData?.recipientEmail),
+      helpText:
+        "The detected row should contain an email address in the mapped Recipient Email column.",
+    },
+    {
+      key: "emailReady",
+      label: "Subject/body ready",
+      completed:
+        Boolean(rowData?.subject || subjectTemplate.trim()) &&
+        Boolean(rowData?.body || bodyTemplate.trim()),
+      helpText: "Use mapped subject/body columns or generate preview from a template.",
+    },
+    {
+      key: "tracking",
+      label: "Tracking columns mapped",
+      completed: Boolean(
+        mappings.emailStatus && mappings.draftCreatedDate && mappings.draftModifiedDate
+      ),
+      helpText:
+        "Map Email Status, Draft Created Date and Draft Modified Date for automatic tracking.",
+    },
+  ];
+
+  const setupCompletedCount = setupChecklist.filter((item) => item.completed).length;
+  const setupTotalCount = setupChecklist.length;
+  const setupProgressPercent = Math.round((setupCompletedCount / setupTotalCount) * 100);
+
+  const isDraftReady = Boolean(
+    selectedTable &&
+    mappings.recipientEmail &&
+    rowData?.recipientEmail &&
+    (rowData?.body || bodyTemplate.trim())
+  );
+
+  const setupStatusText = isDraftReady
+    ? "Ready to create draft"
+    : `${setupCompletedCount}/${setupTotalCount} complete`;
+
+  const activeWorkflowPreset =
+    WORKFLOW_PRESETS.find((preset) => preset.id === selectedWorkflowPreset) || WORKFLOW_PRESETS[0];
+
+  const presetCompletedFields = activeWorkflowPreset.recommendedFields.filter((fieldKey) =>
+    Boolean(mappings[fieldKey])
+  );
+
+  const presetMissingFields = activeWorkflowPreset.recommendedFields.filter(
+    (fieldKey) => !mappings[fieldKey]
+  );
+
+  const presetProgressPercent = Math.round(
+    (presetCompletedFields.length / activeWorkflowPreset.recommendedFields.length) * 100
+  );
+
+  function getMappingFieldLabel(fieldKey) {
+    const field = MAPPING_FIELDS.find((item) => item.key === fieldKey);
+    return field?.label || fieldKey;
+  }
+
+  const recommendedMappingFields = MAPPING_FIELDS.filter((field) =>
+    activeWorkflowPreset.recommendedFields.includes(field.key)
+  );
+
+  const optionalMappingFields = MAPPING_FIELDS.filter(
+    (field) => !activeWorkflowPreset.recommendedFields.includes(field.key)
+  );
 
   // Initial load
   useEffect(() => {
@@ -354,18 +406,35 @@ function App() {
         );
       }
 
-      if (rowIndex !== null) {
-        const freshRowData = await getMappedRowData(selectedTable, rowIndex, finalMappings);
+      const latestActiveRowIndex = await getActiveRowIndex();
+
+      if (latestActiveRowIndex !== null) {
+        const activeRowChanged = latestActiveRowIndex !== rowIndex;
+
+        if (activeRowChanged) {
+          setRowIndex(latestActiveRowIndex);
+        }
+
+        const freshRowData = await getMappedRowData(
+          selectedTable,
+          latestActiveRowIndex,
+          finalMappings
+        );
 
         const safeFreshRowData = mergeFreshRowDataSafely(freshRowData);
 
         const currentSnapshot = getRowDataSnapshot(rowData);
         const freshSnapshot = getRowDataSnapshot(safeFreshRowData);
 
-        if (currentSnapshot !== freshSnapshot) {
+        if (currentSnapshot !== freshSnapshot || activeRowChanged) {
           setRowData(safeFreshRowData);
 
-          if (!headersChanged && manual) {
+          if (activeRowChanged) {
+            addActivity(
+              "success",
+              `Selected row changed to row ${latestActiveRowIndex + 1}. Preview refreshed.`
+            );
+          } else if (!headersChanged && manual) {
             addActivity("success", "Selected row preview refreshed.");
           }
         }
@@ -986,6 +1055,115 @@ function App() {
       )}
 
       <main className="app-main">
+        {/* Setup Checklist */}
+        <section className={`section setup-section ${isDraftReady ? "setup-ready" : ""}`}>
+          <div className="setup-top">
+            <div>
+              <div className="setup-kicker">Setup Health</div>
+              <h2 className="setup-title">{setupStatusText}</h2>
+            </div>
+
+            <div className="setup-score">
+              {setupCompletedCount}/{setupTotalCount}
+            </div>
+          </div>
+
+          <div className="setup-progress-track">
+            <div className="setup-progress-fill" style={{ width: `${setupProgressPercent}%` }} />
+          </div>
+
+          <div className="setup-checklist">
+            {setupChecklist.map((item) => (
+              <div
+                className={`setup-check-item ${
+                  item.completed ? "setup-check-complete" : "setup-check-pending"
+                }`}
+                key={item.key}
+              >
+                <div className="setup-check-icon">{item.completed ? "✓" : "•"}</div>
+
+                <div className="setup-check-content">
+                  <div className="setup-check-label">{item.label}</div>
+
+                  {!item.completed && <div className="setup-check-help">{item.helpText}</div>}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {isDraftReady && (
+            <div className="setup-ready-note">
+              Everything important is ready. You can generate/preview templates or open an Outlook
+              draft.
+            </div>
+          )}
+        </section>
+
+        {/* Workflow Preset */}
+        <section className="section preset-section">
+          <div className="section-header">
+            <span className="section-number">WF</span>
+            <h2 className="section-title">Workflow Preset</h2>
+          </div>
+
+          <div className="field-group">
+            <label className="field-label">Choose workflow style</label>
+
+            <select
+              className="select"
+              value={selectedWorkflowPreset}
+              onChange={(e) => setSelectedWorkflowPreset(e.target.value)}
+            >
+              {WORKFLOW_PRESETS.map((preset) => (
+                <option key={preset.id} value={preset.id}>
+                  {preset.name}
+                </option>
+              ))}
+            </select>
+
+            <p className="field-hint">{activeWorkflowPreset.description}</p>
+          </div>
+
+          <div className="preset-progress-row">
+            <span>
+              Recommended mappings: {presetCompletedFields.length}/
+              {activeWorkflowPreset.recommendedFields.length}
+            </span>
+
+            <span>{presetProgressPercent}%</span>
+          </div>
+
+          <div className="preset-progress-track">
+            <div className="preset-progress-fill" style={{ width: `${presetProgressPercent}%` }} />
+          </div>
+
+          <div className="preset-chip-list">
+            {activeWorkflowPreset.recommendedFields.map((fieldKey) => {
+              const isMapped = Boolean(mappings[fieldKey]);
+
+              return (
+                <span
+                  className={`preset-chip ${isMapped ? "preset-chip-complete" : "preset-chip-missing"}`}
+                  key={fieldKey}
+                >
+                  {isMapped ? "✓" : "•"} {getMappingFieldLabel(fieldKey)}
+                </span>
+              );
+            })}
+          </div>
+
+          {presetMissingFields.length > 0 && (
+            <div className="preset-warning">
+              Missing recommended mappings:{" "}
+              {presetMissingFields.map((fieldKey) => getMappingFieldLabel(fieldKey)).join(", ")}
+            </div>
+          )}
+
+          {presetMissingFields.length === 0 && (
+            <div className="preset-ready-note">This workflow preset is fully configured.</div>
+          )}
+        </section>
+
         {/* Table Selection */}
         <section className="section">
           <div className="section-header">
@@ -1074,18 +1252,55 @@ function App() {
             </span>
           </div>
 
+          <div className="mapping-subtitle-row">
+            <span>Recommended for: {activeWorkflowPreset.name}</span>
+            <span>
+              {presetCompletedFields.length}/{activeWorkflowPreset.recommendedFields.length} mapped
+            </span>
+          </div>
+
           <div className="mapping-grid">
-            {MAPPING_FIELDS.map((field) => (
-              <MappingRow
-                key={field.key}
-                label={field.label}
-                required={field.required}
-                value={mappings[field.key]}
-                headers={headers}
-                onChange={(value) => setMapping(field.key, value)}
-              />
+            {recommendedMappingFields.map((field) => (
+              <div className="mapping-row-wrap recommended-mapping" key={field.key}>
+                <div className="mapping-recommend-badge">Recommended</div>
+
+                <MappingRow
+                  label={field.label}
+                  required={field.required}
+                  value={mappings[field.key]}
+                  headers={headers}
+                  onChange={(value) => setMapping(field.key, value)}
+                />
+              </div>
             ))}
           </div>
+
+          <div className="optional-mapping-header">
+            <button
+              className="btn-ghost"
+              onClick={() => setShowOptionalMappings((value) => !value)}
+            >
+              {showOptionalMappings ? "Hide Optional Fields" : "Show Optional Fields"}
+            </button>
+
+            <span>{optionalMappingFields.length} optional</span>
+          </div>
+
+          {showOptionalMappings && (
+            <div className="mapping-grid optional-mapping-grid">
+              {optionalMappingFields.map((field) => (
+                <div className="mapping-row-wrap" key={field.key}>
+                  <MappingRow
+                    label={field.label}
+                    required={field.required}
+                    value={mappings[field.key]}
+                    headers={headers}
+                    onChange={(value) => setMapping(field.key, value)}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
 
           <div className="save-note">
             <span>✓</span>
@@ -1401,7 +1616,11 @@ function App() {
               Read Row
             </button>
 
-            <button className="btn-primary btn-lg" onClick={handleOpenOutlookWebDraft}>
+            <button
+              className="btn-primary btn-lg"
+              onClick={handleOpenOutlookWebDraft}
+              disabled={!isDraftReady}
+            >
               Open Outlook Web Draft
             </button>
           </div>
