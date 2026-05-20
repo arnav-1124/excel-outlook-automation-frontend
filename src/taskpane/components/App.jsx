@@ -24,6 +24,7 @@ import AppFooter from "./layout/AppFooter";
 // Hooks
 import useNotifications from "../hooks/useNotifications";
 import useActivityLog from "../hooks/useActivityLog";
+import useWorkflowPreset from "../hooks/useWorkflowPreset";
 
 // Constants
 import { MAPPING_FIELDS } from "../constants/mappingFields";
@@ -175,28 +176,19 @@ function App() {
     ? "Ready to create draft"
     : `${setupCompletedCount}/${setupTotalCount} complete`;
 
-  const activeWorkflowPreset =
-    WORKFLOW_PRESETS.find((preset) => preset.id === selectedWorkflowPreset) || WORKFLOW_PRESETS[0];
-
-  const presetCompletedFields = activeWorkflowPreset.recommendedFields.filter((fieldKey) =>
-    Boolean(mappings[fieldKey])
-  );
-
-  const presetMissingFields = activeWorkflowPreset.recommendedFields.filter(
-    (fieldKey) => !mappings[fieldKey]
-  );
-
-  const presetProgressPercent = Math.round(
-    (presetCompletedFields.length / activeWorkflowPreset.recommendedFields.length) * 100
-  );
-
-  const recommendedMappingFields = MAPPING_FIELDS.filter((field) =>
-    activeWorkflowPreset.recommendedFields.includes(field.key)
-  );
-
-  const optionalMappingFields = MAPPING_FIELDS.filter(
-    (field) => !activeWorkflowPreset.recommendedFields.includes(field.key)
-  );
+  const {
+    activeWorkflowPreset,
+    presetCompletedFields,
+    presetMissingFields,
+    presetProgressPercent,
+    recommendedMappingFields,
+    optionalMappingFields,
+  } = useWorkflowPreset({
+    workflowPresets: WORKFLOW_PRESETS,
+    selectedWorkflowPreset,
+    mappings,
+    mappingFields: MAPPING_FIELDS,
+  });
 
   // Initial load
   useEffect(() => {
@@ -247,7 +239,6 @@ function App() {
       clearInterval(intervalId);
     };
   }, [selectedTable, autoSyncEnabled, headers, mappings, rowIndex, rowData]);
-
 
   function autoLoadTemplateFromRow(rowDataFromExcel) {
     const templateTypeValue = rowDataFromExcel?.templateType;
