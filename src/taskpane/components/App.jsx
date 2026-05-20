@@ -5,6 +5,10 @@ import Banner from "./Banner";
 
 import ActivityLogSection from "./ActivityLogSection";
 import DebugSection from "./DebugSection";
+import TableSelectorSection from "./TableSelectorSection";
+import HeaderPreviewSection from "./HeaderPreviewSection";
+import SetupChecklistSection from "./SetupChecklistSection";
+import WorkflowPresetSection from "./WorkflowPresetSection";
 
 import { MAPPING_FIELDS } from "../constants/mappingFields";
 import { WORKFLOW_PRESETS } from "../constants/workflowPresets";
@@ -950,192 +954,45 @@ function App() {
 
       <main className="app-main">
         {/* Setup Checklist */}
-        <section className={`section setup-section ${isDraftReady ? "setup-ready" : ""}`}>
-          <div className="setup-top">
-            <div>
-              <div className="setup-kicker">Setup Health</div>
-              <h2 className="setup-title">{setupStatusText}</h2>
-            </div>
-
-            <div className="setup-score">
-              {setupCompletedCount}/{setupTotalCount}
-            </div>
-          </div>
-
-          <div className="setup-progress-track">
-            <div className="setup-progress-fill" style={{ width: `${setupProgressPercent}%` }} />
-          </div>
-
-          <div className="setup-checklist">
-            {setupChecklist.map((item) => (
-              <div
-                className={`setup-check-item ${
-                  item.completed ? "setup-check-complete" : "setup-check-pending"
-                }`}
-                key={item.key}
-              >
-                <div className="setup-check-icon">{item.completed ? "✓" : "•"}</div>
-
-                <div className="setup-check-content">
-                  <div className="setup-check-label">{item.label}</div>
-
-                  {!item.completed && <div className="setup-check-help">{item.helpText}</div>}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {isDraftReady && (
-            <div className="setup-ready-note">
-              Everything important is ready. You can generate/preview templates or open an Outlook
-              draft.
-            </div>
-          )}
-        </section>
+        <SetupChecklistSection
+          setupChecklist={setupChecklist}
+          setupCompletedCount={setupCompletedCount}
+          setupTotalCount={setupTotalCount}
+          setupProgressPercent={setupProgressPercent}
+          setupStatusText={setupStatusText}
+          isDraftReady={isDraftReady}
+        />
 
         {/* Workflow Preset */}
-        <section className="section preset-section">
-          <div className="section-header">
-            <span className="section-number">WF</span>
-            <h2 className="section-title">Workflow Preset</h2>
-          </div>
-
-          <div className="field-group">
-            <label className="field-label">Choose workflow style</label>
-
-            <select
-              className="select"
-              value={selectedWorkflowPreset}
-              onChange={(e) => setSelectedWorkflowPreset(e.target.value)}
-            >
-              {WORKFLOW_PRESETS.map((preset) => (
-                <option key={preset.id} value={preset.id}>
-                  {preset.name}
-                </option>
-              ))}
-            </select>
-
-            <p className="field-hint">{activeWorkflowPreset.description}</p>
-          </div>
-
-          <div className="preset-progress-row">
-            <span>
-              Recommended mappings: {presetCompletedFields.length}/
-              {activeWorkflowPreset.recommendedFields.length}
-            </span>
-
-            <span>{presetProgressPercent}%</span>
-          </div>
-
-          <div className="preset-progress-track">
-            <div className="preset-progress-fill" style={{ width: `${presetProgressPercent}%` }} />
-          </div>
-
-          <div className="preset-chip-list">
-            {activeWorkflowPreset.recommendedFields.map((fieldKey) => {
-              const isMapped = Boolean(mappings[fieldKey]);
-
-              return (
-                <span
-                  className={`preset-chip ${isMapped ? "preset-chip-complete" : "preset-chip-missing"}`}
-                  key={fieldKey}
-                >
-                  {isMapped ? "✓" : "•"} {getMappingFieldLabel(MAPPING_FIELDS, fieldKey)}
-                </span>
-              );
-            })}
-          </div>
-
-          {presetMissingFields.length > 0 && (
-            <div className="preset-warning">
-              Missing recommended mappings:{" "}
-              {presetMissingFields
-                .map((fieldKey) => getMappingFieldLabel(MAPPING_FIELDS, fieldKey))
-                .join(", ")}
-            </div>
-          )}
-
-          {presetMissingFields.length === 0 && (
-            <div className="preset-ready-note">This workflow preset is fully configured.</div>
-          )}
-        </section>
+        <WorkflowPresetSection
+          workflowPresets={WORKFLOW_PRESETS}
+          selectedWorkflowPreset={selectedWorkflowPreset}
+          onChangeWorkflowPreset={setSelectedWorkflowPreset}
+          activeWorkflowPreset={activeWorkflowPreset}
+          presetCompletedFields={presetCompletedFields}
+          presetMissingFields={presetMissingFields}
+          presetProgressPercent={presetProgressPercent}
+          getFieldLabel={(fieldKey) => getMappingFieldLabel(MAPPING_FIELDS, fieldKey)}
+        />
 
         {/* Table Selection */}
-        <section className="section">
-          <div className="section-header">
-            <span className="section-number">01</span>
-            <h2 className="section-title">Select Excel Table</h2>
-          </div>
-
-          <div className="field-group">
-            <label className="field-label">Workbook Table</label>
-
-            <select
-              className="select"
-              value={selectedTable || ""}
-              onChange={(e) => setSelectedTable(e.target.value)}
-            >
-              {tables.length === 0 && <option value="">No tables found</option>}
-
-              {tables.map((table) => (
-                <option key={table} value={table}>
-                  {table}
-                </option>
-              ))}
-            </select>
-
-            <p className="field-hint">
-              Choose the Excel table that contains recipient, subject and body columns.
-            </p>
-          </div>
-
-          <button className="btn-outline" onClick={loadTables} disabled={isLoadingTables}>
-            {isLoadingTables ? "Loading..." : "Refresh Tables"}
-          </button>
-
-          <div className="sync-control">
-            <label className="sync-toggle">
-              <input
-                type="checkbox"
-                checked={autoSyncEnabled}
-                onChange={(e) => setAutoSyncEnabled(e.target.checked)}
-              />
-              <span>Auto-sync workbook changes</span>
-            </label>
-
-            {lastSyncText && <span className="sync-time">Last sync: {lastSyncText}</span>}
-          </div>
-        </section>
+        <TableSelectorSection
+          tables={tables}
+          selectedTable={selectedTable}
+          onSelectTable={setSelectedTable}
+          onRefreshTables={loadTables}
+          isLoadingTables={isLoadingTables}
+          autoSyncEnabled={autoSyncEnabled}
+          onToggleAutoSync={setAutoSyncEnabled}
+          lastSyncText={lastSyncText}
+        />
 
         {/* Headers Preview */}
-        <section className="section">
-          <div className="section-header">
-            <span className="section-number">02</span>
-            <h2 className="section-title">Available Headers</h2>
-
-            <button className="btn-ghost" onClick={() => setShowHeaders((value) => !value)}>
-              {showHeaders ? "Hide" : "Show"}
-            </button>
-          </div>
-
-          {!showHeaders && (
-            <p className="empty-state compact">
-              {headers.length > 0
-                ? `${headers.length} header(s) detected. Open this section if you want to verify them.`
-                : "No headers loaded yet."}
-            </p>
-          )}
-
-          {showHeaders && (
-            <div className="header-chip-list">
-              {headers.map((header) => (
-                <span className="header-chip" key={header}>
-                  {header}
-                </span>
-              ))}
-            </div>
-          )}
-        </section>
+        <HeaderPreviewSection
+          headers={headers}
+          showHeaders={showHeaders}
+          onToggleShowHeaders={() => setShowHeaders((value) => !value)}
+        />
 
         {/* Mapping Section */}
         <section className="section">
