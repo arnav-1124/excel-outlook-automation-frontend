@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 
+// Common Components
 import Toast from "./common/Toast";
 import Banner from "./common/Banner";
 
+// Section Components
 import ActivityLogSection from "./sections/ActivityLogSection";
 import DebugSection from "./sections/DebugSection";
 import TableSelectorSection from "./sections/TableSelectorSection";
@@ -19,9 +21,14 @@ import OnboardingScreen from "./layout/OnboardingScreen";
 import AppHeader from "./layout/AppHeader";
 import AppFooter from "./layout/AppFooter";
 
+// Hooks
+import useNotifications from "../hooks/useNotifications";
+
+// Constants
 import { MAPPING_FIELDS } from "../constants/mappingFields";
 import { WORKFLOW_PRESETS } from "../constants/workflowPresets";
 
+// Utils
 import { getActivityTime, getCurrentDateTimeText } from "../utils/dateUtils";
 import { normalizeTemplateName, renderDisplayValue } from "../utils/textUtils";
 import { getRowDataSnapshot, mergeFreshRowDataSafely } from "../utils/rowDataUtils";
@@ -31,11 +38,13 @@ import {
   getMappingFieldLabel,
 } from "../utils/mappingUtils";
 
+// Stores (state management)
 import useTableStore from "../store/tableStore";
 import useHeaderStore from "../store/headerStore";
 import useMappingStore from "../store/mappingStore";
 import useActiveRowStore from "../store/activeRowStore";
 
+// Services (external dependencies)
 import { getActiveRowIndex, getMappedRowData, updateMappedRowValues } from "../services/rowService";
 import { getWorkbookTables } from "../services/tableService";
 import { openOutlookWebDraft } from "../services/emailService";
@@ -62,8 +71,8 @@ function App() {
 
   const { rowIndex, rowData, setRowIndex, setRowData } = useActiveRowStore();
 
-  const [banner, setBanner] = useState(null);
-  const [toast, setToast] = useState(null);
+  const { banner, toast, showBanner, showToast, clearBanner, clearToast } = useNotifications();
+
   const [activityLog, setActivityLog] = useState([]);
 
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -237,24 +246,6 @@ function App() {
       clearInterval(intervalId);
     };
   }, [selectedTable, autoSyncEnabled, headers, mappings, rowIndex, rowData]);
-
-  function showBanner(type, message) {
-    setBanner({ type, message });
-
-    if (type !== "error") {
-      setTimeout(() => {
-        setBanner(null);
-      }, 3500);
-    }
-  }
-
-  function showToast(type, title, message) {
-    setToast({ type, title, message });
-
-    setTimeout(() => {
-      setToast(null);
-    }, 4500);
-  }
 
   function addActivity(type, message) {
     const newActivity = {
@@ -869,9 +860,9 @@ function App() {
 
       <AppHeader onRefreshTables={loadTables} />
 
-      <Toast toast={toast} onClose={() => setToast(null)} />
+      <Toast toast={toast} onClose={clearToast} />
 
-      <Banner banner={banner} onClose={() => setBanner(null)} />
+      <Banner banner={banner} onClose={clearBanner} />
 
       <main className="app-main">
         {/* Setup Checklist */}
