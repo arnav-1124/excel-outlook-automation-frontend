@@ -1,23 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import Toast from "./Toast";
-import Banner from "./Banner";
+import Toast from "./common/Toast";
+import Banner from "./common/Banner";
 
-import ActivityLogSection from "./ActivityLogSection";
-import DebugSection from "./DebugSection";
-import TableSelectorSection from "./TableSelectorSection";
-import HeaderPreviewSection from "./HeaderPreviewSection";
-import SetupChecklistSection from "./SetupChecklistSection";
-import WorkflowPresetSection from "./WorkflowPresetSection";
-import MappingSection from "./MappingSection";
-import SelectedRowSection from "./SelectedRowSection";
-import PlaceholderSection from "./PlaceholderSection";
-import EmailPreviewSection from "./EmailPreviewSection";
-import ActionSection from "./ActionSection";
-import TemplateEditorSection from "./TemplateEditorSection";
-import OnboardingScreen from "./OnboardingScreen";
-import AppHeader from "./AppHeader";
-import AppFooter from "./AppFooter";
+import ActivityLogSection from "./sections/ActivityLogSection";
+import DebugSection from "./sections/DebugSection";
+import TableSelectorSection from "./sections/TableSelectorSection";
+import HeaderPreviewSection from "./sections/HeaderPreviewSection";
+import SetupChecklistSection from "./sections/SetupChecklistSection";
+import WorkflowPresetSection from "./sections/WorkflowPresetSection";
+import MappingSection from "./sections/MappingSection";
+import SelectedRowSection from "./sections/SelectedRowSection";
+import PlaceholderSection from "./sections/PlaceholderSection";
+import EmailPreviewSection from "./sections/EmailPreviewSection";
+import ActionSection from "./sections/ActionSection";
+import TemplateEditorSection from "./sections/TemplateEditorSection";
+import OnboardingScreen from "./layout/OnboardingScreen";
+import AppHeader from "./layout/AppHeader";
+import AppFooter from "./layout/AppFooter";
 
 import { MAPPING_FIELDS } from "../constants/mappingFields";
 import { WORKFLOW_PRESETS } from "../constants/workflowPresets";
@@ -190,8 +190,7 @@ function App() {
 
   // Initial load
   useEffect(() => {
-    const onboardingCompleted = loadOnboardingCompleted();
-    setShowOnboarding(!onboardingCompleted);
+    setShowOnboarding(true);
 
     loadTables();
 
@@ -700,7 +699,6 @@ function App() {
   }
 
   function handleCompleteOnboarding() {
-    saveOnboardingCompleted(true);
     setShowOnboarding(false);
 
     showToast(
@@ -709,7 +707,7 @@ function App() {
       "You can now connect your Excel table and start creating email drafts."
     );
 
-    addActivity("success", "Onboarding completed.");
+    addActivity("success", "Onboarding completed for this session.");
   }
 
   function handleShowOnboardingAgain() {

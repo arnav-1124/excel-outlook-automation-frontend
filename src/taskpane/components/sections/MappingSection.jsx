@@ -1,5 +1,5 @@
 import React from "react";
-import MappingRow from "./MappingRow";
+import MappingRow from "../mapping/MappingRow";
 
 function MappingSection({
   mappings,
