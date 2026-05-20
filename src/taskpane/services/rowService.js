@@ -56,6 +56,12 @@ export async function getMappedRowData(tableName, worksheetRowIndex, mappings) {
 
       console.log("Row values:", rowValues);
 
+      const allFields = {};
+
+      headers.forEach((header, index) => {
+        allFields[header] = rowValues[index];
+      });
+
       const result = {};
 
       Object.entries(mappings).forEach(([key, mappedHeader]) => {
@@ -68,6 +74,12 @@ export async function getMappedRowData(tableName, worksheetRowIndex, mappings) {
         }
       });
 
+      // Universal template support.
+      // This keeps existing rowData.recipientEmail / rowData.subject / rowData.body working,
+      // while also exposing every Excel column for placeholders.
+      result.__allFields = allFields;
+
+      console.log("All row fields:", allFields);
       console.log("Mapped row data:", result);
 
       return result;

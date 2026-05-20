@@ -11,6 +11,7 @@ import { getTableHeaders } from "../services/headerService";
 import { saveMappings, loadMappings } from "../services/settingsService";
 import { openOutlookWebDraft } from "../services/emailService";
 import { suggestMappingsFromHeaders } from "../services/autoMappingService";
+import { replaceTemplatePlaceholders, findMissingPlaceholders } from "../services/templateService";
 
 import MappingRow from "./MappingRow";
 
@@ -83,6 +84,11 @@ function App() {
   const [banner, setBanner] = useState(null);
   const [toast, setToast] = useState(null);
   const [activityLog, setActivityLog] = useState([]);
+
+  const [subjectTemplate, setSubjectTemplate] = useState("");
+  const [bodyTemplate, setBodyTemplate] = useState("");
+  const [templateMissingFields, setTemplateMissingFields] = useState([]);
+
   const [isLoadingTables, setIsLoadingTables] = useState(false);
   const [isReadingRow, setIsReadingRow] = useState(false);
   const [showHeaders, setShowHeaders] = useState(false);
@@ -264,6 +270,70 @@ function App() {
     }
 
     return true;
+  }
+
+  function handleGenerateFromTemplate() {
+    try {
+      if (!rowData?.__allFields) {
+        showBanner("error", "Please detect a selected row before generating from template.");
+        return;
+      }
+
+      if (!subjectTemplate.trim() && !bodyTemplate.trim()) {
+        showBanner("error", "Please enter a subject template or body template first.");
+        return;
+      }
+
+      const allFields = {
+        ...rowData.__allFields,
+        Recipient_Email: rowData.recipientEmail || "",
+        Recipient_Name: rowData.recipientName || "",
+        Sender_Email: rowData.senderEmail || "",
+        Sender_Name: rowData.senderName || "",
+      };
+
+      const combinedTemplateText = `${subjectTemplate}\n${bodyTemplate}`;
+      const missingFields = findMissingPlaceholders(combinedTemplateText, allFields);
+
+      setTemplateMissingFields(missingFields);
+
+      if (missingFields.length > 0) {
+        showBanner(
+          "warning",
+          `Some placeholders were not found: ${missingFields
+            .map((field) => `{{${field}}}`)
+            .join(", ")}`
+        );
+      }
+
+      const generatedSubject = subjectTemplate.trim()
+        ? replaceTemplatePlaceholders(subjectTemplate, allFields)
+        : rowData.subject || "";
+
+      const generatedBody = bodyTemplate.trim()
+        ? replaceTemplatePlaceholders(bodyTemplate, allFields)
+        : rowData.body || "";
+
+      const generatedRowData = {
+        ...rowData,
+        subject: generatedSubject,
+        body: generatedBody,
+        __templateApplied: true,
+      };
+
+      setRowData(generatedRowData);
+
+      showToast(
+        "success",
+        "Template applied",
+        "Subject and body preview were generated from your template."
+      );
+
+      addActivity("success", "Template applied to selected row.");
+    } catch (error) {
+      console.error("Template generation error:", error);
+      showBanner("error", "Could not generate email from template.");
+    }
   }
 
   function getCurrentDateTimeText() {
@@ -532,6 +602,120 @@ function App() {
                 <span className="preview-value">{renderValue(rowData.templateType)}</span>
               </div>
             </div>
+          )}
+        </section>
+
+        {/* Available Placeholders */}
+        <section className="section">
+          <div className="section-header">
+            <span className="section-number">TPL</span>
+            <h2 className="section-title">Available Placeholders</h2>
+          </div>
+
+          {!rowData?.__allFields && (
+            <div className="empty-state">
+              Detect a selected row to see all available placeholders from your Excel table.
+            </div>
+          )}
+
+          {rowData?.__allFields && (
+            <>
+              <p className="field-hint placeholder-hint">
+                Use these placeholders in future templates. They are generated directly from your
+                Excel table headers.
+              </p>
+
+              <div className="placeholder-list">
+                {Object.keys(rowData.__allFields).map((fieldName) => (
+                  <button
+                    key={fieldName}
+                    type="button"
+                    className="placeholder-chip"
+                    title={`{{${fieldName}}}`}
+                    onClick={() => {
+                      navigator.clipboard?.writeText(`{{${fieldName}}}`);
+                      showToast("success", "Placeholder copied", `{{${fieldName}}} copied.`);
+                      addActivity("success", `Placeholder copied: {{${fieldName}}}`);
+                    }}
+                  >
+                    {`{{${fieldName}}}`}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+        </section>
+
+        {/* Template Editor */}
+        <section className="section">
+          <div className="section-header">
+            <span className="section-number">TMP</span>
+            <h2 className="section-title">Template Editor</h2>
+
+            {rowData?.__templateApplied && <span className="badge badge-ok">Applied</span>}
+          </div>
+
+          {!rowData?.__allFields && (
+            <div className="empty-state">
+              Detect a selected row first. Then you can use Excel headers as placeholders.
+            </div>
+          )}
+
+          {rowData?.__allFields && (
+            <>
+              <div className="template-field-group">
+                <label className="field-label">Subject Template</label>
+
+                <input
+                  className="input"
+                  value={subjectTemplate}
+                  onChange={(e) => setSubjectTemplate(e.target.value)}
+                  placeholder="Example: Follow-up for {{Invoice_Number}}"
+                />
+              </div>
+
+              <div className="template-field-group">
+                <label className="field-label">Body Template</label>
+
+                <textarea
+                  className="textarea"
+                  value={bodyTemplate}
+                  onChange={(e) => setBodyTemplate(e.target.value)}
+                  rows={7}
+                  placeholder={`Dear {{Customer_Name}},\n\nPlease check {{Invoice_Number}}.\n\nRegards,\n{{Sender_Name}}`}
+                />
+              </div>
+
+              {templateMissingFields.length > 0 && (
+                <div className="template-warning">
+                  <strong>Missing placeholders:</strong>{" "}
+                  {templateMissingFields.map((field) => `{{${field}}}`).join(", ")}
+                </div>
+              )}
+
+              <div className="template-actions">
+                <button className="btn-primary" onClick={handleGenerateFromTemplate}>
+                  Generate Preview From Template
+                </button>
+
+                <button
+                  className="btn-outline"
+                  onClick={() => {
+                    setSubjectTemplate("");
+                    setBodyTemplate("");
+                    setTemplateMissingFields([]);
+                    showToast("success", "Template cleared", "Template editor has been reset.");
+                  }}
+                >
+                  Clear Template
+                </button>
+              </div>
+
+              <p className="field-hint template-note">
+                Template output only updates the preview. It does not overwrite your Excel
+                subject/body cells.
+              </p>
+            </>
           )}
         </section>
 
