@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 
-import { getWorkbookTables } from "../services/tableService";
-import { getTableHeaders } from "../services/headerService";
-import { getActiveRowIndex, getMappedRowData } from "../services/rowService";
-import { suggestMappingsFromHeaders } from "../services/autoMappingService";
-import { saveMappings, loadMappings } from "../services/settingsService";
+import { getWorkbookTables } from "../services/excel/tableService";
+import { getTableHeaders } from "../services/excel/headerService";
+import { getActiveRowIndex, getMappedRowData } from "../services/excel/rowService";
+import { suggestMappingsFromHeaders } from "../services/template/autoMappingService";
+import { saveMappings, loadMappings } from "../services/storage/settingsService";
 
 import { getActivityTime } from "../utils/dateUtils";
 import { areArraysEqual, cleanMappingsForHeaders } from "../utils/mappingUtils";

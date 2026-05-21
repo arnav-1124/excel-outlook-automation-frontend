@@ -1,7 +1,7 @@
 import { getCurrentDateTimeText } from "../utils/dateUtils";
 
-import { openOutlookWebDraft } from "../services/emailService";
-import { getMappedRowData, updateMappedRowValues } from "../services/rowService";
+import { openOutlookWebDraft } from "../services/email/emailService";
+import { getMappedRowData, updateMappedRowValues } from "../services/excel/rowService";
 
 function useEmailDraft({
   rowData,

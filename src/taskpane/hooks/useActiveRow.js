@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { getActiveRowIndex, getMappedRowData } from "../services/rowService";
+import { getActiveRowIndex, getMappedRowData } from "../services/excel/rowService";
 
 function useActiveRow({
   selectedTable,

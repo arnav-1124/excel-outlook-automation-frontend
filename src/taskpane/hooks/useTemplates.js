@@ -5,11 +5,11 @@ import {
   saveTemplateSettings,
   loadNamedTemplates,
   saveNamedTemplates,
-} from "../services/settingsService";
+} from "../services/storage/settingsService";
 
-import { replaceTemplatePlaceholders, findMissingPlaceholders } from "../services/templateService";
+import { replaceTemplatePlaceholders, findMissingPlaceholders } from "../services/template/templateService";
 
-import { updateMappedRowValues, getMappedRowData } from "../services/rowService";
+import { updateMappedRowValues, getMappedRowData } from "../services/excel/rowService";
 
 import { normalizeTemplateName } from "../utils/textUtils";
 
