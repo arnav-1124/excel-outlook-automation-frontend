@@ -27,13 +27,14 @@ import useActivityLog from "../hooks/useActivityLog";
 import useWorkflowPreset from "../hooks/useWorkflowPreset";
 import useSetupChecklist from "../hooks/useSetupChecklist";
 import useTemplates from "../hooks/useTemplates";
+import useEmailDraft from "../hooks/useEmailDraft";
 
 // Constants
 import { MAPPING_FIELDS } from "../constants/mappingFields";
 import { WORKFLOW_PRESETS } from "../constants/workflowPresets";
 
 // Utils
-import { getActivityTime, getCurrentDateTimeText } from "../utils/dateUtils";
+import { getActivityTime } from "../utils/dateUtils";
 import { renderDisplayValue } from "../utils/textUtils";
 import { getRowDataSnapshot, mergeFreshRowDataSafely } from "../utils/rowDataUtils";
 import {
@@ -49,9 +50,8 @@ import useMappingStore from "../store/mappingStore";
 import useActiveRowStore from "../store/activeRowStore";
 
 // Services (external dependencies)
-import { getActiveRowIndex, getMappedRowData, updateMappedRowValues } from "../services/rowService";
+import { getActiveRowIndex, getMappedRowData } from "../services/rowService";
 import { getWorkbookTables } from "../services/tableService";
-import { openOutlookWebDraft } from "../services/emailService";
 import { suggestMappingsFromHeaders } from "../services/autoMappingService";
 import { getTableHeaders } from "../services/headerService";
 import { saveMappings, loadMappings } from "../services/settingsService";
@@ -98,6 +98,17 @@ function App() {
     handleClearTemplate,
     autoLoadTemplateFromRow,
   } = useTemplates({
+    rowData,
+    setRowData,
+    selectedTable,
+    rowIndex,
+    mappings,
+    showBanner,
+    showToast,
+    addActivity,
+  });
+
+  const { handleOpenOutlookWebDraft } = useEmailDraft({
     rowData,
     setRowData,
     selectedTable,
@@ -410,26 +421,6 @@ function App() {
     }
   }
 
-  function validateEmailDraftData() {
-    console.log("rowData:", rowData);
-
-    if (!rowData) {
-      showBanner("error", "Please detect the selected row first.");
-      return false;
-    }
-
-    if (!rowData?.recipientEmail) {
-      showBanner("error", "Recipient email is missing in the selected row.");
-      return false;
-    }
-
-    if (!rowData?.body) {
-      showBanner("error", "Email body is missing in the selected row.");
-      return false;
-    }
-
-    return true;
-  }
 
   function handleCompleteOnboarding() {
     setShowOnboarding(false);
@@ -447,53 +438,6 @@ function App() {
     setShowOnboarding(true);
   }
 
-  async function handleOpenOutlookWebDraft() {
-    try {
-      if (!validateEmailDraftData()) return;
-
-      openOutlookWebDraft(rowData);
-
-      const nowText = getCurrentDateTimeText();
-
-      const valuesToUpdate = {
-        emailStatus: "Draft Created",
-        draftCreatedDate: rowData?.draftCreatedDate || nowText,
-        draftModifiedDate: nowText,
-      };
-
-      const updated = await updateMappedRowValues(
-        selectedTable,
-        rowIndex,
-        mappings,
-        valuesToUpdate
-      );
-
-      if (updated) {
-        const refreshedData = await getMappedRowData(selectedTable, rowIndex, mappings);
-        setRowData(refreshedData);
-
-        showBanner("success", "Outlook draft opened and Excel row updated.");
-
-        addActivity("success", "Outlook Web draft opened.");
-        addActivity("success", "Email Status updated to Draft Created.");
-        addActivity("success", "Draft Created Date and Draft Modified Date updated.");
-
-        showToast(
-          "success",
-          "Excel row updated",
-          "Email Status, Draft Created Date and Draft Modified Date were updated."
-        );
-      } else {
-        showBanner(
-          "warning",
-          "Draft opened, but Excel row was not updated. Please check status/date mappings."
-        );
-      }
-    } catch (error) {
-      console.error("Outlook Web draft creation error:", error);
-      showBanner("error", "Could not open Outlook draft or update Excel row.");
-    }
-  }
 
   function handleCopyPlaceholder(fieldName) {
     navigator.clipboard?.writeText(`{{${fieldName}}}`);
