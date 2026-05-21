@@ -28,6 +28,7 @@ import useWorkflowPreset from "../hooks/useWorkflowPreset";
 import useSetupChecklist from "../hooks/useSetupChecklist";
 import useTemplates from "../hooks/useTemplates";
 import useEmailDraft from "../hooks/useEmailDraft";
+import useActiveRow from "../hooks/useActiveRow";
 
 // Constants
 import { MAPPING_FIELDS } from "../constants/mappingFields";
@@ -108,6 +109,17 @@ function App() {
     addActivity,
   });
 
+  const { isReadingRow, detectActiveRow } = useActiveRow({
+    selectedTable,
+    mappings,
+    bodyTemplate,
+    setRowIndex,
+    setRowData,
+    showBanner,
+    addActivity,
+    autoLoadTemplateFromRow,
+  });
+
   const { handleOpenOutlookWebDraft } = useEmailDraft({
     rowData,
     setRowData,
@@ -120,7 +132,6 @@ function App() {
   });
 
   const [isLoadingTables, setIsLoadingTables] = useState(false);
-  const [isReadingRow, setIsReadingRow] = useState(false);
   const [showHeaders, setShowHeaders] = useState(false);
   const [showRawJson, setShowRawJson] = useState(false);
 
@@ -369,59 +380,6 @@ function App() {
     }
   }
 
-  // Detect Active Row
-  async function detectActiveRow() {
-    try {
-      if (!selectedTable) {
-        showBanner("error", "Please select an Excel table first.");
-        return;
-      }
-
-      const hasRecipientMapping = Boolean(mappings.recipientEmail);
-      const hasBodySource = Boolean(mappings.body || bodyTemplate.trim());
-
-      if (!hasRecipientMapping) {
-        showBanner("error", "Please map Recipient Email before reading the selected row.");
-        return;
-      }
-
-      if (!hasBodySource) {
-        showBanner(
-          "error",
-          "Please map Body column or enter a Body Template before reading the selected row."
-        );
-        return;
-      }
-
-      setIsReadingRow(true);
-
-      const index = await getActiveRowIndex();
-
-      setRowIndex(index);
-
-      if (index !== null && selectedTable) {
-        const data = await getMappedRowData(selectedTable, index, mappings);
-
-        console.log("Fetched row data:", data);
-
-        setRowData(data);
-
-        autoLoadTemplateFromRow(data);
-
-        showBanner("success", "Selected row loaded successfully.");
-        addActivity("success", `Selected row ${index + 1} detected and preview loaded.`);
-      } else {
-        showBanner("warning", "Could not detect selected row. Please click inside the table row.");
-      }
-    } catch (error) {
-      console.error("Detect active row error:", error);
-      showBanner("error", "Could not read selected row. Please select a cell inside the table.");
-    } finally {
-      setIsReadingRow(false);
-    }
-  }
-
-
   function handleCompleteOnboarding() {
     setShowOnboarding(false);
 
@@ -437,7 +395,6 @@ function App() {
   function handleShowOnboardingAgain() {
     setShowOnboarding(true);
   }
-
 
   function handleCopyPlaceholder(fieldName) {
     navigator.clipboard?.writeText(`{{${fieldName}}}`);
