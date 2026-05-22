@@ -153,7 +153,8 @@ function AccountPanel({
           </div>
 
           <button className="account-upgrade-btn" type="button" onClick={onOpenUpgrade}>
-            Upgrade Plan
+            <span>Upgrade Plan</span>
+            <small>View plans, coupons & credits</small>
           </button>
 
           {!isAuthenticated && (

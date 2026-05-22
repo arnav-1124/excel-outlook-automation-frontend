@@ -11,25 +11,29 @@ function SubscriptionPage({
   onApplyCoupon,
   onClearCoupon,
   preview,
+  previewError,
   isPlansLoading,
   isPreviewLoading,
 }) {
   return (
     <main className="subscription-page">
-      <div className="subscription-page-header">
+      <div className="subscription-hero">
         <button className="subscription-back-btn" type="button" onClick={onBack}>
-          ← Back
+          ← Back to workflow
         </button>
 
-        <div>
-          <p className="subscription-kicker">Subscription</p>
-          <h1 className="subscription-title">Upgrade your automation workspace</h1>
+        <div className="subscription-hero-card">
+          <div className="subscription-hero-icon">★</div>
+
+          <div>
+            <p className="subscription-kicker">Subscription</p>
+            <h1 className="subscription-title">Upgrade your automation workspace</h1>
+            <p className="subscription-subtitle">
+              Pick a plan, apply coupons, and preview your final credits before payment.
+            </p>
+          </div>
         </div>
       </div>
-
-      <p className="subscription-subtitle">
-        Choose a plan, apply coupon codes, and preview credits before payment activation.
-      </p>
 
       <UpgradePanel
         plans={plans}
@@ -40,6 +44,7 @@ function SubscriptionPage({
         onApplyCoupon={onApplyCoupon}
         onClearCoupon={onClearCoupon}
         preview={preview}
+        previewError={previewError}
         isPlansLoading={isPlansLoading}
         isPreviewLoading={isPreviewLoading}
         forceExpanded

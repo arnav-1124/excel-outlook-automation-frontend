@@ -23,6 +23,7 @@ function UpgradePanel({
   onApplyCoupon,
   onClearCoupon,
   preview,
+  previewError,
   isPlansLoading,
   isPreviewLoading,
   forceExpanded = false,
@@ -155,6 +156,13 @@ function UpgradePanel({
                     </button>
                   </div>
                 )}
+
+                {previewError && (
+                  <div className="coupon-error">
+                    <span>!</span>
+                    <p>{previewError}</p>
+                  </div>
+                )}
               </div>
 
               {preview && (
@@ -199,12 +207,12 @@ function UpgradePanel({
                 disabled
                 title="Razorpay integration will be added later"
               >
-                Continue to payment soon
+                Continue to secure payment
               </button>
 
               <p className="upgrade-note">
-                Payment activation will be connected after Razorpay setup. Pricing and coupon
-                preview already comes from backend.
+                Payment gateway is reserved for the next commercial step. Plan pricing, coupon
+                discount, and credit preview are already powered by backend.
               </p>
             </>
           )}

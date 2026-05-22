@@ -8,6 +8,7 @@ function useSubscriptionPreview({ showBanner, showToast }) {
   const [selectedPlanCode, setSelectedPlanCode] = useState("");
   const [couponCode, setCouponCode] = useState("");
   const [preview, setPreview] = useState(null);
+  const [previewError, setPreviewError] = useState("");
 
   const [isPlansLoading, setIsPlansLoading] = useState(false);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
@@ -36,12 +37,13 @@ function useSubscriptionPreview({ showBanner, showToast }) {
 
   async function generatePreview({ planCode = selectedPlanCode, coupon = couponCode } = {}) {
     if (!planCode) {
-      showBanner("error", "Please select a plan first.");
+      setPreviewError("Please select a plan first.");
       return null;
     }
 
     try {
       setIsPreviewLoading(true);
+      setPreviewError("");
 
       const result = await previewSubscription({
         planCode,
@@ -57,8 +59,10 @@ function useSubscriptionPreview({ showBanner, showToast }) {
       return result;
     } catch (error) {
       console.error("Preview subscription failed:", error);
+
       setPreview(null);
-      showBanner("error", error.message || "Could not preview subscription.");
+      setPreviewError(error.message || "Could not preview subscription.");
+
       return null;
     } finally {
       setIsPreviewLoading(false);
@@ -68,6 +72,7 @@ function useSubscriptionPreview({ showBanner, showToast }) {
   function clearCoupon() {
     setCouponCode("");
     setPreview(null);
+    setPreviewError("");
   }
 
   useEffect(() => {
@@ -93,6 +98,8 @@ function useSubscriptionPreview({ showBanner, showToast }) {
     clearCoupon,
 
     preview,
+    previewError,
+
     isPlansLoading,
     isPreviewLoading,
 

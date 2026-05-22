@@ -1,6 +1,5 @@
 /* =============================================
    EXCEL EMAIL AUTOMATION — UI STYLES
-   Safe UI-only upgrade.
    Existing Excel / Outlook logic remains in services.
    ============================================= */
 
@@ -1196,11 +1195,15 @@ button:disabled {
 }
 
 /* =========================
-   Credits Badge - Compact
+   SAAS ACCOUNT / CREDITS / SUBSCRIPTION UI
+   Clean consolidated block.
+   Keep this section together to avoid duplicate overrides.
 ========================= */
 
+/* ---------- Credits Badge ---------- */
+
 .credits-badge-card {
-  margin: 12px 0 12px;
+  margin: 12px 0 14px;
   padding: 12px;
   border-radius: 18px;
   border: 1px solid rgba(240, 90, 0, 0.16);
@@ -1270,16 +1273,6 @@ button:disabled {
   white-space: nowrap;
 }
 
-.credits-collapse-icon,
-.account-collapse-icon {
-  width: 24px;
-  height: 24px;
-  display: grid;
-  place-items: center;
-  border-radius: 999px;
-  background: rgba(240, 90, 0, 0.1);
-}
-
 .credits-progress-track {
   margin-top: 11px;
   height: 7px;
@@ -1335,13 +1328,64 @@ button:disabled {
   cursor: pointer;
 }
 
-/* =========================
-   Account Panel
-========================= */
+.credits-refresh-btn.wide:hover {
+  background: #fff7f0;
+  border-color: rgba(240, 90, 0, 0.32);
+}
+
+/* ---------- Shared centered chevron icons ---------- */
+
+.account-collapse-icon,
+.credits-collapse-icon,
+.upgrade-collapse-icon {
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  min-height: 26px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 999px;
+  line-height: 1;
+  flex: 0 0 auto;
+}
+
+.account-collapse-icon,
+.credits-collapse-icon {
+  background: #fff1e8;
+  color: #9a3412;
+}
+
+.upgrade-collapse-icon {
+  background: #f3e8ff;
+  color: #6d28d9;
+}
+
+.account-collapse-icon::before,
+.credits-collapse-icon::before,
+.upgrade-collapse-icon::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg) translate(-1px, -1px);
+  transition: transform 0.18s ease;
+}
+
+.account-collapse-icon.open::before,
+.credits-collapse-icon.open::before,
+.upgrade-collapse-icon.open::before {
+  transform: rotate(225deg) translate(-1px, -1px);
+}
+
+/* ---------- Account Panel ---------- */
 
 .account-panel {
   margin: 0 0 18px;
-  padding: 16px;
+  padding: 13px;
   border-radius: 22px;
   border: 1px solid rgba(17, 24, 39, 0.08);
   background:
@@ -1350,16 +1394,53 @@ button:disabled {
   box-shadow: 0 18px 44px rgba(31, 41, 55, 0.08);
 }
 
-.account-panel-header {
+.account-panel.expanded {
+  padding: 14px;
+}
+
+.account-panel-toggle {
+  width: 100%;
+  min-height: 44px;
+  border: 0;
+  background: transparent;
+  padding: 0;
   display: flex;
-  align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 13px;
+  align-items: center;
+  text-align: left;
+  cursor: pointer;
+}
+
+.account-toggle-left {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+
+.account-toggle-icon {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  font-size: 14px;
+  background: linear-gradient(135deg, #1d5fa8, #60a5fa);
+  box-shadow: 0 10px 22px rgba(29, 95, 168, 0.18);
+}
+
+.account-toggle-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
 }
 
 .account-kicker {
-  margin: 0 0 3px;
+  margin: 0 0 4px;
   font-size: 10px;
   font-weight: 850;
   letter-spacing: 0.13em;
@@ -1369,9 +1450,9 @@ button:disabled {
 
 .account-title {
   margin: 0;
-  font-size: 18px;
-  line-height: 1.15;
-  font-weight: 900;
+  font-size: 20px;
+  line-height: 1.08;
+  font-weight: 950;
   color: #111827;
 }
 
@@ -1397,12 +1478,33 @@ button:disabled {
   border: 1px solid #a7f3d0;
 }
 
+.account-mini-summary {
+  margin-top: 10px;
+  padding: 10px 11px;
+  border-radius: 15px;
+  background: rgba(238, 244, 255, 0.72);
+  border: 1px solid rgba(29, 95, 168, 0.14);
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 11.5px;
+  font-weight: 850;
+  color: #1d4ed8;
+}
+
+.account-profile-card,
+.account-credit-card,
+.account-guest-note,
+.account-tabs,
+.account-form {
+  margin-top: 14px;
+}
+
 .account-profile-card {
   display: flex;
   align-items: center;
   gap: 11px;
   padding: 12px;
-  margin-bottom: 12px;
   border-radius: 18px;
   border: 1px solid rgba(29, 95, 168, 0.12);
   background: rgba(255, 255, 255, 0.78);
@@ -1466,7 +1568,6 @@ button:disabled {
   justify-content: space-between;
   gap: 12px;
   padding: 13px;
-  margin-bottom: 12px;
   border-radius: 18px;
   background: linear-gradient(135deg, #111827, #1f2937);
   color: #ffffff;
@@ -1496,6 +1597,44 @@ button:disabled {
   font-size: 11px;
   font-weight: 750;
   color: rgba(255, 255, 255, 0.74);
+}
+
+.account-upgrade-btn {
+  width: 100%;
+  margin: 12px 0;
+  border: 0;
+  border-radius: 17px;
+  padding: 12px 14px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.28), transparent 32%),
+    linear-gradient(135deg, #7c3aed, #a855f7);
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 16px 34px rgba(124, 58, 237, 0.24);
+  display: grid;
+  gap: 3px;
+  text-align: left;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.account-upgrade-btn span {
+  font-size: 13px;
+  line-height: 1.1;
+  font-weight: 950;
+}
+
+.account-upgrade-btn small {
+  font-size: 11px;
+  line-height: 1.25;
+  font-weight: 750;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.account-upgrade-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 20px 40px rgba(124, 58, 237, 0.31);
 }
 
 .account-guest-note,
@@ -1560,7 +1699,7 @@ button:disabled {
   border-radius: 14px;
   padding: 10px 11px;
   font-size: 12.5px;
-  font-weight: 500z;
+  font-weight: 650;
   outline: none;
   color: #111827;
   background: rgba(255, 255, 255, 0.92);
@@ -1606,201 +1745,97 @@ button:disabled {
   padding: 3px 6px;
 }
 
-/* Account collapsed mode */
+/* ---------- Subscription Page ---------- */
 
-.account-panel-toggle {
-  width: 100%;
-  border: 0;
-  background: transparent;
-  padding: 0;
-  display: flex;
-  justify-content: space-between;
+.subscription-page {
+  padding-bottom: 18px;
+}
+
+.subscription-hero {
+  margin: 8px 0 14px;
+  display: grid;
   gap: 12px;
-  align-items: center;
-  text-align: left;
+}
+
+.subscription-back-btn {
+  justify-self: flex-start;
+  border: 1px solid rgba(124, 58, 237, 0.16);
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: #ffffff;
+  color: #6d28d9;
+  font-size: 12px;
+  font-weight: 900;
   cursor: pointer;
+  box-shadow: 0 10px 24px rgba(124, 58, 237, 0.08);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
-.account-toggle-left {
+.subscription-back-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgba(124, 58, 237, 0.13);
+}
+
+.subscription-hero-card {
+  padding: 16px;
+  border-radius: 24px;
+  border: 1px solid rgba(124, 58, 237, 0.14);
+  background:
+    radial-gradient(circle at top right, rgba(168, 85, 247, 0.18), transparent 34%),
+    linear-gradient(135deg, #ffffff 0%, #faf7ff 48%, #ffffff 100%);
+  box-shadow: 0 18px 44px rgba(31, 41, 55, 0.08);
   display: flex;
-  align-items: center;
-  gap: 11px;
-  min-width: 0;
+  gap: 13px;
+  align-items: flex-start;
 }
 
-.account-toggle-icon {
-  width: 34px;
-  height: 34px;
+.subscription-hero-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 16px;
   flex: 0 0 auto;
-  border-radius: 13px;
   display: grid;
   place-items: center;
   color: #ffffff;
-  background: linear-gradient(135deg, #1d5fa8, #60a5fa);
-  box-shadow: 0 10px 22px rgba(29, 95, 168, 0.18);
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  box-shadow: 0 14px 28px rgba(124, 58, 237, 0.24);
 }
 
-.account-toggle-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 0 0 auto;
-}
-
-.account-mini-summary {
-  margin-top: 10px;
-  padding: 10px 11px;
-  border-radius: 15px;
-  background: rgba(238, 244, 255, 0.72);
-  border: 1px solid rgba(29, 95, 168, 0.14);
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  font-size: 11.5px;
+.subscription-kicker {
+  margin: 0 0 5px;
+  font-size: 10px;
   font-weight: 850;
-  color: #1d4ed8;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #6d28d9;
 }
 
-.account-panel.collapsed {
-  padding: 13px;
+.subscription-title {
+  margin: 0;
+  font-size: 23px;
+  line-height: 1.05;
+  font-weight: 950;
+  color: #111827;
 }
 
-/* =========================
-   Account/Credits spacing polish
-========================= */
-
-.credits-badge-card {
-  margin: 12px 0 14px;
+.subscription-subtitle {
+  margin: 8px 0 0;
+  font-size: 12.3px;
+  line-height: 1.45;
+  font-weight: 650;
+  color: #6b7280;
 }
 
-.account-panel {
-  margin: 0 0 18px;
+/* Keep older subscription header class harmless if still present in JSX. */
+.subscription-page-header {
+  margin: 10px 0 12px;
+  display: grid;
+  gap: 12px;
 }
 
-.account-panel.expanded {
-  padding: 14px;
-}
-
-.account-panel-toggle {
-  align-items: center;
-}
-
-.account-toggle-left {
-  align-items: center;
-}
-
-.account-toggle-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 14px;
-  font-size: 14px;
-  transform: translateY(0);
-}
-
-.account-toggle-right {
-  align-items: center;
-}
-
-.account-title {
-  font-size: 20px;
-  line-height: 1.08;
-}
-
-.account-kicker {
-  margin-bottom: 4px;
-}
-
-/* =========================
-   Account panel final alignment polish
-========================= */
-
-.account-collapse-icon,
-.credits-collapse-icon {
-  width: 26px;
-  height: 26px;
-  min-width: 26px;
-  min-height: 26px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-  padding: 0;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 900;
-}
-
-.account-collapse-icon {
-  background: #fff1e8;
-  color: #9a3412;
-  transform: translateY(0);
-}
-
-.account-panel.expanded .account-profile-card,
-.account-panel.expanded .account-credit-card,
-.account-panel.expanded .account-guest-note,
-.account-panel.expanded .account-tabs,
-.account-panel.expanded .account-form {
-  margin-top: 14px;
-}
-
-.account-panel.expanded .account-credit-card {
-  margin-top: 18px;
-}
-
-.account-panel-toggle {
-  min-height: 44px;
-}
-
-.account-toggle-left {
-  align-items: center;
-}
-
-.account-toggle-right {
-  align-items: center;
-}
-
-/* =========================
-   Perfect centered chevron icons
-========================= */
-
-.account-collapse-icon,
-.credits-collapse-icon {
-  width: 26px;
-  height: 26px;
-  min-width: 26px;
-  min-height: 26px;
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  border-radius: 999px;
-  background: #fff1e8;
-  color: #9a3412;
-  line-height: 1;
-  flex: 0 0 auto;
-}
-
-.account-collapse-icon::before,
-.credits-collapse-icon::before {
-  content: "";
-  width: 7px;
-  height: 7px;
-  border-right: 2px solid currentColor;
-  border-bottom: 2px solid currentColor;
-  transform: rotate(45deg) translate(-1px, -1px);
-  transition: transform 0.18s ease;
-}
-
-.account-collapse-icon.open::before,
-.credits-collapse-icon.open::before {
-  transform: rotate(225deg) translate(-1px, -1px);
-}
-
-/* =========================
-   Upgrade / Subscription Panel
-========================= */
+/* ---------- Upgrade / Subscription Preview Panel ---------- */
 
 .upgrade-panel {
   margin: 0 0 18px;
@@ -1811,6 +1846,18 @@ button:disabled {
     radial-gradient(circle at top right, rgba(124, 58, 237, 0.12), transparent 34%),
     linear-gradient(135deg, #ffffff 0%, #faf7ff 48%, #ffffff 100%);
   box-shadow: 0 18px 44px rgba(31, 41, 55, 0.08);
+}
+
+.upgrade-panel.page-mode {
+  margin-top: 0;
+}
+
+.upgrade-panel.page-mode .upgrade-panel-toggle {
+  cursor: default;
+}
+
+.upgrade-panel.page-mode .upgrade-mini-summary {
+  display: none;
 }
 
 .upgrade-panel-toggle {
@@ -1879,34 +1926,6 @@ button:disabled {
   white-space: nowrap;
 }
 
-.upgrade-collapse-icon {
-  width: 26px;
-  height: 26px;
-  min-width: 26px;
-  min-height: 26px;
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  background: #f3e8ff;
-  color: #6d28d9;
-}
-
-.upgrade-collapse-icon::before {
-  content: "";
-  width: 7px;
-  height: 7px;
-  border-right: 2px solid currentColor;
-  border-bottom: 2px solid currentColor;
-  transform: rotate(45deg) translate(-1px, -1px);
-  transition: transform 0.18s ease;
-}
-
-.upgrade-collapse-icon.open::before {
-  transform: rotate(225deg) translate(-1px, -1px);
-}
-
 .upgrade-mini-summary {
   margin-top: 10px;
   padding: 10px 11px;
@@ -1962,7 +1981,9 @@ button:disabled {
 }
 
 .plan-card.active {
-  border-color: rgba(124, 58, 237, 0.6);
+  border-color: rgba(124, 58, 237, 0.62);
+  background:
+    radial-gradient(circle at top right, rgba(124, 58, 237, 0.09), transparent 34%), #ffffff;
   box-shadow: 0 18px 38px rgba(124, 58, 237, 0.14);
 }
 
@@ -2036,6 +2057,10 @@ button:disabled {
   cursor: pointer;
 }
 
+.coupon-apply-btn:hover:not(:disabled) {
+  background: #6d28d9;
+}
+
 .coupon-apply-btn:disabled {
   opacity: 0.65;
   cursor: not-allowed;
@@ -2074,6 +2099,43 @@ button:disabled {
   cursor: pointer;
 }
 
+/* =========================
+   Local coupon error
+========================= */
+
+.coupon-error {
+  margin-top: 10px;
+  padding: 10px 11px;
+  border-radius: 15px;
+  background: #fff0ee;
+  border: 1px solid #ffbcb4;
+  color: #cc2200;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.coupon-error span {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  background: #ffe2dc;
+  color: #cc2200;
+  font-size: 11px;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.coupon-error p {
+  margin: 0;
+  font-size: 11.8px;
+  line-height: 1.4;
+  font-weight: 750;
+}
+
 .subscription-preview-card {
   margin-top: 12px;
   padding: 13px;
@@ -2083,29 +2145,31 @@ button:disabled {
   box-shadow: 0 18px 38px rgba(17, 24, 39, 0.18);
 }
 
-.preview-row {
+.subscription-preview-card .preview-row {
   display: flex;
   justify-content: space-between;
   gap: 12px;
   font-size: 12px;
   font-weight: 750;
   color: rgba(255, 255, 255, 0.78);
+  border-bottom: none;
+  padding: 0;
 }
 
-.preview-row + .preview-row {
+.subscription-preview-card .preview-row + .preview-row {
   margin-top: 8px;
 }
 
-.preview-row strong {
+.subscription-preview-card .preview-row strong {
   color: #ffffff;
   font-weight: 950;
 }
 
-.preview-row.discount strong {
+.subscription-preview-card .preview-row.discount strong {
   color: #86efac;
 }
 
-.preview-row.total {
+.subscription-preview-card .preview-row.total {
   margin-top: 11px;
   padding-top: 11px;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
@@ -2145,14 +2209,17 @@ button:disabled {
   width: 100%;
   margin-top: 12px;
   border: 0;
-  border-radius: 15px;
-  padding: 11px 12px;
-  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  border-radius: 16px;
+  padding: 12px 13px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.28), transparent 32%),
+    linear-gradient(135deg, #7c3aed, #a855f7);
   color: #ffffff;
-  font-size: 12.5px;
+  font-size: 12.7px;
   font-weight: 950;
   cursor: not-allowed;
-  opacity: 0.68;
+  opacity: 0.72;
+  box-shadow: 0 16px 34px rgba(124, 58, 237, 0.2);
 }
 
 .upgrade-note {
@@ -2161,96 +2228,6 @@ button:disabled {
   line-height: 1.4;
   color: #6b7280;
   font-weight: 650;
-}
-
-/* =========================
-   Account upgrade CTA
-========================= */
-
-.account-upgrade-btn {
-  width: 100%;
-  margin: 0 0 12px;
-  border: 0;
-  border-radius: 15px;
-  padding: 11px 12px;
-  background: linear-gradient(135deg, #7c3aed, #a855f7);
-  color: #ffffff;
-  font-size: 12.5px;
-  font-weight: 950;
-  cursor: pointer;
-  box-shadow: 0 14px 30px rgba(124, 58, 237, 0.22);
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease;
-}
-
-.account-upgrade-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 18px 36px rgba(124, 58, 237, 0.3);
-}
-
-/* =========================
-   Subscription Page
-========================= */
-
-.subscription-page {
-  padding-bottom: 18px;
-}
-
-.subscription-page-header {
-  margin: 10px 0 12px;
-  display: grid;
-  gap: 12px;
-}
-
-.subscription-back-btn {
-  justify-self: flex-start;
-  border: 1px solid rgba(124, 58, 237, 0.16);
-  border-radius: 999px;
-  padding: 8px 12px;
-  background: #ffffff;
-  color: #6d28d9;
-  font-size: 12px;
-  font-weight: 900;
-  cursor: pointer;
-  box-shadow: 0 10px 24px rgba(124, 58, 237, 0.08);
-}
-
-.subscription-kicker {
-  margin: 0 0 5px;
-  font-size: 10px;
-  font-weight: 850;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #6d28d9;
-}
-
-.subscription-title {
-  margin: 0;
-  font-size: 24px;
-  line-height: 1.05;
-  font-weight: 950;
-  color: #111827;
-}
-
-.subscription-subtitle {
-  margin: 0 0 14px;
-  font-size: 12.5px;
-  line-height: 1.45;
-  font-weight: 650;
-  color: #6b7280;
-}
-
-.upgrade-panel.page-mode {
-  margin-top: 0;
-}
-
-.upgrade-panel.page-mode .upgrade-panel-toggle {
-  cursor: default;
-}
-
-.upgrade-panel.page-mode .upgrade-mini-summary {
-  display: none;
 }
 
 /* === SETUP CHECKLIST === */

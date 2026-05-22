@@ -99,6 +99,7 @@ function App() {
     isPlansLoading,
     isPreviewLoading,
     generatePreview,
+    previewError,
   } = useSubscriptionPreview({
     showBanner,
     showToast,
@@ -315,6 +316,7 @@ function App() {
               });
             }}
             preview={preview}
+            previewError={previewError}
             isPlansLoading={isPlansLoading}
             isPreviewLoading={isPreviewLoading}
           />
