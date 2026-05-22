@@ -32,6 +32,8 @@ import useTemplates from "../hooks/useTemplates";
 import useEmailDraft from "../hooks/useEmailDraft";
 import useActiveRow from "../hooks/useActiveRow";
 import useWorkbookSync from "../hooks/useWorkbookSync";
+import useAccount from "../hooks/useAccount";
+import useUsageCredits from "../hooks/useUsageCredits";
 
 // Constants
 import { MAPPING_FIELDS } from "../constants/mappingFields";
@@ -59,6 +61,29 @@ function App() {
   const { banner, toast, showBanner, showToast, clearBanner, clearToast } = useNotifications();
 
   const { activityLog, addActivity, clearActivityLog } = useActivityLog();
+
+  const {
+    user,
+    isAuthenticated,
+    isAccountLoading,
+    login,
+    register,
+    logout,
+    sendForgotPasswordOtp,
+    resetPasswordWithOtp,
+  } = useAccount({
+    showToast,
+    showBanner,
+    addActivity,
+  });
+
+  const { usage, isUsageLoading, loadUsage, ensureCreditsAvailable, consumeAutomationCredit } =
+    useUsageCredits({
+      isAuthenticated,
+      showToast,
+      showBanner,
+      addActivity,
+    });
 
   const [showOnboarding, setShowOnboarding] = useState(true);
   const [selectedWorkflowPreset, setSelectedWorkflowPreset] = useState("followup");
@@ -345,7 +370,21 @@ function App() {
           onSyncWorkbook={() => syncWorkbookChanges({ manual: true })}
           onRefreshTables={loadTables}
           onReadRow={detectActiveRow}
-          onOpenOutlookDraft={handleOpenOutlookWebDraft}
+          onOpenOutlookDraft={async () => {
+            const hasCredits = await ensureCreditsAvailable({ creditsRequired: 1 });
+
+            if (!hasCredits) return;
+
+            await handleOpenOutlookWebDraft();
+
+            await consumeAutomationCredit({
+              metadata: {
+                selectedTable,
+                rowIndex,
+                recipientEmail: rowData?.recipientEmail || null,
+              },
+            });
+          }}
           isDraftReady={isDraftReady}
         />
 
