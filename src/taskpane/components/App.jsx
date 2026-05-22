@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 
-import { getPlans } from "../services/api/plansApi";
-
 // Common Components
 import Toast from "./common/Toast";
 import Banner from "./common/Banner";
@@ -22,6 +20,8 @@ import TemplateEditorSection from "./sections/TemplateEditorSection";
 import OnboardingScreen from "./layout/OnboardingScreen";
 import AppHeader from "./layout/AppHeader";
 import AppFooter from "./layout/AppFooter";
+
+import CreditsBadge from "./account/CreditsBadge";
 
 // Hooks
 import useNotifications from "../hooks/useNotifications";
@@ -211,20 +211,6 @@ function App() {
     addActivity,
   });
 
-  // TEMP API TEST - remove after testing
-  async function testBackendConnection() {
-    try {
-      const { getPlans } = await import("../services/api/plansApi");
-      const plans = await getPlans();
-
-      console.log("Backend plans:", plans);
-      showToast("success", "Backend connected", `${plans.length} plans loaded.`);
-    } catch (error) {
-      console.error("Backend test failed:", error);
-      showToast("error", "Backend failed", error.message);
-    }
-  }
-
   function handleCompleteOnboarding() {
     setShowOnboarding(false);
 
@@ -264,9 +250,13 @@ function App() {
 
       <AppHeader onRefreshTables={loadTables} />
 
-      <button className="btn-outline" onClick={testBackendConnection}>
-        Test Backend
-      </button>
+      <CreditsBadge
+        usage={usage}
+        isAuthenticated={isAuthenticated}
+        user={user}
+        isLoading={isUsageLoading}
+        onRefresh={loadUsage}
+      />
 
       <Toast toast={toast} onClose={clearToast} />
 
