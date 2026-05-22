@@ -41,6 +41,33 @@ export function getGuestDeviceId() {
   return guestDeviceId;
 }
 
+function formatFieldName(fieldName) {
+  const labels = {
+    email: "Email",
+    password: "Password",
+    fullName: "Name",
+    newPassword: "New password",
+    otp: "OTP",
+  };
+
+  return labels[fieldName] || fieldName;
+}
+
+function getApiErrorMessage(data) {
+  if (Array.isArray(data?.errors) && data.errors.length > 0) {
+    return data.errors
+      .map((error) => {
+        const fieldName = error.path?.split(".").pop();
+        const label = fieldName ? formatFieldName(fieldName) : null;
+
+        return label ? `${label}: ${error.message}` : error.message;
+      })
+      .join(", ");
+  }
+
+  return data?.message || "API request failed.";
+}
+
 export async function apiRequest(endpoint, options = {}) {
   const token = getAccessToken();
 
@@ -61,11 +88,12 @@ export async function apiRequest(endpoint, options = {}) {
   const data = await response.json().catch(() => null);
 
   if (!response.ok) {
-    const message = data?.message || "API request failed.";
+    const message = getApiErrorMessage(data);
 
     const error = new Error(message);
     error.status = response.status;
     error.data = data;
+    error.validationErrors = data?.errors || [];
 
     throw error;
   }

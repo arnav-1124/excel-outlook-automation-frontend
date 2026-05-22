@@ -22,6 +22,7 @@ import AppHeader from "./layout/AppHeader";
 import AppFooter from "./layout/AppFooter";
 
 import CreditsBadge from "./account/CreditsBadge";
+import AccountPanel from "./account/AccountPanel";
 
 // Hooks
 import useNotifications from "../hooks/useNotifications";
@@ -256,6 +257,19 @@ function App() {
         user={user}
         isLoading={isUsageLoading}
         onRefresh={loadUsage}
+      />
+
+      <AccountPanel
+        user={user}
+        isAuthenticated={isAuthenticated}
+        isAccountLoading={isAccountLoading}
+        usage={usage}
+        onLogin={login}
+        onRegister={register}
+        onLogout={logout}
+        onForgotPassword={sendForgotPasswordOtp}
+        onResetPassword={resetPasswordWithOtp}
+        onRefreshUsage={loadUsage}
       />
 
       <Toast toast={toast} onClose={clearToast} />

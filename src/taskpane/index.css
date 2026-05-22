@@ -1187,52 +1187,66 @@ button:disabled {
   color: var(--text-secondary);
 }
 
+.onboarding-footer-note {
+  margin: 14px 4px 0;
+  text-align: center;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
 /* =========================
-   Credits Badge
+   Credits Badge - Compact
 ========================= */
 
 .credits-badge-card {
-  margin: 14px 0 18px;
-  padding: 16px;
-  border-radius: 20px;
+  margin: 12px 0 12px;
+  padding: 12px;
+  border-radius: 18px;
   border: 1px solid rgba(240, 90, 0, 0.16);
   background:
-    radial-gradient(circle at top left, rgba(240, 90, 0, 0.14), transparent 34%),
-    linear-gradient(135deg, #ffffff 0%, #fffaf6 45%, #ffffff 100%);
-  box-shadow: 0 16px 42px rgba(31, 41, 55, 0.08);
+    radial-gradient(circle at top left, rgba(240, 90, 0, 0.12), transparent 34%),
+    linear-gradient(135deg, #ffffff 0%, #fffaf6 48%, #ffffff 100%);
+  box-shadow: 0 14px 34px rgba(31, 41, 55, 0.07);
 }
 
-.credits-badge-top {
+.credits-compact-row {
+  width: 100%;
+  border: 0;
+  padding: 0;
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 14px;
+  text-align: left;
+  cursor: pointer;
 }
 
 .credits-badge-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 11px;
   min-width: 0;
 }
 
 .credits-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: 14px;
+  width: 34px;
+  height: 34px;
+  border-radius: 13px;
   display: grid;
   place-items: center;
   flex: 0 0 auto;
   color: #ffffff;
-  font-size: 15px;
+  font-size: 13px;
   background: linear-gradient(135deg, #f05a00, #ff8a3d);
-  box-shadow: 0 12px 26px rgba(240, 90, 0, 0.28);
+  box-shadow: 0 10px 22px rgba(240, 90, 0, 0.24);
 }
 
 .credits-kicker {
-  margin: 0 0 3px;
-  font-size: 10px;
-  font-weight: 800;
+  margin: 0 0 2px;
+  font-size: 9.5px;
+  font-weight: 850;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: #9a3412;
@@ -1240,37 +1254,35 @@ button:disabled {
 
 .credits-title {
   margin: 0;
-  font-size: 22px;
+  font-size: 18px;
   line-height: 1.1;
-  font-weight: 900;
+  font-weight: 950;
   color: #111827;
 }
 
-.credits-refresh-btn {
-  width: 34px;
-  height: 34px;
-  border-radius: 12px;
-  border: 1px solid rgba(240, 90, 0, 0.16);
-  background: rgba(255, 255, 255, 0.82);
+.credits-compact-right {
+  display: flex;
+  align-items: center;
+  gap: 9px;
   color: #9a3412;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 800;
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease,
-    border-color 0.15s ease;
+  font-size: 12px;
+  font-weight: 900;
+  white-space: nowrap;
 }
 
-.credits-refresh-btn:hover {
-  transform: translateY(-1px);
-  border-color: rgba(240, 90, 0, 0.34);
-  box-shadow: 0 10px 24px rgba(240, 90, 0, 0.12);
+.credits-collapse-icon,
+.account-collapse-icon {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(240, 90, 0, 0.1);
 }
 
 .credits-progress-track {
-  margin-top: 14px;
-  height: 8px;
+  margin-top: 11px;
+  height: 7px;
   border-radius: 999px;
   background: rgba(240, 90, 0, 0.1);
   overflow: hidden;
@@ -1283,13 +1295,16 @@ button:disabled {
   transition: width 0.25s ease;
 }
 
+.credits-expanded-content {
+  margin-top: 10px;
+}
+
 .credits-badge-meta {
-  margin-top: 11px;
   display: flex;
   justify-content: space-between;
   gap: 12px;
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 850;
   color: #374151;
 }
 
@@ -1307,12 +1322,480 @@ button:disabled {
   color: #6b7280;
 }
 
-.onboarding-footer-note {
-  margin: 14px 4px 0;
-  text-align: center;
+.credits-refresh-btn.wide {
+  width: 100%;
+  margin-top: 10px;
+  border: 1px solid rgba(240, 90, 0, 0.18);
+  border-radius: 13px;
+  padding: 9px 10px;
+  background: #ffffff;
+  color: #9a3412;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+/* =========================
+   Account Panel
+========================= */
+
+.account-panel {
+  margin: 0 0 18px;
+  padding: 16px;
+  border-radius: 22px;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  background:
+    radial-gradient(circle at top right, rgba(29, 95, 168, 0.12), transparent 32%),
+    linear-gradient(135deg, #ffffff 0%, #f8fbff 48%, #ffffff 100%);
+  box-shadow: 0 18px 44px rgba(31, 41, 55, 0.08);
+}
+
+.account-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 13px;
+}
+
+.account-kicker {
+  margin: 0 0 3px;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: #1d5fa8;
+}
+
+.account-title {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.15;
+  font-weight: 900;
+  color: #111827;
+}
+
+.account-status-pill {
+  padding: 6px 9px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.account-status-pill.guest {
+  color: #9a3412;
+  background: #fff4e8;
+  border: 1px solid #ffd7b5;
+}
+
+.account-status-pill.signed-in {
+  color: #047857;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+}
+
+.account-profile-card {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(29, 95, 168, 0.12);
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.account-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 15px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  font-weight: 900;
+  color: #ffffff;
+  background: linear-gradient(135deg, #1d5fa8, #60a5fa);
+  box-shadow: 0 12px 24px rgba(29, 95, 168, 0.18);
+}
+
+.account-profile-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.account-profile-name {
+  font-size: 13px;
+  font-weight: 900;
+  color: #111827;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-profile-email {
+  margin-top: 2px;
+  font-size: 11.5px;
+  font-weight: 650;
+  color: #6b7280;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-link-btn,
+.account-text-btn {
+  border: 0;
+  background: transparent;
+  color: #1d5fa8;
+  font-size: 11.5px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.account-link-btn:hover,
+.account-text-btn:hover {
+  text-decoration: underline;
+}
+
+.account-credit-card {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px;
+  margin-bottom: 12px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #111827, #1f2937);
+  color: #ffffff;
+  box-shadow: 0 16px 34px rgba(17, 24, 39, 0.18);
+}
+
+.account-credit-label {
+  margin: 0 0 3px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.66);
+}
+
+.account-credit-value {
+  margin: 0;
+  font-size: 27px;
+  line-height: 1;
+  font-weight: 950;
+}
+
+.account-credit-meta {
+  display: grid;
+  gap: 3px;
+  text-align: right;
   font-size: 11px;
-  line-height: 1.5;
-  color: var(--text-muted);
+  font-weight: 750;
+  color: rgba(255, 255, 255, 0.74);
+}
+
+.account-guest-note,
+.account-form-intro {
+  margin-bottom: 12px;
+  padding: 10px 11px;
+  border-radius: 15px;
+  background: rgba(238, 244, 255, 0.86);
+  border: 1px solid #bad1f7;
+  color: #1d4ed8;
+  font-size: 11.8px;
+  line-height: 1.45;
+  font-weight: 650;
+}
+
+.account-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 4px;
+  margin-bottom: 12px;
+  border-radius: 16px;
+  background: rgba(17, 24, 39, 0.05);
+}
+
+.account-tab {
+  border: 0;
+  border-radius: 13px;
+  padding: 9px 10px;
+  background: transparent;
+  color: #6b7280;
+  font-size: 11.7px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.account-tab.active {
+  background: #ffffff;
+  color: #111827;
+  box-shadow: 0 10px 22px rgba(17, 24, 39, 0.08);
+}
+
+.account-form {
+  display: grid;
+  gap: 10px;
+}
+
+.account-field {
+  display: grid;
+  gap: 5px;
+}
+
+.account-field span {
+  font-size: 11px;
+  font-weight: 850;
+  color: #374151;
+}
+
+.account-field input {
+  width: 100%;
+  border: 1px solid rgba(17, 24, 39, 0.1);
+  border-radius: 14px;
+  padding: 10px 11px;
+  font-size: 12.5px;
+  font-weight: 500z;
+  outline: none;
+  color: #111827;
+  background: rgba(255, 255, 255, 0.92);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.account-field input:focus {
+  border-color: rgba(29, 95, 168, 0.48);
+  box-shadow: 0 0 0 3px rgba(29, 95, 168, 0.12);
+}
+
+.account-primary-btn {
+  width: 100%;
+  border: 0;
+  border-radius: 15px;
+  padding: 11px 12px;
+  background: linear-gradient(135deg, #1d5fa8, #2563eb);
+  color: #ffffff;
+  font-size: 12.5px;
+  font-weight: 950;
+  cursor: pointer;
+  box-shadow: 0 14px 30px rgba(37, 99, 235, 0.22);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.account-primary-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 36px rgba(37, 99, 235, 0.28);
+}
+
+.account-primary-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.account-text-btn {
+  justify-self: center;
+  padding: 3px 6px;
+}
+
+/* Account collapsed mode */
+
+.account-panel-toggle {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  text-align: left;
+  cursor: pointer;
+}
+
+.account-toggle-left {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+
+.account-toggle-icon {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border-radius: 13px;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  background: linear-gradient(135deg, #1d5fa8, #60a5fa);
+  box-shadow: 0 10px 22px rgba(29, 95, 168, 0.18);
+}
+
+.account-toggle-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.account-mini-summary {
+  margin-top: 10px;
+  padding: 10px 11px;
+  border-radius: 15px;
+  background: rgba(238, 244, 255, 0.72);
+  border: 1px solid rgba(29, 95, 168, 0.14);
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 11.5px;
+  font-weight: 850;
+  color: #1d4ed8;
+}
+
+.account-panel.collapsed {
+  padding: 13px;
+}
+
+/* =========================
+   Account/Credits spacing polish
+========================= */
+
+.credits-badge-card {
+  margin: 12px 0 14px;
+}
+
+.account-panel {
+  margin: 0 0 18px;
+}
+
+.account-panel.expanded {
+  padding: 14px;
+}
+
+.account-panel-toggle {
+  align-items: center;
+}
+
+.account-toggle-left {
+  align-items: center;
+}
+
+.account-toggle-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 14px;
+  font-size: 14px;
+  transform: translateY(0);
+}
+
+.account-toggle-right {
+  align-items: center;
+}
+
+.account-title {
+  font-size: 20px;
+  line-height: 1.08;
+}
+
+.account-kicker {
+  margin-bottom: 4px;
+}
+
+/* =========================
+   Account panel final alignment polish
+========================= */
+
+.account-collapse-icon,
+.credits-collapse-icon {
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  min-height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.account-collapse-icon {
+  background: #fff1e8;
+  color: #9a3412;
+  transform: translateY(0);
+}
+
+.account-panel.expanded .account-profile-card,
+.account-panel.expanded .account-credit-card,
+.account-panel.expanded .account-guest-note,
+.account-panel.expanded .account-tabs,
+.account-panel.expanded .account-form {
+  margin-top: 14px;
+}
+
+.account-panel.expanded .account-credit-card {
+  margin-top: 18px;
+}
+
+.account-panel-toggle {
+  min-height: 44px;
+}
+
+.account-toggle-left {
+  align-items: center;
+}
+
+.account-toggle-right {
+  align-items: center;
+}
+
+/* =========================
+   Perfect centered chevron icons
+========================= */
+
+.account-collapse-icon,
+.credits-collapse-icon {
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  min-height: 26px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 999px;
+  background: #fff1e8;
+  color: #9a3412;
+  line-height: 1;
+  flex: 0 0 auto;
+}
+
+.account-collapse-icon::before,
+.credits-collapse-icon::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg) translate(-1px, -1px);
+  transition: transform 0.18s ease;
+}
+
+.account-collapse-icon.open::before,
+.credits-collapse-icon.open::before {
+  transform: rotate(225deg) translate(-1px, -1px);
 }
 
 /* === SETUP CHECKLIST === */
