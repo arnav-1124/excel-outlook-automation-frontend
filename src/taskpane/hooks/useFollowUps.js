@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import {
+  createFollowUp,
   getFollowUps,
   getFollowUpSummary,
   resolveFollowUp,
@@ -60,6 +61,41 @@ function useFollowUps({ isAuthenticated, showToast, showBanner, addActivity }) {
       setFollowUpsError(error.message || "Could not load follow-ups.");
       showBanner("error", error.message || "Could not load follow-ups.");
       return [];
+    } finally {
+      setIsFollowUpsLoading(false);
+    }
+  }
+
+  async function createFollowUpItem(payload) {
+    if (!isAuthenticated) {
+      const error = new Error("Sign in to save follow-ups and receive reminders.");
+      showBanner("info", error.message);
+      throw error;
+    }
+
+    try {
+      setIsFollowUpsLoading(true);
+      setFollowUpsError("");
+
+      const created = await createFollowUp(payload);
+
+      showToast("success", "Follow-up created", "This reminder is now being tracked.");
+
+      addActivity("success", "Follow-up created from Excel row.");
+
+      await loadFollowUpSummary();
+      await loadFollowUps({
+        bucket: activeFollowUpBucket,
+      });
+
+      return created;
+    } catch (error) {
+      console.error("Create follow-up failed:", error);
+
+      const message = error.message || "Could not create follow-up.";
+      setFollowUpsError(message);
+
+      throw new Error(message);
     } finally {
       setIsFollowUpsLoading(false);
     }
@@ -138,6 +174,7 @@ function useFollowUps({ isAuthenticated, showToast, showBanner, addActivity }) {
     loadFollowUpSummary,
     setActiveFollowUpBucket,
 
+    createFollowUpItem,
     markFollowUpResolved,
     snoozeFollowUpItem,
     reopenFollowUpItem,

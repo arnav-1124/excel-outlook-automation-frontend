@@ -1,5 +1,7 @@
 import React from "react";
 
+import FollowUpCreatePanel from "./FollowUpCreatePanel";
+
 function formatDate(dateValue) {
   if (!dateValue) return "No date";
 
@@ -32,6 +34,13 @@ function FollowUpDashboard({
   onSnooze,
   onReopen,
   onCancel,
+  isCreateOpen,
+  onCloseCreate,
+  rowData,
+  mappings,
+  selectedTable,
+  rowIndex,
+  onCreateFollowUp,
 }) {
   const buckets = [
     { key: "dueToday", label: "Due", count: summary?.dueToday || 0 },
@@ -81,6 +90,17 @@ function FollowUpDashboard({
           </div>
         </div>
       </div>
+
+      <FollowUpCreatePanel
+        isOpen={isCreateOpen}
+        onClose={onCloseCreate}
+        rowData={rowData}
+        mappings={mappings}
+        selectedTable={selectedTable}
+        rowIndex={rowIndex}
+        isSaving={isLoading}
+        onSave={onCreateFollowUp}
+      />
 
       <div className="followup-summary-grid">
         <div className="followup-summary-card urgent">
@@ -165,20 +185,36 @@ function FollowUpDashboard({
 
               <div className="followup-actions">
                 {item.status === "RESOLVED" ? (
-                  <button type="button" className="followup-secondary-btn" onClick={() => onReopen(item.id)}>
+                  <button
+                    type="button"
+                    className="followup-secondary-btn"
+                    onClick={() => onReopen(item.id)}
+                  >
                     Reopen
                   </button>
                 ) : (
                   <>
-                    <button type="button" className="followup-success-btn" onClick={() => onResolve(item.id)}>
+                    <button
+                      type="button"
+                      className="followup-success-btn"
+                      onClick={() => onResolve(item.id)}
+                    >
                       Resolve
                     </button>
 
-                    <button type="button" className="followup-secondary-btn" onClick={() => onSnooze(item.id, 2)}>
+                    <button
+                      type="button"
+                      className="followup-secondary-btn"
+                      onClick={() => onSnooze(item.id, 2)}
+                    >
                       Snooze 2d
                     </button>
 
-                    <button type="button" className="followup-danger-btn" onClick={() => onCancel(item.id)}>
+                    <button
+                      type="button"
+                      className="followup-danger-btn"
+                      onClick={() => onCancel(item.id)}
+                    >
                       Cancel
                     </button>
                   </>

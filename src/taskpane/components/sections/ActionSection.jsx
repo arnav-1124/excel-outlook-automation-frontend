@@ -4,6 +4,7 @@ function ActionSection({
   onSyncWorkbook,
   onRefreshTables,
   onReadRow,
+  onCreateFollowUp,
   onOpenOutlookDraft,
   isDraftReady,
 }) {
@@ -27,7 +28,15 @@ function ActionSection({
           Read Row
         </button>
 
-        <button className="btn-primary btn-lg" onClick={onOpenOutlookDraft} disabled={!isDraftReady}>
+        <button className="btn-outline" type="button" onClick={onCreateFollowUp}>
+          Create follow-up reminder
+        </button>
+
+        <button
+          className="btn-primary btn-lg"
+          onClick={onOpenOutlookDraft}
+          disabled={!isDraftReady}
+        >
           Open Outlook Web Draft
         </button>
       </div>

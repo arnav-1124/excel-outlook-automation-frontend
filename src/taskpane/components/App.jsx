@@ -26,6 +26,7 @@ import AccountPanel from "./account/AccountPanel";
 import SubscriptionPage from "./account/SubscriptionPage";
 
 import FollowUpDashboard from "./followups/FollowUpDashboard";
+import FollowUpCreatePanel from "./followups/FollowUpCreatePanel";
 
 // Hooks
 import useNotifications from "../hooks/useNotifications";
@@ -129,6 +130,7 @@ function App() {
     isFollowUpsLoading,
     followUpsError,
     loadFollowUps,
+    createFollowUpItem,
     markFollowUpResolved,
     snoozeFollowUpItem,
     reopenFollowUpItem,
@@ -164,6 +166,7 @@ function App() {
   const [appView, setAppView] = useState("main");
 
   const [accountOpenRequestKey, setAccountOpenRequestKey] = useState(0);
+  const [isFollowUpCreateOpen, setIsFollowUpCreateOpen] = useState(false);
 
   const {
     subjectTemplate,
@@ -330,6 +333,34 @@ function App() {
     showBanner("info", "Sign in or create an account to save follow-ups and receive reminders.");
   }
 
+  function handleOpenFollowUpCreate() {
+    if (!isAuthenticated) {
+      openAccountForFollowUps();
+      return;
+    }
+
+    if (!rowData) {
+      showBanner("warning", "Select an Excel row first before creating a follow-up.");
+      return;
+    }
+
+    setIsFollowUpCreateOpen(true);
+    navigateToView("followups");
+
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        const createPanel = document.querySelector(".followup-create-card");
+
+        if (createPanel) {
+          createPanel.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }
+      }, 160);
+    });
+  }
+
   function renderValue(value) {
     const displayValue = renderDisplayValue(value);
 
@@ -461,6 +492,13 @@ function App() {
             onSnooze={snoozeFollowUpItem}
             onReopen={reopenFollowUpItem}
             onCancel={cancelFollowUpItem}
+            isCreateOpen={isFollowUpCreateOpen}
+            onCloseCreate={() => setIsFollowUpCreateOpen(false)}
+            rowData={rowData}
+            mappings={mappings}
+            selectedTable={selectedTable}
+            rowIndex={rowIndex}
+            onCreateFollowUp={createFollowUpItem}
           />
         ) : (
           <>
@@ -561,6 +599,7 @@ function App() {
               onSyncWorkbook={() => syncWorkbookChanges({ manual: true })}
               onRefreshTables={loadTables}
               onReadRow={detectActiveRow}
+              onCreateFollowUp={handleOpenFollowUpCreate}
               onOpenOutlookDraft={async () => {
                 const hasCredits = await ensureCreditsAvailable({ creditsRequired: 1 });
 
