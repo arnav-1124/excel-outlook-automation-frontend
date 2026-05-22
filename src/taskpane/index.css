@@ -2883,3 +2883,283 @@ button {
 .upgrade-panel-toggle:active {
   transform: scale(0.992);
 }
+
+/* =========================
+   Admin Coupon Manager
+========================= */
+
+.admin-form-card {
+  padding: 14px;
+  margin-bottom: 12px;
+  border-radius: 22px;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  background:
+    radial-gradient(circle at top right, rgba(17, 24, 39, 0.06), transparent 34%), #ffffff;
+  box-shadow: 0 16px 36px rgba(17, 24, 39, 0.06);
+}
+
+.admin-form-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.admin-form-header h3 {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.15;
+  font-weight: 950;
+  color: #111827;
+}
+
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.admin-select {
+  width: 100%;
+  border: 1px solid rgba(17, 24, 39, 0.1);
+  border-radius: 14px;
+  padding: 10px 11px;
+  font-size: 12.5px;
+  font-weight: 650;
+  outline: none;
+  color: #111827;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.admin-select:focus {
+  border-color: rgba(17, 24, 39, 0.36);
+  box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
+}
+
+.admin-plan-selector {
+  margin: 10px 0 12px;
+  padding: 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  background: #f9fafb;
+}
+
+.admin-plan-selector-header {
+  display: grid;
+  gap: 3px;
+  margin-bottom: 10px;
+}
+
+.admin-plan-selector-header span {
+  font-size: 11px;
+  font-weight: 900;
+  color: #374151;
+}
+
+.admin-plan-selector-header small {
+  font-size: 10.8px;
+  color: #6b7280;
+  font-weight: 650;
+}
+
+.admin-plan-chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.admin-plan-chip {
+  border: 1px solid rgba(17, 24, 39, 0.1);
+  border-radius: 999px;
+  padding: 7px 10px;
+  background: #ffffff;
+  color: #374151;
+  font-size: 11.2px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.admin-plan-chip.selected {
+  background: #111827;
+  color: #ffffff;
+  border-color: #111827;
+}
+
+.admin-primary-btn,
+.admin-secondary-btn,
+.admin-danger-btn,
+.admin-success-btn {
+  border: 0;
+  border-radius: 14px;
+  padding: 9px 11px;
+  font-size: 11.8px;
+  font-weight: 950;
+  cursor: pointer;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.15s ease,
+    filter 0.15s ease;
+}
+
+.admin-primary-btn {
+  width: 100%;
+  margin-top: 4px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #111827, #374151);
+  box-shadow: 0 14px 28px rgba(17, 24, 39, 0.16);
+}
+
+.admin-primary-btn:hover:not(:disabled),
+.admin-secondary-btn:hover,
+.admin-danger-btn:hover,
+.admin-success-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+}
+
+.admin-primary-btn:active,
+.admin-secondary-btn:active,
+.admin-danger-btn:active,
+.admin-success-btn:active,
+.admin-plan-chip:active {
+  transform: scale(0.985);
+}
+
+.admin-secondary-btn {
+  color: #111827;
+  background: #f3f4f6;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+}
+
+.admin-secondary-btn.compact {
+  padding: 7px 9px;
+  white-space: nowrap;
+}
+
+.admin-danger-btn {
+  color: #991b1b;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+}
+
+.admin-success-btn {
+  color: #047857;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+}
+
+.admin-coupon-list {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-coupon-card {
+  padding: 13px;
+  border-radius: 18px;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  background: #ffffff;
+  box-shadow: 0 12px 26px rgba(17, 24, 39, 0.045);
+}
+
+.admin-coupon-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.admin-coupon-code {
+  font-size: 14px;
+  font-weight: 950;
+  color: #111827;
+  letter-spacing: 0.02em;
+}
+
+.admin-coupon-description {
+  margin: 4px 0 0;
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: #6b7280;
+  font-weight: 650;
+}
+
+.admin-status-badge {
+  padding: 5px 7px;
+  border-radius: 999px;
+  font-size: 9.5px;
+  font-weight: 950;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.admin-status-badge.active {
+  color: #047857;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+}
+
+.admin-status-badge.inactive {
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+}
+
+.admin-status-badge.expired {
+  color: #991b1b;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+}
+
+.admin-coupon-grid {
+  margin-top: 11px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.admin-coupon-grid div {
+  padding: 9px 10px;
+  border-radius: 14px;
+  background: #f9fafb;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.admin-coupon-grid span {
+  font-size: 10.8px;
+  font-weight: 800;
+  color: #6b7280;
+}
+
+.admin-coupon-grid strong {
+  font-size: 11.2px;
+  font-weight: 950;
+  color: #111827;
+  text-align: right;
+}
+
+.admin-coupon-actions {
+  margin-top: 11px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.admin-empty-state {
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px dashed rgba(17, 24, 39, 0.2);
+  background: #f9fafb;
+  display: grid;
+  gap: 5px;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.admin-empty-state strong {
+  color: #111827;
+  font-size: 13px;
+}

@@ -89,8 +89,15 @@ function App() {
 
   const {
     coupons: adminCoupons,
+    couponForm,
+    setCouponForm,
+    editingCouponId,
     isAdminLoading,
     adminError,
+    resetCouponForm,
+    startEditingCoupon,
+    saveCoupon,
+    changeCouponStatus,
   } = useAdminCoupons({
     isAdmin,
     showToast,
@@ -361,9 +368,17 @@ function App() {
         ) : appView === "admin" ? (
           <AdminPage
             onBack={() => navigateToView("main")}
+            plans={plans}
             coupons={adminCoupons}
+            couponForm={couponForm}
+            setCouponForm={setCouponForm}
+            editingCouponId={editingCouponId}
             isLoading={isAdminLoading}
             error={adminError}
+            onSaveCoupon={saveCoupon}
+            onResetCouponForm={resetCouponForm}
+            onEditCoupon={startEditingCoupon}
+            onChangeCouponStatus={changeCouponStatus}
           />
         ) : (
           <>

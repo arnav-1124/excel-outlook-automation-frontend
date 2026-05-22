@@ -1,6 +1,22 @@
 import React from "react";
 
-function AdminPage({ onBack, coupons, isLoading, error }) {
+import AdminCouponForm from "./AdminCouponForm";
+import AdminCouponList from "./AdminCouponList";
+
+function AdminPage({
+  onBack,
+  plans,
+  coupons,
+  couponForm,
+  setCouponForm,
+  editingCouponId,
+  isLoading,
+  error,
+  onSaveCoupon,
+  onResetCouponForm,
+  onEditCoupon,
+  onChangeCouponStatus,
+}) {
   const activeCoupons = coupons.filter((coupon) => coupon.status === "ACTIVE").length;
   const inactiveCoupons = coupons.length - activeCoupons;
 
@@ -41,6 +57,17 @@ function AdminPage({ onBack, coupons, isLoading, error }) {
         </div>
       </div>
 
+      <AdminCouponForm
+        form={couponForm}
+        setForm={setCouponForm}
+        editingCouponId={editingCouponId}
+        plans={plans}
+        isLoading={isLoading}
+        error={error}
+        onSave={onSaveCoupon}
+        onCancel={onResetCouponForm}
+      />
+
       <section className="admin-section-card">
         <div className="admin-section-header">
           <div>
@@ -53,15 +80,12 @@ function AdminPage({ onBack, coupons, isLoading, error }) {
           </span>
         </div>
 
-        {error && <div className="admin-local-error">{error}</div>}
-
-        <div className="admin-placeholder-card">
-          <h3>Coupon manager UI comes next</h3>
-          <p>
-            The admin shell is ready. Next we will add the create/edit form and coupon list with
-            status controls.
-          </p>
-        </div>
+        <AdminCouponList
+          coupons={coupons}
+          isLoading={isLoading}
+          onEditCoupon={onEditCoupon}
+          onChangeStatus={onChangeCouponStatus}
+        />
       </section>
     </div>
   );
