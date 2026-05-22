@@ -283,6 +283,26 @@ function App() {
     return displayValue;
   }
 
+  function navigateToView(view) {
+    setAppView(view);
+
+    requestAnimationFrame(() => {
+      const mainElement = document.querySelector(".app-main");
+
+      if (mainElement) {
+        mainElement.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      } else {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }
+    });
+  }
+
   return (
     <div className="app">
       <OnboardingScreen showOnboarding={showOnboarding} onComplete={handleCompleteOnboarding} />
@@ -308,8 +328,8 @@ function App() {
         onForgotPassword={sendForgotPasswordOtp}
         onResetPassword={resetPasswordWithOtp}
         onRefreshUsage={loadUsage}
-        onOpenUpgrade={() => setAppView("subscription")}
-        onOpenAdmin={() => setAppView("admin")}
+        onOpenUpgrade={() => navigateToView("subscription")}
+        onOpenAdmin={() => navigateToView("admin")}
       />
 
       <Toast toast={toast} onClose={clearToast} />
@@ -319,7 +339,7 @@ function App() {
       <main className="app-main">
         {appView === "subscription" ? (
           <SubscriptionPage
-            onBack={() => setAppView("main")}
+            onBack={() => navigateToView("main")}
             plans={plans}
             selectedPlanCode={selectedPlanCode}
             onSelectPlan={setSelectedPlanCode}
@@ -340,7 +360,7 @@ function App() {
           />
         ) : appView === "admin" ? (
           <AdminPage
-            onBack={() => setAppView("main")}
+            onBack={() => navigateToView("main")}
             coupons={adminCoupons}
             isLoading={isAdminLoading}
             error={adminError}

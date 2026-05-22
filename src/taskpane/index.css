@@ -71,6 +71,37 @@ button:disabled {
   cursor: not-allowed;
 }
 
+/* =========================
+   Button interaction polish
+========================= */
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-primary:active,
+.btn-outline:active,
+.account-upgrade-btn:active,
+.account-admin-btn:active,
+.account-primary-btn:active,
+.upgrade-primary-btn:active,
+.coupon-apply-btn:active,
+.subscription-back-btn:active,
+.admin-back-btn:active,
+.plan-card:active {
+  transform: scale(0.985);
+}
+
+.account-upgrade-btn,
+.account-admin-btn,
+.account-primary-btn,
+.coupon-apply-btn,
+.subscription-back-btn,
+.admin-back-btn,
+.plan-card {
+  will-change: transform;
+}
+
 /* === APP SHELL === */
 
 .app {
@@ -2741,4 +2772,114 @@ button:disabled {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-muted);
+}
+
+/* =========================
+   Account CTA buttons - Upgrade and Admin Button Restyling
+========================= */
+
+.account-upgrade-btn,
+.account-admin-btn {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 0 10px;
+  border: 0;
+  border-radius: 16px;
+  padding: 11px 12px;
+  color: #ffffff;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.15s ease,
+    filter 0.15s ease;
+}
+
+.account-upgrade-btn {
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.24), transparent 32%),
+    linear-gradient(135deg, #7c3aed, #a855f7);
+  box-shadow: 0 12px 26px rgba(124, 58, 237, 0.22);
+  margin-top: 10px;
+}
+
+.account-admin-btn {
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.18), transparent 32%),
+    linear-gradient(135deg, #111827, #374151);
+  box-shadow: 0 12px 26px rgba(17, 24, 39, 0.2);
+}
+
+.account-upgrade-btn:hover,
+.account-admin-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+}
+
+.account-upgrade-btn:active,
+.account-admin-btn:active {
+  transform: translateY(0) scale(0.985);
+}
+
+.account-upgrade-btn span,
+.account-admin-btn span {
+  font-size: 12.8px;
+  line-height: 1.1;
+  font-weight: 950;
+}
+
+.account-upgrade-btn small,
+.account-admin-btn small {
+  display: block;
+  margin-top: 3px;
+  font-size: 10.8px;
+  line-height: 1.25;
+  font-weight: 750;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.account-upgrade-btn::after,
+.account-admin-btn::after {
+  content: "→";
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 950;
+}
+
+/* =========================
+   Page transition
+========================= */
+
+.subscription-page,
+.admin-page {
+  animation: page-enter 0.18s ease-out;
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.995);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* cursor/feedback to AccountPanel toggle */
+.account-panel-toggle:active,
+.credits-compact-row:active,
+.upgrade-panel-toggle:active {
+  transform: scale(0.992);
 }
