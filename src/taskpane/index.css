@@ -2230,6 +2230,223 @@ button:disabled {
   font-weight: 650;
 }
 
+/* =========================
+   Admin Console
+========================= */
+
+.account-admin-btn {
+  width: 100%;
+  margin: 0 0 12px;
+  border: 0;
+  border-radius: 17px;
+  padding: 12px 14px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.22), transparent 32%),
+    linear-gradient(135deg, #111827, #374151);
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 16px 34px rgba(17, 24, 39, 0.22);
+  display: grid;
+  gap: 3px;
+  text-align: left;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.account-admin-btn span {
+  font-size: 13px;
+  line-height: 1.1;
+  font-weight: 950;
+}
+
+.account-admin-btn small {
+  font-size: 11px;
+  line-height: 1.25;
+  font-weight: 750;
+  color: rgba(255, 255, 255, 0.74);
+}
+
+.account-admin-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 20px 40px rgba(17, 24, 39, 0.28);
+}
+
+.admin-page {
+  padding-bottom: 18px;
+}
+
+.admin-hero {
+  margin: 8px 0 14px;
+  display: grid;
+  gap: 12px;
+}
+
+.admin-back-btn {
+  justify-self: flex-start;
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: #ffffff;
+  color: #111827;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(17, 24, 39, 0.08);
+}
+
+.admin-back-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgba(17, 24, 39, 0.12);
+}
+
+.admin-hero-card {
+  padding: 16px;
+  border-radius: 24px;
+  border: 1px solid rgba(17, 24, 39, 0.1);
+  background:
+    radial-gradient(circle at top right, rgba(17, 24, 39, 0.09), transparent 34%),
+    linear-gradient(135deg, #ffffff 0%, #f9fafb 48%, #ffffff 100%);
+  box-shadow: 0 18px 44px rgba(31, 41, 55, 0.08);
+  display: flex;
+  gap: 13px;
+  align-items: flex-start;
+}
+
+.admin-hero-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 16px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  background: linear-gradient(135deg, #111827, #4b5563);
+  box-shadow: 0 14px 28px rgba(17, 24, 39, 0.22);
+}
+
+.admin-kicker,
+.admin-section-kicker {
+  margin: 0 0 5px;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #374151;
+}
+
+.admin-title {
+  margin: 0;
+  font-size: 23px;
+  line-height: 1.05;
+  font-weight: 950;
+  color: #111827;
+}
+
+.admin-subtitle {
+  margin: 8px 0 0;
+  font-size: 12.3px;
+  line-height: 1.45;
+  font-weight: 650;
+  color: #6b7280;
+}
+
+.admin-metric-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 9px;
+  margin-bottom: 12px;
+}
+
+.admin-metric-card {
+  padding: 13px;
+  border-radius: 18px;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  background: #ffffff;
+  box-shadow: 0 12px 26px rgba(17, 24, 39, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-metric-card span {
+  font-size: 11.5px;
+  color: #6b7280;
+  font-weight: 800;
+}
+
+.admin-metric-card strong {
+  font-size: 18px;
+  color: #111827;
+  font-weight: 950;
+}
+
+.admin-section-card {
+  padding: 14px;
+  border-radius: 22px;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  background: #ffffff;
+  box-shadow: 0 16px 36px rgba(17, 24, 39, 0.06);
+}
+
+.admin-section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.admin-section-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 950;
+  color: #111827;
+}
+
+.admin-section-pill {
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  color: #374151;
+  font-size: 10px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.admin-local-error {
+  margin-bottom: 10px;
+  padding: 10px 11px;
+  border-radius: 15px;
+  background: #fff0ee;
+  border: 1px solid #ffbcb4;
+  color: #cc2200;
+  font-size: 11.8px;
+  font-weight: 750;
+}
+
+.admin-placeholder-card {
+  padding: 13px;
+  border-radius: 18px;
+  border: 1px dashed rgba(17, 24, 39, 0.2);
+  background: #f9fafb;
+}
+
+.admin-placeholder-card h3 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 950;
+  color: #111827;
+}
+
+.admin-placeholder-card p {
+  margin: 6px 0 0;
+  font-size: 11.7px;
+  line-height: 1.45;
+  color: #6b7280;
+  font-weight: 650;
+}
+
 /* === SETUP CHECKLIST === */
 
 .setup-section {

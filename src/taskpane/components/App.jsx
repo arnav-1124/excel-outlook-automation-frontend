@@ -52,6 +52,10 @@ import useHeaderStore from "../store/headerStore";
 import useMappingStore from "../store/mappingStore";
 import useActiveRowStore from "../store/activeRowStore";
 
+// Admin
+import AdminPage from "./admin/AdminPage";
+import useAdminCoupons from "../hooks/useAdminCoupons";
+
 function App() {
   const { tables, selectedTable, setTables, setSelectedTable } = useTableStore();
 
@@ -78,6 +82,19 @@ function App() {
     showToast,
     showBanner,
     addActivity,
+  });
+
+  // Admin
+  const isAdmin = user?.role === "ADMIN";
+
+  const {
+    coupons: adminCoupons,
+    isAdminLoading,
+    adminError,
+  } = useAdminCoupons({
+    isAdmin,
+    showToast,
+    showBanner,
   });
 
   const { usage, isUsageLoading, loadUsage, ensureCreditsAvailable, consumeAutomationCredit } =
@@ -292,6 +309,7 @@ function App() {
         onResetPassword={resetPasswordWithOtp}
         onRefreshUsage={loadUsage}
         onOpenUpgrade={() => setAppView("subscription")}
+        onOpenAdmin={() => setAppView("admin")}
       />
 
       <Toast toast={toast} onClose={clearToast} />
@@ -319,6 +337,13 @@ function App() {
             previewError={previewError}
             isPlansLoading={isPlansLoading}
             isPreviewLoading={isPreviewLoading}
+          />
+        ) : appView === "admin" ? (
+          <AdminPage
+            onBack={() => setAppView("main")}
+            coupons={adminCoupons}
+            isLoading={isAdminLoading}
+            error={adminError}
           />
         ) : (
           <>

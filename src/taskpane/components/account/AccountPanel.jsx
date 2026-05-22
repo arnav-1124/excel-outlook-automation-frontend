@@ -12,6 +12,7 @@ function AccountPanel({
   onResetPassword,
   onRefreshUsage,
   onOpenUpgrade,
+  onOpenAdmin,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [mode, setMode] = useState(isAuthenticated ? "profile" : "login");
@@ -156,6 +157,13 @@ function AccountPanel({
             <span>Upgrade Plan</span>
             <small>View plans, coupons & credits</small>
           </button>
+
+          {user?.role === "ADMIN" && (
+            <button className="account-admin-btn" type="button" onClick={onOpenAdmin}>
+              <span>Admin Console</span>
+              <small>Manage coupons, plans & product controls</small>
+            </button>
+          )}
 
           {!isAuthenticated && (
             <div className="account-guest-note">
