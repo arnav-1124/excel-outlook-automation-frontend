@@ -1798,6 +1798,461 @@ button:disabled {
   transform: rotate(225deg) translate(-1px, -1px);
 }
 
+/* =========================
+   Upgrade / Subscription Panel
+========================= */
+
+.upgrade-panel {
+  margin: 0 0 18px;
+  padding: 13px;
+  border-radius: 22px;
+  border: 1px solid rgba(124, 58, 237, 0.12);
+  background:
+    radial-gradient(circle at top right, rgba(124, 58, 237, 0.12), transparent 34%),
+    linear-gradient(135deg, #ffffff 0%, #faf7ff 48%, #ffffff 100%);
+  box-shadow: 0 18px 44px rgba(31, 41, 55, 0.08);
+}
+
+.upgrade-panel-toggle {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  text-align: left;
+  cursor: pointer;
+}
+
+.upgrade-toggle-left {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+
+.upgrade-toggle-icon {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  box-shadow: 0 10px 24px rgba(124, 58, 237, 0.22);
+}
+
+.upgrade-kicker {
+  margin: 0 0 4px;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: #6d28d9;
+}
+
+.upgrade-title {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.08;
+  font-weight: 950;
+  color: #111827;
+}
+
+.upgrade-toggle-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.upgrade-pill {
+  padding: 6px 9px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 900;
+  color: #6d28d9;
+  background: #f3e8ff;
+  border: 1px solid #ddd6fe;
+  white-space: nowrap;
+}
+
+.upgrade-collapse-icon {
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  min-height: 26px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #f3e8ff;
+  color: #6d28d9;
+}
+
+.upgrade-collapse-icon::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg) translate(-1px, -1px);
+  transition: transform 0.18s ease;
+}
+
+.upgrade-collapse-icon.open::before {
+  transform: rotate(225deg) translate(-1px, -1px);
+}
+
+.upgrade-mini-summary {
+  margin-top: 10px;
+  padding: 10px 11px;
+  border-radius: 15px;
+  background: rgba(243, 232, 255, 0.62);
+  border: 1px solid rgba(124, 58, 237, 0.12);
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 11.5px;
+  font-weight: 850;
+  color: #6d28d9;
+}
+
+.upgrade-content {
+  margin-top: 16px;
+}
+
+.upgrade-empty {
+  padding: 12px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px dashed rgba(124, 58, 237, 0.25);
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.plan-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.plan-card {
+  width: 100%;
+  border: 1px solid rgba(17, 24, 39, 0.09);
+  border-radius: 18px;
+  padding: 13px;
+  background: rgba(255, 255, 255, 0.9);
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(17, 24, 39, 0.04);
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.plan-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(124, 58, 237, 0.32);
+  box-shadow: 0 16px 34px rgba(124, 58, 237, 0.1);
+}
+
+.plan-card.active {
+  border-color: rgba(124, 58, 237, 0.6);
+  box-shadow: 0 18px 38px rgba(124, 58, 237, 0.14);
+}
+
+.plan-card-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.plan-card h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 950;
+  color: #111827;
+}
+
+.plan-card p {
+  margin: 4px 0 0;
+  font-size: 11.5px;
+  line-height: 1.35;
+  color: #6b7280;
+  font-weight: 650;
+}
+
+.plan-card-top span {
+  align-self: flex-start;
+  padding: 5px 7px;
+  border-radius: 999px;
+  font-size: 9.5px;
+  font-weight: 900;
+  color: #6d28d9;
+  background: #f3e8ff;
+}
+
+.plan-price {
+  margin-top: 12px;
+  font-size: 22px;
+  font-weight: 950;
+  color: #111827;
+}
+
+.plan-credits {
+  margin-top: 5px;
+  font-size: 12px;
+  font-weight: 850;
+  color: #6d28d9;
+}
+
+.coupon-box {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(124, 58, 237, 0.12);
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.coupon-input-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.coupon-apply-btn {
+  border: 0;
+  border-radius: 14px;
+  padding: 0 13px;
+  background: #7c3aed;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.coupon-apply-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.coupon-applied {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 15px;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.coupon-applied strong {
+  display: block;
+  font-size: 12px;
+  color: #047857;
+}
+
+.coupon-applied span {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  color: #065f46;
+}
+
+.coupon-applied button {
+  border: 0;
+  background: transparent;
+  color: #047857;
+  font-size: 11px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.subscription-preview-card {
+  margin-top: 12px;
+  padding: 13px;
+  border-radius: 18px;
+  background: #111827;
+  color: #ffffff;
+  box-shadow: 0 18px 38px rgba(17, 24, 39, 0.18);
+}
+
+.preview-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+  font-weight: 750;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.preview-row + .preview-row {
+  margin-top: 8px;
+}
+
+.preview-row strong {
+  color: #ffffff;
+  font-weight: 950;
+}
+
+.preview-row.discount strong {
+  color: #86efac;
+}
+
+.preview-row.total {
+  margin-top: 11px;
+  padding-top: 11px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 14px;
+  color: #ffffff;
+}
+
+.preview-credit-box {
+  margin-top: 13px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.preview-credit-box div {
+  padding: 9px 10px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.preview-credit-box span {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.68);
+  font-weight: 750;
+}
+
+.preview-credit-box strong {
+  font-size: 12px;
+  color: #ffffff;
+  font-weight: 950;
+}
+
+.upgrade-primary-btn {
+  width: 100%;
+  margin-top: 12px;
+  border: 0;
+  border-radius: 15px;
+  padding: 11px 12px;
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  color: #ffffff;
+  font-size: 12.5px;
+  font-weight: 950;
+  cursor: not-allowed;
+  opacity: 0.68;
+}
+
+.upgrade-note {
+  margin: 9px 0 0;
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: #6b7280;
+  font-weight: 650;
+}
+
+/* =========================
+   Account upgrade CTA
+========================= */
+
+.account-upgrade-btn {
+  width: 100%;
+  margin: 0 0 12px;
+  border: 0;
+  border-radius: 15px;
+  padding: 11px 12px;
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  color: #ffffff;
+  font-size: 12.5px;
+  font-weight: 950;
+  cursor: pointer;
+  box-shadow: 0 14px 30px rgba(124, 58, 237, 0.22);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.account-upgrade-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 36px rgba(124, 58, 237, 0.3);
+}
+
+/* =========================
+   Subscription Page
+========================= */
+
+.subscription-page {
+  padding-bottom: 18px;
+}
+
+.subscription-page-header {
+  margin: 10px 0 12px;
+  display: grid;
+  gap: 12px;
+}
+
+.subscription-back-btn {
+  justify-self: flex-start;
+  border: 1px solid rgba(124, 58, 237, 0.16);
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: #ffffff;
+  color: #6d28d9;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(124, 58, 237, 0.08);
+}
+
+.subscription-kicker {
+  margin: 0 0 5px;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #6d28d9;
+}
+
+.subscription-title {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.05;
+  font-weight: 950;
+  color: #111827;
+}
+
+.subscription-subtitle {
+  margin: 0 0 14px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  font-weight: 650;
+  color: #6b7280;
+}
+
+.upgrade-panel.page-mode {
+  margin-top: 0;
+}
+
+.upgrade-panel.page-mode .upgrade-panel-toggle {
+  cursor: default;
+}
+
+.upgrade-panel.page-mode .upgrade-mini-summary {
+  display: none;
+}
+
 /* === SETUP CHECKLIST === */
 
 .setup-section {

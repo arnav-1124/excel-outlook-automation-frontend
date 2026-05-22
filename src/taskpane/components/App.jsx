@@ -23,6 +23,7 @@ import AppFooter from "./layout/AppFooter";
 
 import CreditsBadge from "./account/CreditsBadge";
 import AccountPanel from "./account/AccountPanel";
+import SubscriptionPage from "./account/SubscriptionPage";
 
 // Hooks
 import useNotifications from "../hooks/useNotifications";
@@ -35,6 +36,7 @@ import useActiveRow from "../hooks/useActiveRow";
 import useWorkbookSync from "../hooks/useWorkbookSync";
 import useAccount from "../hooks/useAccount";
 import useUsageCredits from "../hooks/useUsageCredits";
+import useSubscriptionPreview from "../hooks/useSubscriptionPreview";
 
 // Constants
 import { MAPPING_FIELDS } from "../constants/mappingFields";
@@ -86,9 +88,27 @@ function App() {
       addActivity,
     });
 
+  const {
+    plans,
+    selectedPlanCode,
+    setSelectedPlanCode,
+    couponCode,
+    setCouponCode,
+    clearCoupon,
+    preview,
+    isPlansLoading,
+    isPreviewLoading,
+    generatePreview,
+  } = useSubscriptionPreview({
+    showBanner,
+    showToast,
+  });
+
   const [showOnboarding, setShowOnboarding] = useState(true);
   const [selectedWorkflowPreset, setSelectedWorkflowPreset] = useState("followup");
   const [showOptionalMappings, setShowOptionalMappings] = useState(false);
+
+  const [appView, setAppView] = useState("main");
 
   const {
     subjectTemplate,
@@ -270,6 +290,7 @@ function App() {
         onForgotPassword={sendForgotPasswordOtp}
         onResetPassword={resetPasswordWithOtp}
         onRefreshUsage={loadUsage}
+        onOpenUpgrade={() => setAppView("subscription")}
       />
 
       <Toast toast={toast} onClose={clearToast} />
@@ -277,130 +298,154 @@ function App() {
       <Banner banner={banner} onClose={clearBanner} />
 
       <main className="app-main">
-        {/* Setup Checklist */}
-        <SetupChecklistSection
-          setupChecklist={setupChecklist}
-          setupCompletedCount={setupCompletedCount}
-          setupTotalCount={setupTotalCount}
-          setupProgressPercent={setupProgressPercent}
-          setupStatusText={setupStatusText}
-          isDraftReady={isDraftReady}
-        />
+        {appView === "subscription" ? (
+          <SubscriptionPage
+            onBack={() => setAppView("main")}
+            plans={plans}
+            selectedPlanCode={selectedPlanCode}
+            onSelectPlan={setSelectedPlanCode}
+            couponCode={couponCode}
+            onChangeCoupon={setCouponCode}
+            onApplyCoupon={() => generatePreview()}
+            onClearCoupon={() => {
+              clearCoupon();
+              generatePreview({
+                planCode: selectedPlanCode,
+                coupon: "",
+              });
+            }}
+            preview={preview}
+            isPlansLoading={isPlansLoading}
+            isPreviewLoading={isPreviewLoading}
+          />
+        ) : (
+          <>
+            {/* Setup Checklist */}
+            <SetupChecklistSection
+              setupChecklist={setupChecklist}
+              setupCompletedCount={setupCompletedCount}
+              setupTotalCount={setupTotalCount}
+              setupProgressPercent={setupProgressPercent}
+              setupStatusText={setupStatusText}
+              isDraftReady={isDraftReady}
+            />
 
-        {/* Workflow Preset */}
-        <WorkflowPresetSection
-          workflowPresets={WORKFLOW_PRESETS}
-          selectedWorkflowPreset={selectedWorkflowPreset}
-          onChangeWorkflowPreset={setSelectedWorkflowPreset}
-          activeWorkflowPreset={activeWorkflowPreset}
-          presetCompletedFields={presetCompletedFields}
-          presetMissingFields={presetMissingFields}
-          presetProgressPercent={presetProgressPercent}
-          getFieldLabel={(fieldKey) => getMappingFieldLabel(MAPPING_FIELDS, fieldKey)}
-        />
+            {/* Workflow Preset */}
+            <WorkflowPresetSection
+              workflowPresets={WORKFLOW_PRESETS}
+              selectedWorkflowPreset={selectedWorkflowPreset}
+              onChangeWorkflowPreset={setSelectedWorkflowPreset}
+              activeWorkflowPreset={activeWorkflowPreset}
+              presetCompletedFields={presetCompletedFields}
+              presetMissingFields={presetMissingFields}
+              presetProgressPercent={presetProgressPercent}
+              getFieldLabel={(fieldKey) => getMappingFieldLabel(MAPPING_FIELDS, fieldKey)}
+            />
 
-        {/* Table Selection */}
-        <TableSelectorSection
-          tables={tables}
-          selectedTable={selectedTable}
-          onSelectTable={setSelectedTable}
-          onRefreshTables={loadTables}
-          isLoadingTables={isLoadingTables}
-          autoSyncEnabled={autoSyncEnabled}
-          onToggleAutoSync={setAutoSyncEnabled}
-          lastSyncText={lastSyncText}
-        />
+            {/* Table Selection */}
+            <TableSelectorSection
+              tables={tables}
+              selectedTable={selectedTable}
+              onSelectTable={setSelectedTable}
+              onRefreshTables={loadTables}
+              isLoadingTables={isLoadingTables}
+              autoSyncEnabled={autoSyncEnabled}
+              onToggleAutoSync={setAutoSyncEnabled}
+              lastSyncText={lastSyncText}
+            />
 
-        {/* Headers Preview */}
-        <HeaderPreviewSection
-          headers={headers}
-          showHeaders={showHeaders}
-          onToggleShowHeaders={() => setShowHeaders((value) => !value)}
-        />
+            {/* Headers Preview */}
+            <HeaderPreviewSection
+              headers={headers}
+              showHeaders={showHeaders}
+              onToggleShowHeaders={() => setShowHeaders((value) => !value)}
+            />
 
-        {/* Mapping Section */}
-        <MappingSection
-          mappings={mappings}
-          headers={headers}
-          mappedCount={mappedCount}
-          totalMappingCount={MAPPING_FIELDS.length}
-          requiredMissingCount={requiredMissingCount}
-          recommendedMappingFields={recommendedMappingFields}
-          optionalMappingFields={optionalMappingFields}
-          activeWorkflowPreset={activeWorkflowPreset}
-          presetCompletedFields={presetCompletedFields}
-          showOptionalMappings={showOptionalMappings}
-          onToggleOptionalMappings={() => setShowOptionalMappings((value) => !value)}
-          onSetMapping={setMapping}
-        />
+            {/* Mapping Section */}
+            <MappingSection
+              mappings={mappings}
+              headers={headers}
+              mappedCount={mappedCount}
+              totalMappingCount={MAPPING_FIELDS.length}
+              requiredMissingCount={requiredMissingCount}
+              recommendedMappingFields={recommendedMappingFields}
+              optionalMappingFields={optionalMappingFields}
+              activeWorkflowPreset={activeWorkflowPreset}
+              presetCompletedFields={presetCompletedFields}
+              showOptionalMappings={showOptionalMappings}
+              onToggleOptionalMappings={() => setShowOptionalMappings((value) => !value)}
+              onSetMapping={setMapping}
+            />
 
-        {/* Active Row Detection */}
-        <SelectedRowSection
-          rowIndex={rowIndex}
-          rowData={rowData}
-          isReadingRow={isReadingRow}
-          onDetectActiveRow={detectActiveRow}
-          renderValue={renderValue}
-        />
+            {/* Active Row Detection */}
+            <SelectedRowSection
+              rowIndex={rowIndex}
+              rowData={rowData}
+              isReadingRow={isReadingRow}
+              onDetectActiveRow={detectActiveRow}
+              renderValue={renderValue}
+            />
 
-        {/* Available Placeholders */}
-        <PlaceholderSection rowData={rowData} onCopyPlaceholder={handleCopyPlaceholder} />
+            {/* Available Placeholders */}
+            <PlaceholderSection rowData={rowData} onCopyPlaceholder={handleCopyPlaceholder} />
 
-        {/* Template Editor */}
-        <TemplateEditorSection
-          rowData={rowData}
-          selectedNamedTemplateId={selectedNamedTemplateId}
-          namedTemplates={namedTemplates}
-          templateName={templateName}
-          subjectTemplate={subjectTemplate}
-          bodyTemplate={bodyTemplate}
-          templateMissingFields={templateMissingFields}
-          onLoadNamedTemplate={handleLoadNamedTemplate}
-          onChangeTemplateName={setTemplateName}
-          onChangeSubjectTemplate={setSubjectTemplate}
-          onChangeBodyTemplate={setBodyTemplate}
-          onSaveNamedTemplate={handleSaveNamedTemplate}
-          onDeleteNamedTemplate={handleDeleteNamedTemplate}
-          onGenerateFromTemplate={handleGenerateFromTemplate}
-          onWriteGeneratedEmailToRow={handleWriteGeneratedEmailToRow}
-          onClearTemplate={handleClearTemplate}
-        />
+            {/* Template Editor */}
+            <TemplateEditorSection
+              rowData={rowData}
+              selectedNamedTemplateId={selectedNamedTemplateId}
+              namedTemplates={namedTemplates}
+              templateName={templateName}
+              subjectTemplate={subjectTemplate}
+              bodyTemplate={bodyTemplate}
+              templateMissingFields={templateMissingFields}
+              onLoadNamedTemplate={handleLoadNamedTemplate}
+              onChangeTemplateName={setTemplateName}
+              onChangeSubjectTemplate={setSubjectTemplate}
+              onChangeBodyTemplate={setBodyTemplate}
+              onSaveNamedTemplate={handleSaveNamedTemplate}
+              onDeleteNamedTemplate={handleDeleteNamedTemplate}
+              onGenerateFromTemplate={handleGenerateFromTemplate}
+              onWriteGeneratedEmailToRow={handleWriteGeneratedEmailToRow}
+              onClearTemplate={handleClearTemplate}
+            />
 
-        {/* Email Preview */}
-        <EmailPreviewSection rowData={rowData} renderValue={renderValue} />
+            {/* Email Preview */}
+            <EmailPreviewSection rowData={rowData} renderValue={renderValue} />
 
-        {/* Actions */}
-        <ActionSection
-          onSyncWorkbook={() => syncWorkbookChanges({ manual: true })}
-          onRefreshTables={loadTables}
-          onReadRow={detectActiveRow}
-          onOpenOutlookDraft={async () => {
-            const hasCredits = await ensureCreditsAvailable({ creditsRequired: 1 });
+            {/* Actions */}
+            <ActionSection
+              onSyncWorkbook={() => syncWorkbookChanges({ manual: true })}
+              onRefreshTables={loadTables}
+              onReadRow={detectActiveRow}
+              onOpenOutlookDraft={async () => {
+                const hasCredits = await ensureCreditsAvailable({ creditsRequired: 1 });
 
-            if (!hasCredits) return;
+                if (!hasCredits) return;
 
-            await handleOpenOutlookWebDraft();
+                await handleOpenOutlookWebDraft();
 
-            await consumeAutomationCredit({
-              metadata: {
-                selectedTable,
-                rowIndex,
-                recipientEmail: rowData?.recipientEmail || null,
-              },
-            });
-          }}
-          isDraftReady={isDraftReady}
-        />
+                await consumeAutomationCredit({
+                  metadata: {
+                    selectedTable,
+                    rowIndex,
+                    recipientEmail: rowData?.recipientEmail || null,
+                  },
+                });
+              }}
+              isDraftReady={isDraftReady}
+            />
 
-        {/* Activity Log */}
-        <ActivityLogSection activityLog={activityLog} onClear={clearActivityLog} />
+            {/* Activity Log */}
+            <ActivityLogSection activityLog={activityLog} onClear={clearActivityLog} />
 
-        {/* Debug JSON */}
-        <DebugSection
-          rowData={rowData}
-          showRawJson={showRawJson}
-          onToggle={() => setShowRawJson((value) => !value)}
-        />
+            {/* Debug JSON */}
+            <DebugSection
+              rowData={rowData}
+              showRawJson={showRawJson}
+              onToggle={() => setShowRawJson((value) => !value)}
+            />
+          </>
+        )}
       </main>
 
       <AppFooter onShowIntro={handleShowOnboardingAgain} />

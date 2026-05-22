@@ -11,6 +11,7 @@ function AccountPanel({
   onForgotPassword,
   onResetPassword,
   onRefreshUsage,
+  onOpenUpgrade,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [mode, setMode] = useState(isAuthenticated ? "profile" : "login");
@@ -150,6 +151,10 @@ function AccountPanel({
               <span>{totalCreditsGranted} total</span>
             </div>
           </div>
+
+          <button className="account-upgrade-btn" type="button" onClick={onOpenUpgrade}>
+            Upgrade Plan
+          </button>
 
           {!isAuthenticated && (
             <div className="account-guest-note">
