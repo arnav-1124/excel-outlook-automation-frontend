@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 
+import { getPlans } from "../services/api/plansApi";
+
 // Common Components
 import Toast from "./common/Toast";
 import Banner from "./common/Banner";
@@ -184,6 +186,20 @@ function App() {
     addActivity,
   });
 
+  // TEMP API TEST - remove after testing
+  async function testBackendConnection() {
+    try {
+      const { getPlans } = await import("../services/api/plansApi");
+      const plans = await getPlans();
+
+      console.log("Backend plans:", plans);
+      showToast("success", "Backend connected", `${plans.length} plans loaded.`);
+    } catch (error) {
+      console.error("Backend test failed:", error);
+      showToast("error", "Backend failed", error.message);
+    }
+  }
+
   function handleCompleteOnboarding() {
     setShowOnboarding(false);
 
@@ -222,6 +238,10 @@ function App() {
       <OnboardingScreen showOnboarding={showOnboarding} onComplete={handleCompleteOnboarding} />
 
       <AppHeader onRefreshTables={loadTables} />
+
+      <button className="btn-outline" onClick={testBackendConnection}>
+        Test Backend
+      </button>
 
       <Toast toast={toast} onClose={clearToast} />
 
