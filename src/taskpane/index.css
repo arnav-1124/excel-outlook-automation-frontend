@@ -3163,3 +3163,448 @@ button {
   color: #111827;
   font-size: 13px;
 }
+
+/* =========================
+   Follow-up Center
+========================= */
+
+.followup-open-btn {
+  width: calc(100% - 32px);
+  margin: 0 16px 14px;
+  border: 0;
+  border-radius: 17px;
+  padding: 12px 14px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.22), transparent 32%),
+    linear-gradient(135deg, #0f766e, #14b8a6);
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 16px 34px rgba(20, 184, 166, 0.22);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.15s ease,
+    filter 0.15s ease;
+}
+
+.followup-open-btn span {
+  font-size: 13px;
+  line-height: 1.1;
+  font-weight: 950;
+}
+
+.followup-open-btn small {
+  display: block;
+  margin-top: 3px;
+  font-size: 10.8px;
+  line-height: 1.25;
+  font-weight: 750;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.followup-open-btn::after {
+  content: "→";
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 950;
+}
+
+.followup-open-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+}
+
+.followup-open-btn:active {
+  transform: scale(0.985);
+}
+
+.followup-page {
+  padding-bottom: 18px;
+  animation: page-enter 0.18s ease-out;
+}
+
+.followup-hero {
+  margin: 8px 0 14px;
+  display: grid;
+  gap: 12px;
+}
+
+.followup-back-btn {
+  justify-self: flex-start;
+  border: 1px solid rgba(15, 118, 110, 0.16);
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: #ffffff;
+  color: #0f766e;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(15, 118, 110, 0.08);
+}
+
+.followup-hero-card,
+.followup-auth-gate {
+  padding: 16px;
+  border-radius: 24px;
+  border: 1px solid rgba(15, 118, 110, 0.14);
+  background:
+    radial-gradient(circle at top right, rgba(20, 184, 166, 0.16), transparent 34%),
+    linear-gradient(135deg, #ffffff 0%, #f0fdfa 48%, #ffffff 100%);
+  box-shadow: 0 18px 44px rgba(31, 41, 55, 0.08);
+}
+
+.followup-hero-card {
+  display: flex;
+  gap: 13px;
+  align-items: flex-start;
+}
+
+.followup-hero-icon,
+.followup-auth-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  background: linear-gradient(135deg, #0f766e, #14b8a6);
+  box-shadow: 0 14px 28px rgba(20, 184, 166, 0.24);
+  flex: 0 0 auto;
+}
+
+.followup-auth-icon {
+  margin-bottom: 12px;
+}
+
+.followup-kicker {
+  margin: 0 0 5px;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #0f766e;
+}
+
+.followup-hero-card h1,
+.followup-auth-gate h1 {
+  margin: 0;
+  font-size: 23px;
+  line-height: 1.05;
+  font-weight: 950;
+  color: #111827;
+}
+
+.followup-hero-card p,
+.followup-auth-gate p {
+  margin: 8px 0 0;
+  font-size: 12.3px;
+  line-height: 1.45;
+  font-weight: 650;
+  color: #6b7280;
+}
+
+.followup-primary-btn {
+  width: 100%;
+  margin-top: 14px;
+  border: 0;
+  border-radius: 15px;
+  padding: 11px 12px;
+  background: linear-gradient(135deg, #0f766e, #14b8a6);
+  color: #ffffff;
+  font-size: 12.5px;
+  font-weight: 950;
+  cursor: pointer;
+}
+
+.followup-summary-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 9px;
+  margin-bottom: 12px;
+}
+
+.followup-summary-card {
+  padding: 13px;
+  border-radius: 18px;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  background: #ffffff;
+  box-shadow: 0 12px 26px rgba(17, 24, 39, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.followup-summary-card span {
+  font-size: 11.5px;
+  color: #6b7280;
+  font-weight: 850;
+}
+
+.followup-summary-card strong {
+  font-size: 20px;
+  color: #111827;
+  font-weight: 950;
+}
+
+.followup-summary-card.urgent strong {
+  color: #cc2200;
+}
+
+.followup-summary-card.due strong {
+  color: #b45309;
+}
+
+.followup-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  margin-bottom: 12px;
+}
+
+.followup-tab {
+  border: 1px solid rgba(15, 118, 110, 0.12);
+  border-radius: 15px;
+  padding: 9px 10px;
+  background: #ffffff;
+  color: #0f766e;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 11.5px;
+  font-weight: 900;
+}
+
+.followup-tab.active {
+  background: #ccfbf1;
+  border-color: rgba(15, 118, 110, 0.28);
+}
+
+.followup-error {
+  margin-bottom: 10px;
+  padding: 10px 11px;
+  border-radius: 15px;
+  background: #fff0ee;
+  border: 1px solid #ffbcb4;
+  color: #cc2200;
+  font-size: 11.8px;
+  font-weight: 750;
+}
+
+.followup-list-card {
+  padding: 14px;
+  border-radius: 22px;
+  border: 1px solid rgba(15, 118, 110, 0.1);
+  background: #ffffff;
+  box-shadow: 0 16px 36px rgba(17, 24, 39, 0.06);
+}
+
+.followup-list-header {
+  margin-bottom: 12px;
+}
+
+.followup-list-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 950;
+  color: #111827;
+}
+
+.followup-empty {
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px dashed rgba(15, 118, 110, 0.24);
+  background: #f0fdfa;
+  display: grid;
+  gap: 5px;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.followup-empty strong {
+  color: #111827;
+  font-size: 13px;
+}
+
+.followup-list {
+  display: grid;
+  gap: 10px;
+}
+
+.followup-card {
+  padding: 13px;
+  border-radius: 18px;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  background: #ffffff;
+  box-shadow: 0 12px 26px rgba(17, 24, 39, 0.045);
+}
+
+.followup-card-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.followup-card h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 950;
+  color: #111827;
+}
+
+.followup-card p {
+  margin: 4px 0 0;
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: #6b7280;
+  font-weight: 650;
+}
+
+.followup-priority {
+  padding: 5px 7px;
+  border-radius: 999px;
+  font-size: 9.5px;
+  font-weight: 950;
+  white-space: nowrap;
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.followup-priority.high,
+.followup-priority.urgent {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.followup-priority.normal {
+  background: #eef4ff;
+  color: #1d5fa8;
+}
+
+.followup-priority.low {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.followup-meta-grid {
+  margin-top: 11px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.followup-meta-grid div {
+  padding: 9px 10px;
+  border-radius: 14px;
+  background: #f9fafb;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.followup-meta-grid span {
+  font-size: 10.8px;
+  font-weight: 800;
+  color: #6b7280;
+}
+
+.followup-meta-grid strong {
+  font-size: 11.2px;
+  font-weight: 950;
+  color: #111827;
+  text-align: right;
+}
+
+.followup-note {
+  margin-top: 10px !important;
+  padding: 9px 10px;
+  border-radius: 14px;
+  background: #f0fdfa;
+  color: #0f766e !important;
+}
+
+.followup-actions {
+  margin-top: 11px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.followup-success-btn,
+.followup-secondary-btn,
+.followup-danger-btn {
+  border: 0;
+  border-radius: 14px;
+  padding: 9px 11px;
+  font-size: 11.8px;
+  font-weight: 950;
+  cursor: pointer;
+}
+
+.followup-success-btn {
+  color: #047857;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+}
+
+.followup-secondary-btn {
+  color: #111827;
+  background: #f3f4f6;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+}
+
+.followup-danger-btn {
+  color: #991b1b;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+}
+
+/* =========================
+   Follow-up hero alignment polish
+========================= */
+
+.followup-hero-card {
+  align-items: center;
+  gap: 14px;
+}
+
+.followup-hero-card > div:last-child {
+  min-width: 0;
+  flex: 1;
+}
+
+.followup-hero-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 18px;
+  font-size: 19px;
+}
+
+.followup-hero-card h1 {
+  font-size: 22px;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+.followup-hero-card p {
+  max-width: 100%;
+  font-size: 12.2px;
+  line-height: 1.45;
+}
+
+.followup-kicker {
+  line-height: 1.2;
+}

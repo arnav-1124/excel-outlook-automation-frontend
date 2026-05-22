@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 function AccountPanel({
   user,
@@ -13,9 +13,22 @@ function AccountPanel({
   onRefreshUsage,
   onOpenUpgrade,
   onOpenAdmin,
+  openRequestKey,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [mode, setMode] = useState(isAuthenticated ? "profile" : "login");
+
+  useEffect(() => {
+    if (!openRequestKey) return;
+
+    setIsExpanded(true);
+
+    if (!isAuthenticated) {
+      setMode("login");
+    } else {
+      setMode("profile");
+    }
+  }, [openRequestKey, isAuthenticated]);
 
   const [loginForm, setLoginForm] = useState({
     email: "",

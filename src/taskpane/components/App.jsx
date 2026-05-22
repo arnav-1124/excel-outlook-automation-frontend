@@ -25,6 +25,8 @@ import CreditsBadge from "./account/CreditsBadge";
 import AccountPanel from "./account/AccountPanel";
 import SubscriptionPage from "./account/SubscriptionPage";
 
+import FollowUpDashboard from "./followups/FollowUpDashboard";
+
 // Hooks
 import useNotifications from "../hooks/useNotifications";
 import useActivityLog from "../hooks/useActivityLog";
@@ -37,6 +39,7 @@ import useWorkbookSync from "../hooks/useWorkbookSync";
 import useAccount from "../hooks/useAccount";
 import useUsageCredits from "../hooks/useUsageCredits";
 import useSubscriptionPreview from "../hooks/useSubscriptionPreview";
+import useFollowUps from "../hooks/useFollowUps";
 
 // Constants
 import { MAPPING_FIELDS } from "../constants/mappingFields";
@@ -120,6 +123,24 @@ function App() {
     });
 
   const {
+    followUps,
+    followUpSummary,
+    activeFollowUpBucket,
+    isFollowUpsLoading,
+    followUpsError,
+    loadFollowUps,
+    markFollowUpResolved,
+    snoozeFollowUpItem,
+    reopenFollowUpItem,
+    cancelFollowUpItem,
+  } = useFollowUps({
+    isAuthenticated,
+    showToast,
+    showBanner,
+    addActivity,
+  });
+
+  const {
     plans,
     selectedPlanCode,
     setSelectedPlanCode,
@@ -141,6 +162,8 @@ function App() {
   const [showOptionalMappings, setShowOptionalMappings] = useState(false);
 
   const [appView, setAppView] = useState("main");
+
+  const [accountOpenRequestKey, setAccountOpenRequestKey] = useState(0);
 
   const {
     subjectTemplate,
@@ -287,6 +310,26 @@ function App() {
     addActivity("success", `Placeholder copied: {{${fieldName}}}`);
   }
 
+  function openAccountForFollowUps() {
+    navigateToView("main");
+    setAccountOpenRequestKey(Date.now());
+
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        const accountPanel = document.querySelector(".account-panel");
+
+        if (accountPanel) {
+          accountPanel.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+        }
+      }, 80);
+    });
+
+    showBanner("info", "Sign in or create an account to save follow-ups and receive reminders.");
+  }
+
   function renderValue(value) {
     const displayValue = renderDisplayValue(value);
 
@@ -350,7 +393,17 @@ function App() {
         onRefreshUsage={loadUsage}
         onOpenUpgrade={() => navigateToView("subscription")}
         onOpenAdmin={() => navigateToView("admin")}
+        openRequestKey={accountOpenRequestKey}
       />
+
+      <button
+        className="followup-open-btn"
+        type="button"
+        onClick={() => navigateToView("followups")}
+      >
+        <span>Follow-up Center</span>
+        <small>Due, overdue & reminder tracking</small>
+      </button>
 
       <Toast toast={toast} onClose={clearToast} />
 
@@ -392,6 +445,22 @@ function App() {
             onResetCouponForm={resetCouponForm}
             onEditCoupon={startEditingCoupon}
             onChangeCouponStatus={changeCouponStatus}
+          />
+        ) : appView === "followups" ? (
+          <FollowUpDashboard
+            onBack={() => navigateToView("main")}
+            isAuthenticated={isAuthenticated}
+            onOpenAccount={openAccountForFollowUps}
+            followUps={followUps}
+            summary={followUpSummary}
+            activeBucket={activeFollowUpBucket}
+            isLoading={isFollowUpsLoading}
+            error={followUpsError}
+            onChangeBucket={(bucket) => loadFollowUps({ bucket })}
+            onResolve={markFollowUpResolved}
+            onSnooze={snoozeFollowUpItem}
+            onReopen={reopenFollowUpItem}
+            onCancel={cancelFollowUpItem}
           />
         ) : (
           <>
