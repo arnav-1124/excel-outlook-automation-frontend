@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 // Common Components
 import Toast from "./common/Toast";
@@ -103,6 +103,13 @@ function App() {
     showToast,
     showBanner,
   });
+
+  useEffect(() => {
+    if (appView === "admin" && !isAdmin) {
+      setAppView("main");
+      resetCouponForm();
+    }
+  }, [appView, isAdmin, resetCouponForm]);
 
   const { usage, isUsageLoading, loadUsage, ensureCreditsAvailable, consumeAutomationCredit } =
     useUsageCredits({
@@ -310,6 +317,12 @@ function App() {
     });
   }
 
+  function handleLogout() {
+    logout();
+    setAppView("main");
+    resetCouponForm();
+  }
+
   return (
     <div className="app">
       <OnboardingScreen showOnboarding={showOnboarding} onComplete={handleCompleteOnboarding} />
@@ -331,7 +344,7 @@ function App() {
         usage={usage}
         onLogin={login}
         onRegister={register}
-        onLogout={logout}
+        onLogout={handleLogout}
         onForgotPassword={sendForgotPasswordOtp}
         onResetPassword={resetPasswordWithOtp}
         onRefreshUsage={loadUsage}
