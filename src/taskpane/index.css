@@ -7302,3 +7302,85 @@ button {
 .ds-notification-section > .ds-notification-toggle {
   margin-top: 10px;
 }
+
+/* =========================================================
+   COLLAPSIBLE NOTIFICATION PREFERENCES
+========================================================= */
+
+.ds-notification-panel.collapsed {
+  padding: 0;
+  overflow: hidden;
+}
+
+.ds-notification-panel-toggle {
+  width: 100%;
+  padding: 14px;
+  border: 0;
+  background: transparent;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ds-notification-panel-toggle h2 {
+  margin: 12px 0 0;
+  font-size: 19px;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--ds-text);
+  font-weight: 850;
+}
+
+.ds-notification-panel-toggle p {
+  margin: 6px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ds-muted);
+}
+
+.ds-notification-collapse-icon {
+  width: 28px;
+  height: 28px;
+  margin-top: 2px;
+  border-radius: var(--ds-radius-md);
+  border: 1px solid var(--ds-border);
+  background: #ffffff;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.ds-notification-collapse-icon::before {
+  content: "";
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid var(--ds-muted);
+  border-bottom: 2px solid var(--ds-muted);
+  top: 8px;
+  left: 9px;
+  transform: rotate(45deg);
+}
+
+.ds-notification-collapse-icon.open::before {
+  top: 11px;
+  transform: rotate(225deg);
+}
+
+.ds-notification-mini-summary {
+  padding: 0 14px 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.ds-notification-mini-summary span {
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: #f8fbff;
+  border: 1px solid var(--ds-border-blue);
+  color: var(--ds-blue);
+  font-size: 10.5px;
+  font-weight: 850;
+}
