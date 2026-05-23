@@ -22,51 +22,59 @@ function getCouponUsageText(coupon) {
   return `${redeemed}/${coupon.maxTotalRedemptions} used`;
 }
 
+function getCouponValueText(coupon) {
+  const parts = [];
+
+  parts.push(formatDiscount(coupon));
+
+  if (coupon.extraAutomationCredits) {
+    parts.push(`+${coupon.extraAutomationCredits} automation credits`);
+  }
+
+  if (coupon.extraAiCredits) {
+    parts.push(`+${coupon.extraAiCredits} AI credits`);
+  }
+
+  return parts.join(" · ");
+}
+
 function AdminCouponList({ coupons, isLoading, onEditCoupon, onChangeStatus }) {
   if (isLoading && coupons.length === 0) {
-    return <div className="admin-empty-state">Loading coupons...</div>;
+    return <div className="ds-empty-panel">Loading coupons...</div>;
   }
 
   if (coupons.length === 0) {
     return (
-      <div className="admin-empty-state">
-        <strong>No coupons yet</strong>
-        <span>Create your first coupon to offer discounts or bonus credits.</span>
-      </div>
+      <div className="ds-empty-panel">No coupons yet. Create your first offer rule above.</div>
     );
   }
 
   return (
-    <div className="admin-coupon-list">
+    <div className="ds-admin-coupon-list">
       {coupons.map((coupon) => {
         const isActive = coupon.status === "ACTIVE";
 
         return (
-          <article className="admin-coupon-card" key={coupon.id}>
-            <div className="admin-coupon-top">
+          <article className="ds-admin-coupon-card" key={coupon.id}>
+            <div className="ds-admin-coupon-top">
               <div>
-                <div className="admin-coupon-code">{coupon.code}</div>
-                <p className="admin-coupon-description">
-                  {coupon.description || "No description added."}
-                </p>
-              </div>
+                <div className="ds-admin-coupon-code-row">
+                  <strong>{coupon.code}</strong>
+                  <span className={`ds-admin-status-badge ${coupon.status.toLowerCase()}`}>
+                    {coupon.status}
+                  </span>
+                </div>
 
-              <span className={`admin-status-badge ${coupon.status.toLowerCase()}`}>
-                {coupon.status}
-              </span>
+                <p>{coupon.description || "No description added."}</p>
+              </div>
             </div>
 
-            <div className="admin-coupon-grid">
-              <div>
-                <span>Discount</span>
-                <strong>{formatDiscount(coupon)}</strong>
-              </div>
+            <div className="ds-admin-coupon-value">
+              <span>Offer value</span>
+              <strong>{getCouponValueText(coupon)}</strong>
+            </div>
 
-              <div>
-                <span>Extra credits</span>
-                <strong>{coupon.extraAutomationCredits || 0}</strong>
-              </div>
-
+            <div className="ds-admin-coupon-detail-grid">
               <div>
                 <span>Usage</span>
                 <strong>{getCouponUsageText(coupon)}</strong>
@@ -82,9 +90,9 @@ function AdminCouponList({ coupons, isLoading, onEditCoupon, onChangeStatus }) {
               </div>
             </div>
 
-            <div className="admin-coupon-actions">
+            <div className="ds-admin-coupon-actions">
               <button
-                className="admin-secondary-btn"
+                className="ds-button-secondary"
                 type="button"
                 onClick={() => onEditCoupon(coupon)}
               >
@@ -92,7 +100,7 @@ function AdminCouponList({ coupons, isLoading, onEditCoupon, onChangeStatus }) {
               </button>
 
               <button
-                className={isActive ? "admin-danger-btn" : "admin-success-btn"}
+                className={isActive ? "ds-admin-danger-action" : "ds-admin-success-action"}
                 type="button"
                 onClick={() => onChangeStatus(coupon, isActive ? "INACTIVE" : "ACTIVE")}
               >

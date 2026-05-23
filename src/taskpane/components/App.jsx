@@ -499,6 +499,7 @@ function App() {
             selectedTable={selectedTable}
             rowIndex={rowIndex}
             onCreateFollowUp={createFollowUpItem}
+            onOpenCreate={handleOpenFollowUpCreate}
           />
         ) : (
           <>
@@ -563,6 +564,7 @@ function App() {
             <SelectedRowSection
               rowIndex={rowIndex}
               rowData={rowData}
+              mappings={mappings}
               isReadingRow={isReadingRow}
               onDetectActiveRow={detectActiveRow}
               renderValue={renderValue}

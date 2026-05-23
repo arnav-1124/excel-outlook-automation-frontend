@@ -37,11 +37,9 @@ function UpgradePanel({
   const coupon = preview?.coupon;
 
   return (
-    <section
-      className={`upgrade-panel ${isOpen ? "expanded" : "collapsed"} ${forceExpanded ? "page-mode" : ""}`}
-    >
+    <section className={`ds-upgrade-panel ${isOpen ? "expanded" : "collapsed"}`}>
       <button
-        className="upgrade-panel-toggle"
+        className="ds-upgrade-toggle"
         type="button"
         onClick={() => {
           if (!forceExpanded) {
@@ -49,28 +47,20 @@ function UpgradePanel({
           }
         }}
       >
-        <div className="upgrade-toggle-left">
-          <div className="upgrade-toggle-icon">★</div>
-
-          <div>
-            <p className="upgrade-kicker">Subscription</p>
-            <h2 className="upgrade-title">
-              {selectedPlan ? `${selectedPlan.name} plan` : "Upgrade workspace"}
-            </h2>
-          </div>
+        <div>
+          <p>Billing control</p>
+          <h2>{selectedPlan ? `${selectedPlan.name} plan` : "Choose your plan"}</h2>
         </div>
 
-        <div className="upgrade-toggle-right">
-          <span className="upgrade-pill">
-            {pricing ? formatMoney(pricing.finalAmount, pricing.currency) : "Plans"}
-          </span>
+        <div className="ds-upgrade-toggle-right">
+          <span>{pricing ? formatMoney(pricing.finalAmount, pricing.currency) : "Plans"}</span>
 
-          {!forceExpanded && <span className={`upgrade-collapse-icon ${isOpen ? "open" : ""}`} />}
+          {!forceExpanded && <i className={isOpen ? "open" : ""} />}
         </div>
       </button>
 
       {!isOpen && (
-        <div className="upgrade-mini-summary">
+        <div className="ds-upgrade-mini-summary">
           <span>
             {selectedPlan
               ? `${selectedPlan.automationCredits} credits / ${selectedPlan.interval.toLowerCase()}`
@@ -81,139 +71,175 @@ function UpgradePanel({
       )}
 
       {isOpen && (
-        <div className="upgrade-content">
-          {isPlansLoading && <div className="upgrade-empty">Loading plans...</div>}
+        <div className="ds-upgrade-content">
+          {isPlansLoading && <div className="ds-empty-panel">Loading plans...</div>}
 
           {!isPlansLoading && plans.length === 0 && (
-            <div className="upgrade-empty">No active plans available.</div>
+            <div className="ds-empty-panel">No active plans available.</div>
           )}
 
           {!isPlansLoading && plans.length > 0 && (
             <>
-              <div className="plan-grid">
-                {plans.map((plan) => {
-                  const active = plan.code === selectedPlanCode;
-
-                  return (
-                    <button
-                      key={plan.id}
-                      type="button"
-                      className={`plan-card ${active ? "active" : ""}`}
-                      onClick={() => onSelectPlan(plan.code)}
-                    >
-                      <div className="plan-card-top">
-                        <div>
-                          <h3>{plan.name}</h3>
-                          <p>{plan.description}</p>
-                        </div>
-
-                        <span>{plan.interval}</span>
-                      </div>
-
-                      <div className="plan-price">
-                        {formatMoney(plan.priceAmount, plan.currency)}
-                      </div>
-
-                      <div className="plan-credits">
-                        {plan.automationCredits.toLocaleString("en-IN")} automation credits
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className="coupon-box">
-                <label className="account-field">
-                  <span>Coupon code</span>
-                  <div className="coupon-input-row">
-                    <input
-                      type="text"
-                      value={couponCode}
-                      onChange={(event) => onChangeCoupon(event.target.value.toUpperCase())}
-                      placeholder="WELCOME50"
-                    />
-
-                    <button
-                      className="coupon-apply-btn"
-                      type="button"
-                      onClick={onApplyCoupon}
-                      disabled={isPreviewLoading || !selectedPlanCode}
-                    >
-                      {isPreviewLoading ? "Checking..." : "Apply"}
-                    </button>
-                  </div>
-                </label>
-
-                {coupon && (
-                  <div className="coupon-applied">
-                    <div>
-                      <strong>{coupon.code}</strong>
-                      <span>{coupon.description || "Coupon applied"}</span>
-                    </div>
-
-                    <button type="button" onClick={onClearCoupon}>
-                      Remove
-                    </button>
-                  </div>
-                )}
-
-                {previewError && (
-                  <div className="coupon-error">
-                    <span>!</span>
-                    <p>{previewError}</p>
-                  </div>
-                )}
-              </div>
-
-              {preview && (
-                <div className="subscription-preview-card">
-                  <div className="preview-row">
-                    <span>Plan price</span>
-                    <strong>{formatMoney(pricing.originalAmount, pricing.currency)}</strong>
-                  </div>
-
-                  <div className="preview-row discount">
-                    <span>Discount</span>
-                    <strong>-{formatMoney(pricing.discountAppliedAmount, pricing.currency)}</strong>
-                  </div>
-
-                  <div className="preview-row total">
-                    <span>Payable now</span>
-                    <strong>{formatMoney(pricing.finalAmount, pricing.currency)}</strong>
-                  </div>
-
-                  <div className="preview-credit-box">
-                    <div>
-                      <span>Plan credits</span>
-                      <strong>{credits.planAutomationCredits.toLocaleString("en-IN")}</strong>
-                    </div>
-
-                    <div>
-                      <span>Coupon credits</span>
-                      <strong>{credits.extraAutomationCredits.toLocaleString("en-IN")}</strong>
-                    </div>
-
-                    <div>
-                      <span>Total credits</span>
-                      <strong>{credits.totalAutomationCredits.toLocaleString("en-IN")}</strong>
-                    </div>
+              <section className="ds-dashboard-panel">
+                <div className="ds-dashboard-panel-header">
+                  <div>
+                    <p className="ds-dashboard-panel-title">Available plans</p>
+                    <h3 className="ds-upgrade-section-heading">Pick the credit bundle you need.</h3>
                   </div>
                 </div>
+
+                <div className="ds-dashboard-panel-body">
+                  <div className="ds-plan-grid">
+                    {plans.map((plan) => {
+                      const active = plan.code === selectedPlanCode;
+
+                      return (
+                        <button
+                          key={plan.id}
+                          type="button"
+                          className={`ds-plan-card ${active ? "active" : ""}`}
+                          onClick={() => onSelectPlan(plan.code)}
+                        >
+                          <div className="ds-plan-card-top">
+                            <div>
+                              <h3>{plan.name}</h3>
+                              <p>{plan.description}</p>
+                            </div>
+
+                            <span>{plan.interval}</span>
+                          </div>
+
+                          <div className="ds-plan-card-bottom">
+                            <strong>{formatMoney(plan.priceAmount, plan.currency)}</strong>
+                            <small>
+                              {plan.automationCredits.toLocaleString("en-IN")} automation credits
+                            </small>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </section>
+
+              <section className="ds-dashboard-panel">
+                <div className="ds-dashboard-panel-header">
+                  <div>
+                    <p className="ds-dashboard-panel-title">Coupon</p>
+                    <h3 className="ds-upgrade-section-heading">Apply discount or extra credits.</h3>
+                  </div>
+                </div>
+
+                <div className="ds-dashboard-panel-body">
+                  <label className="account-field ds-coupon-field">
+                    <span>Coupon code</span>
+
+                    <div className="ds-coupon-input-row">
+                      <input
+                        type="text"
+                        value={couponCode}
+                        onChange={(event) => onChangeCoupon(event.target.value.toUpperCase())}
+                        placeholder="WELCOME50"
+                      />
+
+                      <button
+                        className="ds-button-primary ds-coupon-apply-btn"
+                        type="button"
+                        onClick={onApplyCoupon}
+                        disabled={isPreviewLoading || !selectedPlanCode}
+                      >
+                        {isPreviewLoading ? "Checking..." : "Apply"}
+                      </button>
+                    </div>
+                  </label>
+
+                  {coupon && (
+                    <div className="ds-coupon-applied">
+                      <div>
+                        <strong>{coupon.code}</strong>
+                        <span>{coupon.description || "Coupon applied"}</span>
+                      </div>
+
+                      <button type="button" onClick={onClearCoupon}>
+                        Remove
+                      </button>
+                    </div>
+                  )}
+
+                  {previewError && (
+                    <div className="ds-alert error ds-coupon-error">{previewError}</div>
+                  )}
+                </div>
+              </section>
+
+              {preview && (
+                <section className="ds-dashboard-panel">
+                  <div className="ds-dashboard-panel-header">
+                    <div>
+                      <p className="ds-dashboard-panel-title">Preview</p>
+                      <h3 className="ds-upgrade-section-heading">Billing and credits summary.</h3>
+                    </div>
+                  </div>
+
+                  <div className="ds-dashboard-panel-body">
+                    <div className="ds-subscription-preview">
+                      <div>
+                        <span>Plan price</span>
+                        <strong>{formatMoney(pricing.originalAmount, pricing.currency)}</strong>
+                      </div>
+
+                      <div>
+                        <span>Discount</span>
+                        <strong>
+                          -{formatMoney(pricing.discountAppliedAmount, pricing.currency)}
+                        </strong>
+                      </div>
+
+                      <div className="total">
+                        <span>Payable now</span>
+                        <strong>{formatMoney(pricing.finalAmount, pricing.currency)}</strong>
+                      </div>
+                    </div>
+
+                    <div className="ds-credit-preview-grid">
+                      <div>
+                        <span>Plan credits</span>
+                        <strong>{credits.planAutomationCredits.toLocaleString("en-IN")}</strong>
+                      </div>
+
+                      <div>
+                        <span>Coupon credits</span>
+                        <strong>{credits.extraAutomationCredits.toLocaleString("en-IN")}</strong>
+                      </div>
+
+                      <div>
+                        <span>Total credits</span>
+                        <strong>{credits.totalAutomationCredits.toLocaleString("en-IN")}</strong>
+                      </div>
+                    </div>
+                  </div>
+                </section>
               )}
 
-              <button
-                className="upgrade-primary-btn"
-                type="button"
-                disabled
-                title="Razorpay integration will be added later"
-              >
-                Continue to secure payment
-              </button>
+              <section className="ds-upgrade-payment-card">
+                <div>
+                  <p>Secure payment</p>
+                  <h3>Razorpay integration reserved for commercial activation.</h3>
+                  <span>
+                    Pricing, coupon logic, discount calculation, and credit preview are already
+                    backend-powered.
+                  </span>
+                </div>
 
-              <p className="upgrade-note">
-                Payment gateway is reserved for the next commercial step. Plan pricing, coupon
-                discount, and credit preview are already powered by backend.
-              </p>
+                <button
+                  className="ds-button-primary"
+                  type="button"
+                  disabled
+                  title="Razorpay integration will be added later"
+                >
+                  Continue to payment
+                </button>
+              </section>
             </>
           )}
         </div>

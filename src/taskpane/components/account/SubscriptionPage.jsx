@@ -16,22 +16,41 @@ function SubscriptionPage({
   isPreviewLoading,
 }) {
   return (
-    <main className="subscription-page">
-      <div className="subscription-hero">
-        <button className="subscription-back-btn" type="button" onClick={onBack}>
-          ← Back to workflow
-        </button>
+    <main className="ds-page ds-subscription-page">
+      <button className="ds-back-btn" type="button" onClick={onBack}>
+        ← Back to workflow
+      </button>
 
-        <div className="subscription-hero-card">
-          <div className="subscription-hero-icon">★</div>
+      <section className="ds-hero ds-subscription-hero">
+        <div className="ds-hero-content">
+          <div className="ds-pill">Subscription workspace</div>
 
-          <div>
-            <p className="subscription-kicker">Subscription</p>
-            <h1 className="subscription-title">Upgrade your automation workspace</h1>
-            <p className="subscription-subtitle">
-              Pick a plan, apply coupons, and preview your final credits before payment.
-            </p>
-          </div>
+          <h1 className="ds-title">Upgrade when automation becomes your daily system.</h1>
+
+          <p className="ds-subtitle">
+            Choose a plan, apply coupons, and preview exactly how many automation credits will be
+            added before payment activation.
+          </p>
+        </div>
+      </section>
+
+      <div className="ds-subscription-proof-grid">
+        <div className="ds-subscription-proof-card">
+          <span>01</span>
+          <strong>Plan credits</strong>
+          <p>Every plan grants a clean automation credit bundle.</p>
+        </div>
+
+        <div className="ds-subscription-proof-card">
+          <span>02</span>
+          <strong>Coupons</strong>
+          <p>Discount price, add extra credits, or control both from admin.</p>
+        </div>
+
+        <div className="ds-subscription-proof-card">
+          <span>03</span>
+          <strong>Payment ready</strong>
+          <p>Razorpay can plug into this flow when we activate billing.</p>
         </div>
       </div>
 

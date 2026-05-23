@@ -1,6 +1,17 @@
 import React from "react";
 
-function SelectedRowSection({ rowIndex, rowData, isReadingRow, onDetectActiveRow, renderValue }) {
+import { MAPPING_FIELDS } from "../../constants/mappingFields";
+
+function SelectedRowSection({
+  rowIndex,
+  rowData,
+  mappings,
+  isReadingRow,
+  onDetectActiveRow,
+  renderValue,
+}) {
+  const mappedPreviewFields = MAPPING_FIELDS.filter((field) => mappings?.[field.key]).slice(0, 8);
+
   return (
     <section className="section">
       <div className="section-header">
@@ -20,32 +31,25 @@ function SelectedRowSection({ rowIndex, rowData, isReadingRow, onDetectActiveRow
         </div>
       )}
 
-      {rowData && (
+      {rowData && mappedPreviewFields.length === 0 && (
+        <div className="empty-state">
+          Row detected. Map your table columns above to preview useful values here.
+        </div>
+      )}
+
+      {rowData && mappedPreviewFields.length > 0 && (
         <div className="row-preview-grid">
-          <div className="preview-row">
-            <span className="preview-label">To</span>
-            <span className="preview-value">{renderValue(rowData.recipientEmail)}</span>
-          </div>
+          {mappedPreviewFields.map((field) => {
+            const selectedColumn = mappings[field.key];
+            const value = rowData[field.key] ?? rowData[selectedColumn];
 
-          <div className="preview-row">
-            <span className="preview-label">Name</span>
-            <span className="preview-value">{renderValue(rowData.recipientName)}</span>
-          </div>
-
-          <div className="preview-row">
-            <span className="preview-label">Subject</span>
-            <span className="preview-value">{renderValue(rowData.subject)}</span>
-          </div>
-
-          <div className="preview-row">
-            <span className="preview-label">Status</span>
-            <span className="preview-value">{renderValue(rowData.emailStatus)}</span>
-          </div>
-
-          <div className="preview-row">
-            <span className="preview-label">Template</span>
-            <span className="preview-value">{renderValue(rowData.templateType)}</span>
-          </div>
+            return (
+              <div className="preview-row" key={field.key}>
+                <span className="preview-label">{field.label}</span>
+                <span className="preview-value">{renderValue(value)}</span>
+              </div>
+            );
+          })}
         </div>
       )}
     </section>
