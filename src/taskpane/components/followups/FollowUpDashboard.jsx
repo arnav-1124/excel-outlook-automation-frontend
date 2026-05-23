@@ -31,16 +31,52 @@ function getBucketLabel(bucket) {
   return labels[bucket] || "Follow-ups";
 }
 
+function formatDateTime(dateValue) {
+  if (!dateValue) return "No time";
+
+  try {
+    return new Intl.DateTimeFormat("en-IN", {
+      day: "2-digit",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(new Date(dateValue));
+  } catch {
+    return "Invalid time";
+  }
+}
+
+function getReminderHistoryTitle(log) {
+  return (
+    log.followUpItem?.referenceValue ||
+    log.followUpItem?.subject ||
+    log.followUpItem?.recipientEmail ||
+    "Follow-up reminder"
+  );
+}
+
+function getReminderStatusText(log) {
+  if (log.status === "SENT") return "Sent";
+  if (log.status === "SKIPPED") return "Skipped";
+  if (log.status === "FAILED") return "Failed";
+  if (log.status === "PENDING") return "Pending";
+
+  return log.status;
+}
+
 function FollowUpDashboard({
   onBack,
   isAuthenticated,
   onOpenAccount,
   followUps,
   summary,
+  reminderHistory = [],
   activeBucket,
   isLoading,
+  isReminderHistoryLoading,
   error,
   onChangeBucket,
+  onRefreshReminderHistory,
   onResolve,
   onSnooze,
   onReopen,
@@ -338,6 +374,69 @@ function FollowUpDashboard({
               Follow-ups are linked to Excel row references, so the same active row cannot
               accidentally create duplicate reminder tasks.
             </p>
+          </div>
+        </section>
+
+        <section className="ds-dashboard-panel ds-followup-history-panel">
+          <div className="ds-dashboard-panel-header">
+            <div>
+              <p className="ds-dashboard-panel-title">Reminder history</p>
+              <h2 className="ds-followup-panel-heading">
+                {isReminderHistoryLoading ? "Loading activity..." : "Recent reminder activity"}
+              </h2>
+            </div>
+
+            <button
+              className="ds-button-ghost ds-followup-refresh-btn"
+              type="button"
+              onClick={onRefreshReminderHistory}
+            >
+              Refresh
+            </button>
+          </div>
+
+          <div className="ds-dashboard-panel-body">
+            {!isReminderHistoryLoading && reminderHistory.length === 0 && (
+              <div className="ds-empty-panel">No reminder activity yet.</div>
+            )}
+
+            <div className="ds-followup-history-list">
+              {reminderHistory.map((log) => (
+                <article className="ds-followup-history-card" key={log.id}>
+                  <div className="ds-followup-history-top">
+                    <div>
+                      <h3>{getReminderHistoryTitle(log)}</h3>
+                      <p>{formatDateTime(log.createdAt)}</p>
+                    </div>
+
+                    <span className={`ds-reminder-status ${log.status.toLowerCase()}`}>
+                      {getReminderStatusText(log)}
+                    </span>
+                  </div>
+
+                  <div className="ds-followup-history-meta">
+                    <div>
+                      <span>Channel</span>
+                      <strong>{log.channel}</strong>
+                    </div>
+
+                    <div>
+                      <span>Type</span>
+                      <strong>{log.reminderType}</strong>
+                    </div>
+
+                    <div>
+                      <span>Recipient</span>
+                      <strong>{log.recipient || "Not available"}</strong>
+                    </div>
+                  </div>
+
+                  {log.errorMessage && (
+                    <p className="ds-followup-history-error">{log.errorMessage}</p>
+                  )}
+                </article>
+              ))}
+            </div>
           </div>
         </section>
       </div>

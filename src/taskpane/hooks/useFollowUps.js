@@ -4,6 +4,7 @@ import {
   createFollowUp,
   getFollowUps,
   getFollowUpSummary,
+  getFollowUpReminderHistory,
   resolveFollowUp,
   snoozeFollowUp,
   reopenFollowUp,
@@ -17,6 +18,9 @@ function useFollowUps({ isAuthenticated, showToast, showBanner, addActivity }) {
 
   const [isFollowUpsLoading, setIsFollowUpsLoading] = useState(false);
   const [followUpsError, setFollowUpsError] = useState("");
+
+  const [reminderHistory, setReminderHistory] = useState([]);
+  const [isReminderHistoryLoading, setIsReminderHistoryLoading] = useState(false);
 
   async function loadFollowUpSummary() {
     if (!isAuthenticated) {
@@ -54,6 +58,8 @@ function useFollowUps({ isAuthenticated, showToast, showBanner, addActivity }) {
       setActiveFollowUpBucket(bucket);
 
       await loadFollowUpSummary();
+
+      await loadReminderHistory();
 
       return data;
     } catch (error) {
@@ -154,6 +160,9 @@ function useFollowUps({ isAuthenticated, showToast, showBanner, addActivity }) {
   useEffect(() => {
     if (isAuthenticated) {
       loadFollowUpSummary();
+
+      loadReminderHistory();
+
       loadFollowUps({
         bucket: activeFollowUpBucket,
       });
@@ -163,15 +172,41 @@ function useFollowUps({ isAuthenticated, showToast, showBanner, addActivity }) {
     }
   }, [isAuthenticated]);
 
+  async function loadReminderHistory() {
+    if (!isAuthenticated) {
+      setReminderHistory([]);
+      return [];
+    }
+
+    try {
+      setIsReminderHistoryLoading(true);
+
+      const data = await getFollowUpReminderHistory({
+        limit: 20,
+      });
+
+      setReminderHistory(data);
+      return data;
+    } catch (error) {
+      console.error("Load reminder history failed:", error);
+      return [];
+    } finally {
+      setIsReminderHistoryLoading(false);
+    }
+  }
+
   return {
     followUps,
     followUpSummary,
+    reminderHistory,
     activeFollowUpBucket,
     isFollowUpsLoading,
+    isReminderHistoryLoading,
     followUpsError,
 
     loadFollowUps,
     loadFollowUpSummary,
+    loadReminderHistory,
     setActiveFollowUpBucket,
 
     createFollowUpItem,

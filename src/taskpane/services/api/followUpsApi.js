@@ -73,3 +73,15 @@ export async function cancelFollowUp(id) {
 
   return response.data;
 }
+
+export async function getFollowUpReminderHistory({ limit = 20 } = {}) {
+  const params = new URLSearchParams();
+
+  if (limit) params.set("limit", String(limit));
+
+  const response = await apiRequest(`/followups/reminders/history?${params.toString()}`, {
+    method: "GET",
+  });
+
+  return response.data;
+}

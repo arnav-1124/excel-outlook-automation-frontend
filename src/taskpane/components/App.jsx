@@ -136,6 +136,9 @@ function App() {
     snoozeFollowUpItem,
     reopenFollowUpItem,
     cancelFollowUpItem,
+    reminderHistory,
+    isReminderHistoryLoading,
+    loadReminderHistory,
   } = useFollowUps({
     isAuthenticated,
     showToast,
@@ -516,6 +519,9 @@ function App() {
             rowIndex={rowIndex}
             onCreateFollowUp={createFollowUpItem}
             onOpenCreate={handleOpenFollowUpCreate}
+            reminderHistory={reminderHistory}
+            isReminderHistoryLoading={isReminderHistoryLoading}
+            onRefreshReminderHistory={loadReminderHistory}
           />
         ) : (
           <>
