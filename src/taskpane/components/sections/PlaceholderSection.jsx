@@ -4,21 +4,21 @@ function PlaceholderSection({ rowData, onCopyPlaceholder }) {
   return (
     <section className="section">
       <div className="section-header">
-        <span className="section-number">TPL</span>
-        <h2 className="section-title">Available Placeholders</h2>
+        <span className="section-number">05B</span>
+        <h2 className="section-title">Available placeholders</h2>
       </div>
 
       {!rowData?.__allFields && (
         <div className="empty-state">
-          Detect a selected row to see all available placeholders from your Excel table.
+          Detect an active row to see placeholders generated from your source columns.
         </div>
       )}
 
       {rowData?.__allFields && (
         <>
           <p className="field-hint placeholder-hint">
-            Use these placeholders in future templates. They are generated directly from your Excel
-            table headers.
+            Use these placeholders in your message templates. They are generated from your detected
+            source columns.
           </p>
 
           <div className="placeholder-list">

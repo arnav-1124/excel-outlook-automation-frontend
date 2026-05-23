@@ -5,7 +5,7 @@ function ActivityLogSection({ activityLog, onClear }) {
     <section className="section">
       <div className="section-header">
         <span className="section-number">LOG</span>
-        <h2 className="section-title">Recent Activity</h2>
+        <h2 className="section-title">Recent activity</h2>
 
         {activityLog.length > 0 && (
           <button className="btn-ghost" onClick={onClear}>
@@ -16,7 +16,8 @@ function ActivityLogSection({ activityLog, onClear }) {
 
       {activityLog.length === 0 && (
         <div className="empty-state compact">
-          No activity yet. Actions like row detection and draft creation will appear here.
+          No activity yet. Row detection, template actions, reminders, and draft creation will
+          appear here.
         </div>
       )}
 

@@ -543,16 +543,6 @@ function App() {
           />
         ) : (
           <>
-            {/* Setup Checklist */}
-            <SetupChecklistSection
-              setupChecklist={setupChecklist}
-              setupCompletedCount={setupCompletedCount}
-              setupTotalCount={setupTotalCount}
-              setupProgressPercent={setupProgressPercent}
-              setupStatusText={setupStatusText}
-              isDraftReady={isDraftReady}
-            />
-
             {/* Workflow Preset */}
             <WorkflowPresetSection
               workflowPresets={WORKFLOW_PRESETS}
@@ -575,13 +565,6 @@ function App() {
               autoSyncEnabled={autoSyncEnabled}
               onToggleAutoSync={setAutoSyncEnabled}
               lastSyncText={lastSyncText}
-            />
-
-            {/* Headers Preview */}
-            <HeaderPreviewSection
-              headers={headers}
-              showHeaders={showHeaders}
-              onToggleShowHeaders={() => setShowHeaders((value) => !value)}
             />
 
             {/* Mapping Section */}
@@ -610,9 +593,6 @@ function App() {
               renderValue={renderValue}
             />
 
-            {/* Available Placeholders */}
-            <PlaceholderSection rowData={rowData} onCopyPlaceholder={handleCopyPlaceholder} />
-
             {/* Template Editor */}
             <TemplateEditorSection
               rowData={rowData}
@@ -639,6 +619,9 @@ function App() {
               onClearTemplate={handleClearTemplate}
             />
 
+            {/* Available Placeholders */}
+            <PlaceholderSection rowData={rowData} onCopyPlaceholder={handleCopyPlaceholder} />
+
             {/* Email Preview */}
             <EmailPreviewSection rowData={rowData} renderValue={renderValue} />
 
@@ -664,6 +647,23 @@ function App() {
                 });
               }}
               isDraftReady={isDraftReady}
+            />
+
+            {/* Setup Checklist */}
+            <SetupChecklistSection
+              setupChecklist={setupChecklist}
+              setupCompletedCount={setupCompletedCount}
+              setupTotalCount={setupTotalCount}
+              setupProgressPercent={setupProgressPercent}
+              setupStatusText={setupStatusText}
+              isDraftReady={isDraftReady}
+            />
+
+            {/* Headers Preview */}
+            <HeaderPreviewSection
+              headers={headers}
+              showHeaders={showHeaders}
+              onToggleShowHeaders={() => setShowHeaders((value) => !value)}
             />
 
             {/* Activity Log */}

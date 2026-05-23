@@ -4,8 +4,8 @@ function HeaderPreviewSection({ headers, showHeaders, onToggleShowHeaders }) {
   return (
     <section className="section">
       <div className="section-header">
-        <span className="section-number">02</span>
-        <h2 className="section-title">Available Headers</h2>
+        <span className="section-number">VC</span>
+        <h2 className="section-title">Verify detected columns</h2>
 
         <button className="btn-ghost" onClick={onToggleShowHeaders}>
           {showHeaders ? "Hide" : "Show"}
@@ -15,7 +15,7 @@ function HeaderPreviewSection({ headers, showHeaders, onToggleShowHeaders }) {
       {!showHeaders && (
         <p className="empty-state compact">
           {headers.length > 0
-            ? `${headers.length} header(s) detected. Open this section if you want to verify them.`
+            ? `${headers.length} column(s) detected. Open this section if you want to verify the source data.`
             : "No headers loaded yet."}
         </p>
       )}

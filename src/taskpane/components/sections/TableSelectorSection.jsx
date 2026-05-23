@@ -13,12 +13,12 @@ function TableSelectorSection({
   return (
     <section className="section">
       <div className="section-header">
-        <span className="section-number">01</span>
-        <h2 className="section-title">Select Excel Table</h2>
+        <span className="section-number">02</span>
+        <h2 className="section-title">Select source table</h2>
       </div>
 
       <div className="field-group">
-        <label className="field-label">Workbook Table</label>
+        <label className="field-label">Source table</label>
 
         <select
           className="select"
@@ -35,12 +35,12 @@ function TableSelectorSection({
         </select>
 
         <p className="field-hint">
-          Choose the Excel table that contains recipient, subject and body columns.
+          Choose the table that contains the records for this workflow.
         </p>
       </div>
 
       <button className="btn-outline" onClick={onRefreshTables} disabled={isLoadingTables}>
-        {isLoadingTables ? "Loading..." : "Refresh Tables"}
+        {isLoadingTables ? "Loading..." : "Refresh tables"}
       </button>
 
       <div className="sync-control">

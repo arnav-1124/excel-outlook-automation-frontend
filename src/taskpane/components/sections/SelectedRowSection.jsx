@@ -16,24 +16,24 @@ function SelectedRowSection({
     <section className="section">
       <div className="section-header">
         <span className="section-number">04</span>
-        <h2 className="section-title">Selected Row</h2>
+        <h2 className="section-title">Detect active row</h2>
       </div>
 
       <button className="btn-primary" onClick={onDetectActiveRow} disabled={isReadingRow}>
-        {isReadingRow ? "Reading selected row..." : "Detect Selected Row"}
+        {isReadingRow ? "Reading active row..." : "Detect active row"}
       </button>
 
       <p className="hint">Active Row: {rowIndex !== null ? rowIndex + 1 : "Not detected yet"}</p>
 
       {!rowData && (
         <div className="empty-state">
-          Select a cell inside your Excel table, then click Detect Selected Row.
+          Select a cell inside your source table, then click Detect active row.
         </div>
       )}
 
       {rowData && mappedPreviewFields.length === 0 && (
         <div className="empty-state">
-          Row detected. Map your table columns above to preview useful values here.
+          Row detected. Map your required columns above to preview useful values here.
         </div>
       )}
 

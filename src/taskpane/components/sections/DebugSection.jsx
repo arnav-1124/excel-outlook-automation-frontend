@@ -4,8 +4,8 @@ function DebugSection({ rowData, showRawJson, onToggle }) {
   return (
     <section className="section debug-section">
       <div className="section-header">
-        <span className="section-number">DBG</span>
-        <h2 className="section-title">Debug Data</h2>
+        <span className="section-number">DEV</span>
+        <h2 className="section-title">Developer diagnostics</h2>
 
         <button className="btn-ghost" onClick={onToggle}>
           {showRawJson ? "Hide" : "Show"}
@@ -16,7 +16,7 @@ function DebugSection({ rowData, showRawJson, onToggle }) {
 
       {!showRawJson && (
         <p className="empty-state compact">
-          Hidden by default. Open this only while debugging.
+          Hidden by default. Open this only while checking technical row data.
         </p>
       )}
     </section>

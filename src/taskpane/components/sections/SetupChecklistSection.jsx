@@ -12,7 +12,7 @@ function SetupChecklistSection({
     <section className={`section setup-section ${isDraftReady ? "setup-ready" : ""}`}>
       <div className="setup-top">
         <div>
-          <div className="setup-kicker">Setup Health</div>
+          <div className="setup-kicker">Setup health</div>
           <h2 className="setup-title">{setupStatusText}</h2>
         </div>
 
@@ -46,8 +46,8 @@ function SetupChecklistSection({
 
       {isDraftReady && (
         <div className="setup-ready-note">
-          Everything important is ready. You can generate/preview templates or open an Outlook
-          draft.
+          Everything important is ready. You can generate a preview, open a draft, or create a
+          follow-up reminder.
         </div>
       )}
     </section>

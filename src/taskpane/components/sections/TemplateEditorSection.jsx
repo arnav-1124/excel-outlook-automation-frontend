@@ -28,14 +28,14 @@ function TemplateEditorSection({
     <section className="section">
       <div className="section-header">
         <span className="section-number">TMP</span>
-        <h2 className="section-title">Template Editor</h2>
+        <h2 className="section-title">Build message</h2>
 
         {rowData?.__templateApplied && <span className="badge badge-ok">Applied</span>}
       </div>
 
       {!rowData?.__allFields && (
         <div className="empty-state">
-          Detect a selected row first. Then you can use Excel headers as placeholders.
+          Detect a selected row first. Then you can use source columns as placeholders.
         </div>
       )}
 
@@ -49,7 +49,7 @@ function TemplateEditorSection({
 
           <div className="template-manager">
             <div className="template-field-group">
-              <label className="field-label">Local Templates</label>
+              <label className="field-label">Local templates</label>
 
               <select
                 className="select"
@@ -68,7 +68,7 @@ function TemplateEditorSection({
 
             <div className="template-field-group">
               <div className="template-label-row">
-                <label className="field-label">Cloud Templates</label>
+                <label className="field-label">Cloud templates</label>
 
                 <button className="btn-ghost tiny" type="button" onClick={onRefreshCloudTemplates}>
                   {isCloudTemplatesLoading ? "Syncing..." : "Sync from web"}

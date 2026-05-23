@@ -19,7 +19,7 @@ function MappingSection({
     <section className="section">
       <div className="section-header">
         <span className="section-number">03</span>
-        <h2 className="section-title">Column Mapping</h2>
+        <h2 className="section-title">Map required columns</h2>
 
         <span className={`badge ${requiredMissingCount > 0 ? "badge-warn" : "badge-ok"}`}>
           {mappedCount}/{totalMappingCount}
@@ -27,7 +27,7 @@ function MappingSection({
       </div>
 
       <div className="mapping-subtitle-row">
-        <span>Recommended for: {activeWorkflowPreset.name}</span>
+        <span>Recommended for this workflow: {activeWorkflowPreset.name}</span>
         <span>
           {presetCompletedFields.length}/{activeWorkflowPreset.recommendedFields.length} mapped
         </span>
@@ -51,7 +51,7 @@ function MappingSection({
 
       <div className="optional-mapping-header">
         <button className="btn-ghost" onClick={onToggleOptionalMappings}>
-          {showOptionalMappings ? "Hide Optional Fields" : "Show Optional Fields"}
+          {showOptionalMappings ? "Hide optional fields" : "Show optional fields"}
         </button>
 
         <span>{optionalMappingFields.length} optional</span>
@@ -75,7 +75,7 @@ function MappingSection({
 
       <div className="save-note">
         <span>✓</span>
-        <span>Configuration auto-saved locally</span>
+        <span>Column mapping auto-saved locally</span>
       </div>
     </section>
   );

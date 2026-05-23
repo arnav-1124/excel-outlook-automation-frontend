@@ -5,12 +5,12 @@ function EmailPreviewSection({ rowData, renderValue }) {
     <section className="section">
       <div className="section-header">
         <span className="section-number">05</span>
-        <h2 className="section-title">Email Preview</h2>
+        <h2 className="section-title">Review message</h2>
       </div>
 
       {!rowData && (
         <div className="empty-state">
-          Email preview will appear after detecting the selected row.
+          Your generated message preview will appear after detecting a row and applying a template.
         </div>
       )}
 

@@ -7540,3 +7540,100 @@ button {
 .template-cloud-error {
   color: var(--ds-red, #b42318);
 }
+
+/* Action hierarchy */
+
+.section-actions {
+  display: grid;
+  gap: 14px;
+}
+
+.action-primary-panel,
+.action-secondary-panel,
+.action-utility-panel {
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 16px;
+}
+
+.action-primary-panel {
+  border-color: rgba(249, 115, 22, 0.32);
+  background: rgba(249, 115, 22, 0.05);
+}
+
+.action-primary-panel h3,
+.action-secondary-panel h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 850;
+  color: #111827;
+}
+
+.action-primary-panel p,
+.action-secondary-panel p {
+  margin: 6px 0 14px;
+  color: #6b7280;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.action-main-btn,
+.action-followup-btn {
+  width: 100%;
+}
+
+.action-utility-header {
+  display: grid;
+  gap: 3px;
+  margin-bottom: 12px;
+}
+
+.action-utility-header span {
+  color: #6b7280;
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.action-utility-header small {
+  color: #9ca3af;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.action-utility-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 9px;
+}
+
+@media (min-width: 520px) {
+  .action-utility-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Softer SaaS radius alignment */
+
+.credits-badge,
+.account-panel,
+.followup-open-btn {
+  border-radius: 16px;
+}
+
+.credits-badge-inner,
+.account-panel-summary,
+.account-panel-status,
+.followup-open-btn span,
+.followup-open-btn small {
+  border-radius: 12px;
+}
+
+.section,
+.action-primary-panel,
+.action-secondary-panel,
+.action-utility-panel {
+  border-radius: 14px;
+}

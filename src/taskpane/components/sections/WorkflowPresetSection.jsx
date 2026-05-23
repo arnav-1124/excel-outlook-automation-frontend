@@ -13,12 +13,12 @@ function WorkflowPresetSection({
   return (
     <section className="section preset-section">
       <div className="section-header">
-        <span className="section-number">WF</span>
-        <h2 className="section-title">Workflow Preset</h2>
+        <span className="section-number">01</span>
+        <h2 className="section-title">Choose workflow</h2>
       </div>
 
       <div className="field-group">
-        <label className="field-label">Choose workflow style</label>
+        <label className="field-label">Workflow type</label>
 
         <select
           className="select"
@@ -71,7 +71,7 @@ function WorkflowPresetSection({
       )}
 
       {presetMissingFields.length === 0 && (
-        <div className="preset-ready-note">This workflow preset is fully configured.</div>
+        <div className="preset-ready-note">This workflow is ready. Next, select your source table.</div>
       )}
     </section>
   );
