@@ -7505,3 +7505,38 @@ button {
   font-size: 11.5px;
   line-height: 1.45;
 }
+
+.template-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.btn-ghost.tiny {
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(249, 115, 22, 0.35);
+  background: rgba(249, 115, 22, 0.08);
+  color: #ea580c;
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.02em;
+  box-shadow: 0 6px 16px rgba(249, 115, 22, 0.08);
+}
+
+.btn-ghost.tiny:hover {
+  border-color: rgba(249, 115, 22, 0.55);
+  background: rgba(249, 115, 22, 0.14);
+  color: #c2410c;
+  transform: translateY(-1px);
+}
+
+.btn-ghost.tiny:active {
+  transform: translateY(0);
+}
+
+.template-cloud-error {
+  color: var(--ds-red, #b42318);
+}

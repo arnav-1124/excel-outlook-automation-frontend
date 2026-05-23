@@ -42,6 +42,7 @@ import useUsageCredits from "../hooks/useUsageCredits";
 import useSubscriptionPreview from "../hooks/useSubscriptionPreview";
 import useFollowUps from "../hooks/useFollowUps";
 import useNotificationPreferences from "../hooks/useNotificationPreferences";
+import useCloudTemplates from "../hooks/useCloudTemplates";
 
 // Constants
 import { MAPPING_FIELDS } from "../constants/mappingFields";
@@ -173,6 +174,20 @@ function App() {
   const [isFollowUpCreateOpen, setIsFollowUpCreateOpen] = useState(false);
 
   const {
+    cloudTemplates,
+    selectedCloudTemplateId,
+    setSelectedCloudTemplateId,
+    isCloudTemplatesLoading,
+    cloudTemplatesError,
+    loadCloudTemplates,
+  } = useCloudTemplates({
+    isAuthenticated,
+    showToast,
+    showBanner,
+    addActivity,
+  });
+
+  const {
     subjectTemplate,
     setSubjectTemplate,
     bodyTemplate,
@@ -186,6 +201,7 @@ function App() {
 
     handleSaveNamedTemplate,
     handleLoadNamedTemplate,
+    handleLoadCloudTemplate,
     handleDeleteNamedTemplate,
     handleGenerateFromTemplate,
     handleWriteGeneratedEmailToRow,
@@ -197,11 +213,13 @@ function App() {
     selectedTable,
     rowIndex,
     mappings,
+    cloudTemplates,
+    selectedCloudTemplateId,
+    setSelectedCloudTemplateId,
     showBanner,
     showToast,
     addActivity,
   });
-
   const { isReadingRow, detectActiveRow } = useActiveRow({
     selectedTable,
     mappings,
@@ -600,11 +618,17 @@ function App() {
               rowData={rowData}
               selectedNamedTemplateId={selectedNamedTemplateId}
               namedTemplates={namedTemplates}
+              selectedCloudTemplateId={selectedCloudTemplateId}
+              cloudTemplates={cloudTemplates}
+              isCloudTemplatesLoading={isCloudTemplatesLoading}
+              cloudTemplatesError={cloudTemplatesError}
               templateName={templateName}
               subjectTemplate={subjectTemplate}
               bodyTemplate={bodyTemplate}
               templateMissingFields={templateMissingFields}
               onLoadNamedTemplate={handleLoadNamedTemplate}
+              onLoadCloudTemplate={handleLoadCloudTemplate}
+              onRefreshCloudTemplates={loadCloudTemplates}
               onChangeTemplateName={setTemplateName}
               onChangeSubjectTemplate={setSubjectTemplate}
               onChangeBodyTemplate={setBodyTemplate}

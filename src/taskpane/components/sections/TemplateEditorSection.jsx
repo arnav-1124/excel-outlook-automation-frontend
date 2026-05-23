@@ -4,11 +4,17 @@ function TemplateEditorSection({
   rowData,
   selectedNamedTemplateId,
   namedTemplates,
+  selectedCloudTemplateId,
+  cloudTemplates,
+  isCloudTemplatesLoading,
+  cloudTemplatesError,
   templateName,
   subjectTemplate,
   bodyTemplate,
   templateMissingFields,
   onLoadNamedTemplate,
+  onLoadCloudTemplate,
+  onRefreshCloudTemplates,
   onChangeTemplateName,
   onChangeSubjectTemplate,
   onChangeBodyTemplate,
@@ -43,14 +49,14 @@ function TemplateEditorSection({
 
           <div className="template-manager">
             <div className="template-field-group">
-              <label className="field-label">Saved Templates</label>
+              <label className="field-label">Local Templates</label>
 
               <select
                 className="select"
                 value={selectedNamedTemplateId}
                 onChange={(e) => onLoadNamedTemplate(e.target.value)}
               >
-                <option value="">Select saved template...</option>
+                <option value="">Select local template...</option>
 
                 {namedTemplates.map((template) => (
                   <option key={template.id} value={template.id}>
@@ -58,6 +64,48 @@ function TemplateEditorSection({
                   </option>
                 ))}
               </select>
+            </div>
+
+            <div className="template-field-group">
+              <div className="template-label-row">
+                <label className="field-label">Cloud Templates</label>
+
+                <button className="btn-ghost tiny" type="button" onClick={onRefreshCloudTemplates}>
+                  {isCloudTemplatesLoading ? "Syncing..." : "Sync from web"}
+                </button>
+              </div>
+
+              <select
+                className="select"
+                value={selectedCloudTemplateId || ""}
+                onChange={(e) => {
+                  const templateId = e.target.value;
+
+                  console.log("[Cloud Template Dropdown] selected:", {
+                    templateId,
+                    cloudTemplates,
+                  });
+
+                  onLoadCloudTemplate(templateId);
+                }}
+                disabled={isCloudTemplatesLoading || cloudTemplates.length === 0}
+              >
+                <option value="">
+                  {isCloudTemplatesLoading
+                    ? "Loading cloud templates..."
+                    : "Select cloud template..."}
+                </option>
+
+                {cloudTemplates.map((template) => (
+                  <option key={String(template.id)} value={String(template.id)}>
+                    {template.name}
+                  </option>
+                ))}
+              </select>
+
+              {cloudTemplatesError && (
+                <p className="field-hint template-cloud-error">{cloudTemplatesError}</p>
+              )}
             </div>
 
             <div className="template-field-group">

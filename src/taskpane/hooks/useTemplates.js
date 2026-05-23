@@ -7,7 +7,10 @@ import {
   saveNamedTemplates,
 } from "../services/storage/settingsService";
 
-import { replaceTemplatePlaceholders, findMissingPlaceholders } from "../services/template/templateService";
+import {
+  replaceTemplatePlaceholders,
+  findMissingPlaceholders,
+} from "../services/template/templateService";
 
 import { updateMappedRowValues, getMappedRowData } from "../services/excel/rowService";
 
@@ -19,6 +22,9 @@ function useTemplates({
   selectedTable,
   rowIndex,
   mappings,
+  cloudTemplates = [],
+  selectedCloudTemplateId = "",
+  setSelectedCloudTemplateId,
   showBanner,
   showToast,
   addActivity,
@@ -88,6 +94,7 @@ function useTemplates({
 
   function handleSaveNamedTemplate() {
     const cleanName = templateName.trim();
+    setSelectedCloudTemplateId?.("");
 
     if (!cleanName) {
       showBanner("error", "Please enter a template name before saving.");
@@ -144,8 +151,42 @@ function useTemplates({
     saveNamedTemplates(updatedTemplates);
   }
 
+  function handleLoadCloudTemplate(templateId) {
+    const cleanTemplateId = String(templateId || "");
+
+    console.log("[useTemplates] handleLoadCloudTemplate called:", {
+      cleanTemplateId,
+      cloudTemplates,
+    });
+
+    setSelectedCloudTemplateId?.(cleanTemplateId);
+    setSelectedNamedTemplateId("");
+
+    if (!cleanTemplateId) return;
+
+    const selectedTemplate = cloudTemplates.find(
+      (template) => String(template.id) === cleanTemplateId
+    );
+
+    console.log("[useTemplates] selected cloud template:", selectedTemplate);
+
+    if (!selectedTemplate) {
+      showBanner("error", "Selected cloud template was not found.");
+      return;
+    }
+
+    setTemplateName(selectedTemplate.name || "");
+    setSubjectTemplate(selectedTemplate.subjectTemplate || "");
+    setBodyTemplate(selectedTemplate.bodyTemplate || "");
+    setTemplateMissingFields([]);
+
+    showToast("success", "Cloud template loaded", `${selectedTemplate.name} loaded into editor.`);
+    addActivity("success", `Cloud template loaded: ${selectedTemplate.name}`);
+  }
+
   function handleLoadNamedTemplate(templateId) {
     setSelectedNamedTemplateId(templateId);
+    setSelectedCloudTemplateId?.("");
 
     if (!templateId) return;
 
@@ -183,6 +224,7 @@ function useTemplates({
     saveNamedTemplates(updatedTemplates);
 
     setSelectedNamedTemplateId("");
+    setSelectedCloudTemplateId?.("");
     setTemplateName("");
     setSubjectTemplate("");
     setBodyTemplate("");
@@ -334,6 +376,7 @@ function useTemplates({
 
   function handleClearTemplate() {
     setSelectedNamedTemplateId("");
+    setSelectedCloudTemplateId?.("");
     setTemplateName("");
     setSubjectTemplate("");
     setBodyTemplate("");
@@ -362,6 +405,7 @@ function useTemplates({
 
     handleSaveNamedTemplate,
     handleLoadNamedTemplate,
+    handleLoadCloudTemplate,
     handleDeleteNamedTemplate,
     handleGenerateFromTemplate,
     handleWriteGeneratedEmailToRow,
