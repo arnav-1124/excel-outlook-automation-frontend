@@ -41,6 +41,7 @@ import useAccount from "../hooks/useAccount";
 import useUsageCredits from "../hooks/useUsageCredits";
 import useSubscriptionPreview from "../hooks/useSubscriptionPreview";
 import useFollowUps from "../hooks/useFollowUps";
+import useNotificationPreferences from "../hooks/useNotificationPreferences";
 
 // Constants
 import { MAPPING_FIELDS } from "../constants/mappingFields";
@@ -290,6 +291,17 @@ function App() {
     addActivity,
   });
 
+  const {
+    notificationPreference,
+    isNotificationPreferenceLoading,
+    notificationPreferenceError,
+    saveNotificationPreference,
+  } = useNotificationPreferences({
+    isAuthenticated,
+    showToast,
+    showBanner,
+  });
+
   function handleCompleteOnboarding() {
     setShowOnboarding(false);
 
@@ -425,6 +437,10 @@ function App() {
         onOpenUpgrade={() => navigateToView("subscription")}
         onOpenAdmin={() => navigateToView("admin")}
         openRequestKey={accountOpenRequestKey}
+        notificationPreference={notificationPreference}
+        isNotificationPreferenceLoading={isNotificationPreferenceLoading}
+        notificationPreferenceError={notificationPreferenceError}
+        onSaveNotificationPreference={saveNotificationPreference}
       />
 
       <button

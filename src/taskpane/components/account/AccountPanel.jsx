@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+import NotificationPreferencesPanel from "./NotificationPreferencesPanel";
+
 function AccountPanel({
   user,
   isAuthenticated,
@@ -14,6 +16,10 @@ function AccountPanel({
   onOpenUpgrade,
   onOpenAdmin,
   openRequestKey,
+  notificationPreference,
+  isNotificationPreferenceLoading,
+  notificationPreferenceError,
+  onSaveNotificationPreference,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [mode, setMode] = useState(isAuthenticated ? "profile" : "login");
@@ -176,6 +182,16 @@ function AccountPanel({
               <span>Admin Console</span>
               <small>Manage coupons, plans & product controls</small>
             </button>
+          )}
+
+          {isAuthenticated && (
+            <NotificationPreferencesPanel
+              isAuthenticated={isAuthenticated}
+              preference={notificationPreference}
+              isLoading={isNotificationPreferenceLoading}
+              error={notificationPreferenceError}
+              onSave={onSaveNotificationPreference}
+            />
           )}
 
           {!isAuthenticated && (
