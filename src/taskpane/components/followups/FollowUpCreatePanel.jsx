@@ -202,7 +202,7 @@ function buildInitialForm({ rowData, mappings, selectedTable, rowIndex }) {
     recipientName,
     recipientPhone,
     subject,
-    referenceType: referenceType || (referenceValue ? "Excel row reference" : ""),
+    referenceType: referenceType || (referenceValue ? "Spreadsheet row reference" : ""),
     referenceValue,
     sourceTableName: selectedTable || "",
     sourceRowIndex: rowIndex || null,
@@ -312,7 +312,7 @@ function FollowUpCreatePanel({
       <div className="ds-followup-create-header">
         <div>
           <div className="ds-pill">Create reminder</div>
-          <h2>Track this Excel row</h2>
+          <h2>Track this selected row</h2>
           <p>
             Save a follow-up task linked to the selected row, then let reminders carry the memory.
           </p>
@@ -400,7 +400,7 @@ function FollowUpCreatePanel({
               type="text"
               value={form.referenceType}
               onChange={(event) => updateField("referenceType", event.target.value)}
-              placeholder="PO / Invoice / Deduction"
+              placeholder="Invoice / Ticket / Contract"
             />
           </label>
 

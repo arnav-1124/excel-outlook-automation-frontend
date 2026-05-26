@@ -20,3 +20,6 @@ yarn-debug.log*
 yarn-error.log*
 
 office-addin-debugging.log
+
+# Agent
+AGENTS.md

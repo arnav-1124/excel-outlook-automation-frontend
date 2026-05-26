@@ -7,8 +7,8 @@ function AppHeader({ onRefreshTables }) {
         <div className="header-logo">✉</div>
 
         <div>
-          <h1 className="header-title">Excel Email Automation</h1>
-          <p className="header-sub">Excel × Outlook</p>
+          <h1 className="header-title">Spreadsheet Follow-up Assistant</h1>
+          <p className="header-sub">Part of Follow-up Automation</p>
         </div>
       </div>
 

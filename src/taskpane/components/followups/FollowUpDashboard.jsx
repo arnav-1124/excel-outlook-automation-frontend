@@ -171,9 +171,9 @@ function FollowUpDashboard({
 
       <section className="ds-hero ds-followup-hero">
         <div className="ds-hero-content">
-          <div className="ds-pill">Follow-up command center</div>
+          <div className="ds-pill">Follow-up control center</div>
 
-          <h1 className="ds-title">Every pending reply, under control.</h1>
+          <h1 className="ds-title">Every pending conversation, under control.</h1>
 
           <p className="ds-subtitle">
             Track due, overdue, upcoming, and resolved follow-ups from one focused workspace — with
@@ -371,7 +371,7 @@ function FollowUpDashboard({
             </div>
 
             <p className="ds-followup-intel-note">
-              Follow-ups are linked to Excel row references, so the same active row cannot
+              Follow-ups are linked to source row references, so the same active row cannot
               accidentally create duplicate reminder tasks.
             </p>
           </div>

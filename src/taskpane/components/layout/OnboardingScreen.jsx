@@ -22,8 +22,8 @@ function OnboardingScreen({ showOnboarding, onComplete }) {
             <div className="ds-onboarding-logo">✦</div>
 
             <div>
-              <div className="ds-onboarding-brand">Excel Email Automation</div>
-              <div className="ds-onboarding-brand-sub">Follow-up operating system</div>
+              <div className="ds-onboarding-brand">Spreadsheet Follow-up Assistant</div>
+              <div className="ds-onboarding-brand-sub">Follow-up Automation channel</div>
             </div>
           </div>
 
@@ -38,13 +38,13 @@ function OnboardingScreen({ showOnboarding, onComplete }) {
 
         <div className="ds-onboarding-hero-grid">
           <div className="ds-onboarding-copy">
-            <div className="ds-pill">Excel + Outlook + reminders</div>
+            <div className="ds-pill">Spreadsheet-powered follow-up creation</div>
 
             <h1 className="ds-title large ds-onboarding-title">Never miss another follow-up.</h1>
 
             <p className="ds-subtitle ds-onboarding-subtitle">
-              Turn Excel rows into Outlook drafts, tracked follow-up tasks, and email/WhatsApp
-              reminders — without leaving your workbook.
+              Turn workbook rows into email drafts, tracked follow-up tasks, and email/WhatsApp
+              reminders while keeping the web control center connected.
             </p>
 
             <div className="ds-button-row">
@@ -59,18 +59,18 @@ function OnboardingScreen({ showOnboarding, onComplete }) {
 
             <div className="ds-onboarding-proof-row">
               <div>
-                <strong>25</strong>
-                <span>guest automations</span>
+                <strong>Guest</strong>
+                <span>draft trial</span>
               </div>
 
               <div>
-                <strong>75</strong>
-                <span>free account credits</span>
+                <strong>Account</strong>
+                <span>usage credits</span>
               </div>
 
               <div>
-                <strong>5</strong>
-                <span>WhatsApp trial reminders</span>
+                <strong>WhatsApp</strong>
+                <span>reminder channel</span>
               </div>
             </div>
           </div>
@@ -87,13 +87,13 @@ function OnboardingScreen({ showOnboarding, onComplete }) {
               <div className="ds-mock-status">● Auto-tracked</div>
 
               <div className="ds-mock-row">
-                <span className="ds-mock-label">Excel row</span>
-                <span className="ds-mock-value">PO-12845 · RJW Warehouse</span>
+                <span className="ds-mock-label">Source row</span>
+                <span className="ds-mock-value">Client renewal - Acme Services</span>
               </div>
 
               <div className="ds-mock-row">
                 <span className="ds-mock-label">Draft</span>
-                <span className="ds-mock-value">Outlook ready</span>
+                <span className="ds-mock-value">Ready to review</span>
               </div>
 
               <div className="ds-mock-row">
@@ -113,7 +113,7 @@ function OnboardingScreen({ showOnboarding, onComplete }) {
           <div className="ds-onboarding-flow-card">
             <span>01</span>
             <h3>Connect your table</h3>
-            <p>Load Excel tables and detect actual workbook columns automatically.</p>
+            <p>Load workbook tables and detect actual source columns automatically.</p>
           </div>
 
           <div className="ds-onboarding-flow-card">
@@ -125,7 +125,7 @@ function OnboardingScreen({ showOnboarding, onComplete }) {
           <div className="ds-onboarding-flow-card">
             <span>03</span>
             <h3>Create drafts</h3>
-            <p>Generate Outlook-ready email drafts directly from the selected Excel row.</p>
+            <p>Generate professional email drafts directly from the selected source row.</p>
           </div>
 
           <div className="ds-onboarding-flow-card">
@@ -138,9 +138,9 @@ function OnboardingScreen({ showOnboarding, onComplete }) {
         <section className="ds-section" id="onboarding-features">
           <div className="ds-section-header">
             <div>
-              <h2 className="ds-section-title">Everything your Excel workflow was missing.</h2>
+              <h2 className="ds-section-title">Spreadsheet workflows, connected to your control center.</h2>
               <p className="ds-section-subtitle">
-                Built for real teams that already manage work inside spreadsheets.
+                Built for professionals who already manage source data inside spreadsheets.
               </p>
             </div>
           </div>
@@ -173,8 +173,8 @@ function OnboardingScreen({ showOnboarding, onComplete }) {
         </section>
 
         <p className="ds-onboarding-footer">
-          Designed for vendors, customers, warehouse teams, deduction tracking, invoice follow-ups,
-          and any Excel-based communication workflow.
+          Designed for vendors, customers, suppliers, clients, internal teams, and any
+          spreadsheet-powered communication workflow.
         </p>
       </section>
     </div>

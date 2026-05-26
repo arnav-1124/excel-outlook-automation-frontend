@@ -17,9 +17,10 @@ function ActionSection({
 
       <div className="action-primary-panel">
         <div>
-          <h3>Ready to create the draft?</h3>
+          <h3>Ready to draft the next message?</h3>
           <p>
-            Open a web draft using the generated message preview and selected recipient details.
+            Open a web email draft using the generated message preview and selected recipient
+            details.
           </p>
         </div>
 

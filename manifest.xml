@@ -7,8 +7,8 @@
   <Version>1.0.0.0</Version>
   <ProviderName>Arnav Gupta</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
-  <DisplayName DefaultValue="Excel Email Automation"/>
-  <Description DefaultValue="Create Outlook email drafts from Excel table rows using mappings, templates, previews, and workflow tracking."/>
+  <DisplayName DefaultValue="Spreadsheet Follow-up Assistant"/>
+  <Description DefaultValue="Create email drafts and follow-ups from workbook rows using mappings, templates, previews, and reminder tracking."/>
   <IconUrl DefaultValue="https://localhost:3000/assets/icon-32.png"/>
   <HighResolutionIconUrl DefaultValue="https://localhost:3000/assets/icon-64.png"/>
   <SupportUrl DefaultValue="https://github.com/arnav-1124/excel-outlook-automation"/>
@@ -75,13 +75,13 @@
         <bt:Url id="Taskpane.Url" DefaultValue="https://localhost:3000/taskpane.html" />
       </bt:Urls>
       <bt:ShortStrings>
-        <bt:String id="GetStarted.Title" DefaultValue="Welcome to Excel Email Automation" />
-        <bt:String id="CommandsGroup.Label" DefaultValue="Email Automation" />
-        <bt:String id="TaskpaneButton.Label" DefaultValue="Open Email Assistant" />
+        <bt:String id="GetStarted.Title" DefaultValue="Welcome to Spreadsheet Follow-up Assistant" />
+        <bt:String id="CommandsGroup.Label" DefaultValue="Follow-up Assistant" />
+        <bt:String id="TaskpaneButton.Label" DefaultValue="Open Follow-up Assistant" />
       </bt:ShortStrings>
       <bt:LongStrings>
-        <bt:String id="GetStarted.Description" DefaultValue="Open the Email Assistant from the Home tab to map Excel columns, preview selected rows, apply templates, and create Outlook drafts." />
-        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Open the Excel Email Automation assistant" />
+        <bt:String id="GetStarted.Description" DefaultValue="Open the assistant from the Home tab to map workbook columns, preview selected rows, apply templates, and create follow-up drafts." />
+        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Open the spreadsheet follow-up assistant" />
       </bt:LongStrings>
     </Resources>
   </VersionOverrides>

@@ -1,8 +1,8 @@
 {
   "name": "excel-email-automation-addin",
-  "displayName": "Excel Email Automation",
+  "displayName": "Spreadsheet Follow-up Assistant",
   "version": "0.1.0",
-  "description": "A universal Excel add-in for creating Outlook email drafts from mapped table rows.",
+  "description": "A spreadsheet-powered add-in for creating email drafts and follow-ups from mapped table rows.",
   "author": {
     "name": "Arnav Gupta",
     "email": "arnavgupta112@gmail.com"
