@@ -1,15 +1,4 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Content-Security-Policy",
-          "value": "frame-ancestors 'self' https://*.officeapps.live.com https://*.office.com https://*.microsoft.com https://*.microsoftonline.com"
-        }
-      ]
-    }
-  ]
+  "outputDirectory": "dist"
 }
